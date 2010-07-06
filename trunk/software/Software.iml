@@ -39,6 +39,61 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="CREATE Lab Commons Audio">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-audio/create-lab-commons-audio.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-audio/create-lab-commons-audio-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="CREATE Lab Commons Collections">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-collections/create-lab-commons-collections.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-collections/create-lab-commons-collections-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="CREATE Lab Commons Device">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-device/create-lab-commons-device.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-device/create-lab-commons-device-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="CREATE Lab Commons Speech">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-speech/create-lab-commons-speech.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-speech/create-lab-commons-speech-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="CREATE Lab Commons User Interface">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-user-interface/create-lab-commons-user-interface.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-user-interface/create-lab-commons-user-interface-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="CREATE Lab Commons Util">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-util/create-lab-commons-util.jar!/" />

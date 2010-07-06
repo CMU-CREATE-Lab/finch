@@ -1,4 +1,4 @@
-package edu.cmu.ri.createlab.terk.robot.finch.applications;
+package edu.cmu.ri.createlab.terk.robot.finch.application;
 
 import edu.cmu.ri.createlab.terk.application.TerkApplication;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;
@@ -6,7 +6,6 @@ import edu.cmu.ri.createlab.terk.services.audio.AudioService;
 import edu.cmu.ri.createlab.terk.services.buzzer.BuzzerService;
 import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
 import edu.cmu.ri.createlab.terk.services.motor.OpenLoopVelocityControllableMotorService;
-import edu.cmu.ri.createlab.terk.services.motor.PositionControllableMotorService;
 import edu.cmu.ri.createlab.terk.services.obstacle.SimpleObstacleDetectorService;
 import edu.cmu.ri.createlab.terk.services.photoresistor.PhotoresistorService;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
@@ -71,15 +70,6 @@ public abstract class BaseFinchApplication extends TerkApplication
       if (getServiceManager() != null)
          {
          return ((PhotoresistorService)(getServiceManager().getServiceByTypeId(PhotoresistorService.TYPE_ID)));
-         }
-      return null;
-      }
-
-   protected final PositionControllableMotorService getPositionControllableMotorService()
-      {
-      if (getServiceManager() != null)
-         {
-         return ((PositionControllableMotorService)(getServiceManager().getServiceByTypeId(PositionControllableMotorService.TYPE_ID)));
          }
       return null;
       }

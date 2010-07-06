@@ -1,13 +1,14 @@
 package edu.cmu.ri.createlab.terk.robot.finch;
 
 import java.awt.Color;
+import edu.cmu.ri.createlab.device.CreateLabDeviceProxy;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public interface FinchController
+public interface FinchController extends CreateLabDeviceProxy
    {
    /**
     * Returns the state of the accelerometer; returns <code>null</code> if an error occurred while trying to read the

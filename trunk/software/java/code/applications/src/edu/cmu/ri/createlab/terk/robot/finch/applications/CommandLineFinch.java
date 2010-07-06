@@ -3,8 +3,10 @@ package edu.cmu.ri.createlab.terk.robot.finch.applications;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import edu.cmu.ri.createlab.device.CreateLabDevicePingFailureEventListener;
 import edu.cmu.ri.createlab.terk.robot.finch.DefaultFinchController;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
+import edu.cmu.ri.createlab.terk.robot.finch.application.BaseCommandLineFinch;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
 import edu.cmu.ri.createlab.terk.services.ServiceManager;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
@@ -22,26 +24,25 @@ import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class CommandLineFinchViaServices extends BaseCommandLineFinch
+public final class CommandLineFinch extends BaseCommandLineFinch
    {
    public static void main(final String[] args)
       {
       final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-      new CommandLineFinchViaServices(in).run();
+      new CommandLineFinch(in).run();
       }
 
    private ServiceManager serviceManager;
    private FinchController finchController;
 
-   public CommandLineFinchViaServices(final BufferedReader in)
+   public CommandLineFinch(final BufferedReader in)
       {
       super(in);
       }
 
    protected boolean connect()
       {
-      // TODO
       finchController = DefaultFinchController.create();
 
       if (finchController == null)
@@ -53,6 +54,16 @@ public final class CommandLineFinchViaServices extends BaseCommandLineFinch
       else
          {
          println("Connection successful.");
+         finchController.addCreateLabDevicePingFailureEventListener(
+               new CreateLabDevicePingFailureEventListener()
+               {
+               public void handlePingFailureEvent()
+                  {
+                  println("Finch ping failure detected.  You will need to reconnect.");
+                  serviceManager = null;
+                  finchController = null;
+                  }
+               });
          serviceManager = new FinchServiceManager(finchController);
          return true;
          }
@@ -132,7 +143,6 @@ public final class CommandLineFinchViaServices extends BaseCommandLineFinch
          }
       serviceManager = null;
 
-      // TODO
       return true;
       }
    }

@@ -8,12 +8,16 @@ import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.led.BaseFullColorLEDServiceImpl;
 import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 final class FullColorLEDServiceImpl extends BaseFullColorLEDServiceImpl
    {
+   private static final Log LOG = LogFactory.getLog(FullColorLEDServiceImpl.class);
+
    static FullColorLEDServiceImpl create(final FinchController finchController)
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
@@ -39,12 +43,14 @@ final class FullColorLEDServiceImpl extends BaseFullColorLEDServiceImpl
 
    public Color[] set(final boolean[] mask, final Color[] colors)
       {
+      LOG.debug("FullColorLEDServiceImpl.set(" + (mask == null ? null : mask.length) + ", " + (colors == null ? null : colors.length) + ")");
       if (mask != null && colors != null)
          {
          if (mask.length > 0 && colors.length > 0)
             {
             if (mask[0])
                {
+               LOG.debug("FullColorLEDServiceImpl.set(): setting LED to color [" + colors[0] + " and finchController = [" + finchController + "]");
                if (finchController.setFullColorLED(colors[0]))
                   {
                   return new Color[]{colors[0]};

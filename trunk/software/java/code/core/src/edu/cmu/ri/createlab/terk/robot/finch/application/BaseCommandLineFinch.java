@@ -1,4 +1,4 @@
-package edu.cmu.ri.createlab.terk.robot.finch.applications;
+package edu.cmu.ri.createlab.terk.robot.finch.application;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Chris Bartley (bartley@cmu.edu)
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
-abstract class BaseCommandLineFinch extends BaseCommandLineApplication
+public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
    {
    private static final Log LOG = LogFactory.getLog(BaseCommandLineFinch.class);
    private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
@@ -400,7 +400,7 @@ abstract class BaseCommandLineFinch extends BaseCommandLineApplication
             }
          };
 
-   BaseCommandLineFinch(final BufferedReader in)
+   public BaseCommandLineFinch(final BufferedReader in)
       {
       super(in);
 
