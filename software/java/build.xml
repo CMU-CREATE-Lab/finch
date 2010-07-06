@@ -6,7 +6,11 @@
    <!-- Paths -->
    <path id="finch-core-classpath">
       <!-- third-party jars -->
+      <pathelement path="${create-lab-commons-audio.jar}"/>
+      <pathelement path="${create-lab-commons-collections.jar}"/>
+      <pathelement path="${create-lab-commons-device.jar}"/>
       <pathelement path="${create-lab-commons-usb-hid.jar}"/>
+      <pathelement path="${create-lab-commons-user-interface.jar}"/>
       <pathelement path="${create-lab-commons-util.jar}"/>
       <pathelement path="${commons-lang.jar}"/>
       <pathelement path="${commons-logging.jar}"/>
@@ -21,10 +25,19 @@
       <pathelement path="${finch-core.build.dir}"/>
 
       <!-- third-party jars -->
+      <pathelement path="${create-lab-commons-audio.jar}"/>
+      <pathelement path="${create-lab-commons-collections.jar}"/>
+      <pathelement path="${create-lab-commons-device.jar}"/>
+      <pathelement path="${create-lab-commons-speech.jar}"/>
       <pathelement path="${create-lab-commons-usb-hid.jar}"/>
+      <pathelement path="${create-lab-commons-user-interface.jar}"/>
       <pathelement path="${create-lab-commons-util.jar}"/>
       <pathelement path="${commons-lang.jar}"/>
       <pathelement path="${commons-logging.jar}"/>
+      <pathelement path="${freetts.jar}"/>
+      <pathelement path="${freetts-extra1.jar}"/>
+      <pathelement path="${freetts-extra2.jar}"/>
+      <pathelement path="${freetts-extra3.jar}"/>
       <pathelement path="${log4j.jar}"/>
       <pathelement path="${jna.jar}"/>
       <pathelement path="${terk-core.jar}"/>
@@ -106,7 +119,11 @@
       <create-dist component.name="finch-core">
          <additional-files-to-copy>
             <fileset file="${commons-lang.jar}"/>
+            <fileset file="${create-lab-commons-audio.jar}"/>
+            <fileset file="${create-lab-commons-collections.jar}"/>
+            <fileset file="${create-lab-commons-device.jar}"/>
             <fileset file="${create-lab-commons-usb-hid.jar}"/>
+            <fileset file="${create-lab-commons-user-interface.jar}"/>
             <fileset file="${create-lab-commons-util.jar}"/>
             <fileset file="${jna.jar}"/>
             <fileset file="${terk-core.jar}"/>
@@ -122,8 +139,17 @@
          <additional-files-to-copy>
             <fileset file="${finch-core.dist.dir}/${finch-core.jar.filename}"/>
             <fileset file="${commons-lang.jar}"/>
+            <fileset file="${create-lab-commons-audio.jar}"/>
+            <fileset file="${create-lab-commons-collections.jar}"/>
+            <fileset file="${create-lab-commons-device.jar}"/>
+            <fileset file="${create-lab-commons-speech.jar}"/>
             <fileset file="${create-lab-commons-usb-hid.jar}"/>
+            <fileset file="${create-lab-commons-user-interface.jar}"/>
             <fileset file="${create-lab-commons-util.jar}"/>
+            <fileset file="${freetts.jar}"/>
+            <fileset file="${freetts-extra1.jar}"/>
+            <fileset file="${freetts-extra2.jar}"/>
+            <fileset file="${freetts-extra3.jar}"/>
             <fileset file="${jna.jar}"/>
             <fileset file="${terk-core.jar}"/>
             <fileset file="${terk-services.jar}"/>

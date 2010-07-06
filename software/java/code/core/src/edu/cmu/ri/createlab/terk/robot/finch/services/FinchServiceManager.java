@@ -33,6 +33,11 @@ public final class FinchServiceManager extends AbstractServiceManager
 
    public FinchServiceManager(final FinchController finchController)
       {
+      if (finchController == null)
+         {
+         throw new IllegalArgumentException("FinchController may not be null");
+         }
+
       this.finchController = finchController;
 
       // get the collection of supported services from the peer's proxy
@@ -55,7 +60,7 @@ public final class FinchServiceManager extends AbstractServiceManager
       {
       if (LOG.isTraceEnabled())
          {
-         LOG.trace("SerialDeviceServiceManager.loadService(" + typeId + ")");
+         LOG.trace("FinchServiceManager.loadService(" + typeId + ")");
          }
 
       if (finchServiceFactory != null)
@@ -70,7 +75,10 @@ public final class FinchServiceManager extends AbstractServiceManager
             // load the service
             if (service == null)
                {
-               LOG.debug("SerialDeviceServiceManager.loadService() needs to load the [" + typeId + "] service");
+               if (LOG.isDebugEnabled())
+                  {
+                  LOG.debug("FinchServiceManager.loadService() needs to load the [" + typeId + "] service");
+                  }
 
                service = finchServiceFactory.createService(typeId, finchController);
 

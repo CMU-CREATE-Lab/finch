@@ -19,21 +19,21 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-final class FinchServiceFactory
+public final class FinchServiceFactory
    {
    private static final Log LOG = LogFactory.getLog(FinchServiceFactory.class);
 
-   private interface SerialDeviceServiceCreator
+   private interface ServiceCreator
       {
       Service create(final FinchController finchController);
       }
 
-   private final Map<String, SerialDeviceServiceCreator> typeIdToServiceCreatorsMap = new HashMap<String, SerialDeviceServiceCreator>();
+   private final Map<String, ServiceCreator> typeIdToServiceCreatorsMap = new HashMap<String, ServiceCreator>();
 
-   FinchServiceFactory()
+   public FinchServiceFactory()
       {
       typeIdToServiceCreatorsMap.put(AccelerometerService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -41,7 +41,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(AudioService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -49,7 +49,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(BuzzerService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -57,7 +57,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(FinchService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -65,7 +65,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(FullColorLEDService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -73,7 +73,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(PhotoresistorService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -81,7 +81,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(SimpleObstacleDetectorService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -89,7 +89,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(ThermistorService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -97,7 +97,7 @@ final class FinchServiceFactory
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(OpenLoopVelocityControllableMotorService.TYPE_ID,
-                                     new SerialDeviceServiceCreator()
+                                     new ServiceCreator()
                                      {
                                      public Service create(final FinchController finchController)
                                         {
@@ -106,7 +106,7 @@ final class FinchServiceFactory
                                      });
       }
 
-   public Service createService(final String serviceTypeId, final FinchController proxy)
+   public Service createService(final String serviceTypeId, final FinchController finchController)
       {
       if (typeIdToServiceCreatorsMap.containsKey(serviceTypeId))
          {
@@ -114,7 +114,7 @@ final class FinchServiceFactory
             {
             LOG.debug("FinchServiceFactory.createService(" + serviceTypeId + ")");
             }
-         return typeIdToServiceCreatorsMap.get(serviceTypeId).create(proxy);
+         return typeIdToServiceCreatorsMap.get(serviceTypeId).create(finchController);
          }
       return null;
       }
