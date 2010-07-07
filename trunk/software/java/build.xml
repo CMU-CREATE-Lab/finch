@@ -38,8 +38,10 @@
       <pathelement path="${freetts-extra1.jar}"/>
       <pathelement path="${freetts-extra2.jar}"/>
       <pathelement path="${freetts-extra3.jar}"/>
+      <pathelement path="${lti-civil.jar}"/>
       <pathelement path="${log4j.jar}"/>
       <pathelement path="${jna.jar}"/>
+      <pathelement path="${swing-layout.jar}"/>
       <pathelement path="${terk-core.jar}"/>
       <pathelement path="${terk-services.jar}"/>
    </path>
@@ -151,6 +153,10 @@
             <fileset file="${freetts-extra2.jar}"/>
             <fileset file="${freetts-extra3.jar}"/>
             <fileset file="${jna.jar}"/>
+            <fileset file="${lti-civil.jar}"/>
+            <fileset file="${lti-civil-1.native}"/>
+            <fileset file="${lti-civil-2.native}"/>
+            <fileset file="${swing-layout.jar}"/>
             <fileset file="${terk-core.jar}"/>
             <fileset file="${terk-services.jar}"/>
          </additional-files-to-copy>
