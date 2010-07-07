@@ -1,6 +1,8 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
 import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
+import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
+import edu.cmu.ri.createlab.util.ByteUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
@@ -21,5 +23,14 @@ public final class GetThermistorCommandStrategy extends CreateLabHIDCommandStrat
    protected byte[] getCommand()
       {
       return COMMAND.clone();
+      }
+
+   public Integer convertResult(final HIDCommandResult result)
+      {
+      if (result.wasSuccessful())
+         {
+         return ByteUtils.unsignedByteToInt(result.getData()[0]);
+         }
+      return null;
       }
    }

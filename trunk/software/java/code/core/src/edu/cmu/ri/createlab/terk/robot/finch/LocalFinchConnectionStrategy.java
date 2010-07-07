@@ -1,10 +1,9 @@
-package edu.cmu.ri.createlab.terk.robot.finch.application;
+package edu.cmu.ri.createlab.terk.robot.finch;
 
 import edu.cmu.ri.createlab.device.connectivity.CreateLabDeviceConnectionEventListener;
 import edu.cmu.ri.createlab.device.connectivity.CreateLabDeviceConnectionState;
 import edu.cmu.ri.createlab.device.connectivity.FinchConnectivityManager;
 import edu.cmu.ri.createlab.terk.application.ConnectionStrategy;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
 import edu.cmu.ri.createlab.terk.services.ServiceManager;
 import org.apache.commons.logging.Log;

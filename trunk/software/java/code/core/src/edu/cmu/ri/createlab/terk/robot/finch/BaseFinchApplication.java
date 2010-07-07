@@ -1,4 +1,4 @@
-package edu.cmu.ri.createlab.terk.robot.finch.application;
+package edu.cmu.ri.createlab.terk.robot.finch;
 
 import edu.cmu.ri.createlab.terk.application.TerkApplication;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;

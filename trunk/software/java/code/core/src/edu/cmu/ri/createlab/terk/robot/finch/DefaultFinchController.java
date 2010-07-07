@@ -27,7 +27,6 @@ import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStr
 import edu.cmu.ri.createlab.usb.hid.HIDCommandExecutionQueue;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandStrategy;
-import edu.cmu.ri.createlab.util.ByteUtils;
 import edu.cmu.ri.createlab.util.MathUtils;
 import edu.cmu.ri.createlab.util.thread.DaemonThreadFactory;
 import org.apache.commons.lang.NotImplementedException;
@@ -65,10 +64,10 @@ public final class DefaultFinchController implements FinchController
    private final ScheduledFuture<?> peerPingScheduledFuture;
    private final HIDCommandStrategy disconnectHIDCommandStrategy = new DisconnectCommandStrategy();
    private final HIDCommandStrategy emergencyStopHIDCommandStrategy = new EmergencyStopCommandStrategy();
-   private final HIDCommandStrategy getAccelerometerHIDCommandStrategy = new GetAccelerometerCommandStrategy();
-   private final HIDCommandStrategy getObstacleSensorHIDCommandStrategy = new GetObstacleSensorCommandStrategy();
-   private final HIDCommandStrategy getPhotoresistorHIDCommandStrategy = new GetPhotoresistorCommandStrategy();
-   private final HIDCommandStrategy getThermistorHIDCommandStrategy = new GetThermistorCommandStrategy();
+   private final GetAccelerometerCommandStrategy getAccelerometerHIDCommandStrategy = new GetAccelerometerCommandStrategy();
+   private final GetObstacleSensorCommandStrategy getObstacleSensorHIDCommandStrategy = new GetObstacleSensorCommandStrategy();
+   private final GetPhotoresistorCommandStrategy getPhotoresistorHIDCommandStrategy = new GetPhotoresistorCommandStrategy();
+   private final GetThermistorCommandStrategy getThermistorHIDCommandStrategy = new GetThermistorCommandStrategy();
    private final AccelerometerUnitConversionStrategy accelerometerUnitConversionStrategy = AccelerometerUnitConversionStrategyFinder.getInstance().lookup(FinchConstants.ACCELEROMETER_DEVICE_ID);
    private final ThermistorUnitConversionStrategy thermistorUnitConversionStrategy = ThermistorUnitConversionStrategyFinder.getInstance().lookup(FinchConstants.THERMISTOR_DEVICE_ID);
    private final Collection<CreateLabDevicePingFailureEventListener> createLabDevicePingFailureEventListeners = new HashSet<CreateLabDevicePingFailureEventListener>();
@@ -110,55 +109,30 @@ public final class DefaultFinchController implements FinchController
       {
       final HIDCommandResult response = commandExecutionQueue.execute(getAccelerometerHIDCommandStrategy);
 
-      if (response.wasSuccessful())
-         {
-         final byte[] responseData = response.getData();
-         return new AccelerometerState(ByteUtils.unsignedByteToInt(responseData[0]),
-                                       ByteUtils.unsignedByteToInt(responseData[1]),
-                                       ByteUtils.unsignedByteToInt(responseData[2]));
-         }
-
-      return null;
+      return getAccelerometerHIDCommandStrategy.convertResult(response);
       }
 
    public boolean[] areObstaclesDetected()
       {
-      final HIDCommandResult response = commandExecutionQueue.execute(getObstacleSensorHIDCommandStrategy);
+      final HIDCommandResult result = commandExecutionQueue.execute(getObstacleSensorHIDCommandStrategy);
 
-      if (response.wasSuccessful())
-         {
-         final byte[] responseData = response.getData();
-         return new boolean[]{ByteUtils.unsignedByteToInt(responseData[0]) == 1,
-                              ByteUtils.unsignedByteToInt(responseData[1]) == 1};
-         }
-
-      return null;
+      return getObstacleSensorHIDCommandStrategy.convertResult(result);
       }
 
    public int[] getPhotoresistors()
       {
-      final HIDCommandResult response = commandExecutionQueue.execute(getPhotoresistorHIDCommandStrategy);
+      final HIDCommandResult result = commandExecutionQueue.execute(getPhotoresistorHIDCommandStrategy);
 
-      if (response.wasSuccessful())
-         {
-         final byte[] responseData = response.getData();
-         return new int[]{ByteUtils.unsignedByteToInt(responseData[0]),
-                          ByteUtils.unsignedByteToInt(responseData[1])};
-         }
-
-      return null;
+      return getPhotoresistorHIDCommandStrategy.convertResult(result);
       }
 
    public Integer getThermistor(final int id)
       {
       if (id >= 0 && id < FinchConstants.THERMISTOR_DEVICE_COUNT)
          {
-         final HIDCommandResult response = commandExecutionQueue.execute(getThermistorHIDCommandStrategy);
+         final HIDCommandResult result = commandExecutionQueue.execute(getThermistorHIDCommandStrategy);
 
-         if (response.wasSuccessful())
-            {
-            return ByteUtils.unsignedByteToInt(response.getData()[0]);
-            }
+         return getThermistorHIDCommandStrategy.convertResult(result);
          }
 
       return null;

@@ -1,6 +1,8 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
 import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
+import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
+import edu.cmu.ri.createlab.util.ByteUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
@@ -21,5 +23,17 @@ public final class GetPhotoresistorCommandStrategy extends CreateLabHIDCommandSt
    protected byte[] getCommand()
       {
       return COMMAND.clone();
+      }
+
+   public int[] convertResult(final HIDCommandResult result)
+      {
+      if (result.wasSuccessful())
+         {
+         final byte[] responseData = result.getData();
+         return new int[]{ByteUtils.unsignedByteToInt(responseData[0]),
+                          ByteUtils.unsignedByteToInt(responseData[1])};
+         }
+
+      return null;
       }
    }

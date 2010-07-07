@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import edu.cmu.ri.createlab.device.CreateLabDevicePingFailureEventListener;
+import edu.cmu.ri.createlab.terk.robot.finch.BaseCommandLineFinch;
 import edu.cmu.ri.createlab.terk.robot.finch.DefaultFinchController;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
-import edu.cmu.ri.createlab.terk.robot.finch.application.BaseCommandLineFinch;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
 import edu.cmu.ri.createlab.terk.services.ServiceManager;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
@@ -36,7 +36,7 @@ public final class CommandLineFinch extends BaseCommandLineFinch
    private ServiceManager serviceManager;
    private FinchController finchController;
 
-   public CommandLineFinch(final BufferedReader in)
+   private CommandLineFinch(final BufferedReader in)
       {
       super(in);
       }

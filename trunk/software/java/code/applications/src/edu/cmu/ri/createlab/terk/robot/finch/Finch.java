@@ -16,7 +16,6 @@ import javax.swing.WindowConstants;
 import edu.cmu.ri.createlab.audio.AudioHelper;
 import edu.cmu.ri.createlab.speech.Mouth;
 import edu.cmu.ri.createlab.terk.application.ConnectionStrategyEventHandlerAdapter;
-import edu.cmu.ri.createlab.terk.robot.finch.application.BaseFinchApplication;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;
 import edu.cmu.ri.createlab.terk.services.audio.AudioService;
 import edu.cmu.ri.createlab.terk.services.buzzer.BuzzerService;
@@ -40,7 +39,7 @@ public final class Finch extends BaseFinchApplication
    {
    private static final Log LOG = LogFactory.getLog(Finch.class);
 
-   private static final String DEFAULT_CONNECTION_STRATEGY_IMPLEMENTATION_CLASS = "edu.cmu.ri.createlab.terk.robot.finch.application.LocalFinchConnectionStrategy";
+   private static final String DEFAULT_CONNECTION_STRATEGY_IMPLEMENTATION_CLASS = "edu.cmu.ri.createlab.terk.robot.finch.LocalFinchConnectionStrategy";
 
    private final Semaphore connectionCompleteSemaphore = new Semaphore(1);
 
@@ -260,7 +259,7 @@ public final class Finch extends BaseFinchApplication
     *
     * @param ms - the number of milliseconds to sleep for.  Valid values are all positive integers.
     */
-   public void sleep(int ms)
+   public void sleep(final int ms)
       {
 
       if (ms < 0)
@@ -273,7 +272,7 @@ public final class Finch extends BaseFinchApplication
             {
             Thread.sleep(ms);
             }
-         catch (InterruptedException ie)
+         catch (InterruptedException ignored)
             {
             System.out.println("Error:  sleep was interrupted for some reason");
             }
@@ -350,9 +349,9 @@ public final class Finch extends BaseFinchApplication
    public double[] getAccelerations()
       {
       final AccelerometerService service = getAccelerometerService();
-      double[] accelerations = new double[3];
       if (service != null)
          {
+         final double[] accelerations = new double[3];
          accelerations[0] = service.getAccelerometerGs(0).getX();
          accelerations[1] = service.getAccelerometerGs(0).getY();
          accelerations[2] = service.getAccelerometerGs(0).getZ();
@@ -373,7 +372,7 @@ public final class Finch extends BaseFinchApplication
     * @param frequency The frequency of the tone in Hertz
     * @param duration The time to play the tone in milliseconds
     */
-   public void playTone(int frequency, int duration)
+   public void playTone(final int frequency, final int duration)
       {
       playTone(frequency, FinchConstants.AUDIO_DEVICE_MAX_AMPLITUDE, duration);
       }
@@ -406,7 +405,7 @@ public final class Finch extends BaseFinchApplication
     *
     * @param     fileLocation Absolute path of the file or name of the file if located in some directory as source code
     */
-   public void playClip(String fileLocation)
+   public void playClip(final String fileLocation)
       {
       final AudioService service = getAudioService();
       if (service != null)
@@ -468,7 +467,7 @@ public final class Finch extends BaseFinchApplication
     * @param     frequency Frequency in Hertz of the tone to be played
     * @param     duration  Duration in milliseconds of the tone
     */
-   public void buzz(int frequency, int duration)
+   public void buzz(final int frequency, final int duration)
       {
       final BuzzerService service = getBuzzerService();
       if (service != null)
@@ -551,7 +550,7 @@ public final class Finch extends BaseFinchApplication
     * @param limit The value the light sensor needs to exceed
     * @return whether the light sensor exceeds the value specified by limit
     */
-   public boolean isLeftLightSensor(int limit)
+   public boolean isLeftLightSensor(final int limit)
       {
       return (limit > getLeftLightSensor());
       }
@@ -563,7 +562,7 @@ public final class Finch extends BaseFinchApplication
     * @param limit The value the light sensor needs to exceed
     * @return true if the light sensor exceeds the value specified by limit
     */
-   public boolean isRightLightSensor(int limit)
+   public boolean isRightLightSensor(final int limit)
       {
       return (limit > getRightLightSensor());
       }
@@ -677,7 +676,7 @@ public final class Finch extends BaseFinchApplication
     * @param limit The value the temperature needs to exceed
     * @return true if the temperature exceeds the value specified by limit
     */
-   public boolean isTemperature(double limit)
+   public boolean isTemperature(final double limit)
       {
       return (limit > getTemperature());
       }
@@ -738,7 +737,7 @@ public final class Finch extends BaseFinchApplication
     * @param yVal  The Y axis acceleration value
     * @param zVal  The Z axis acceleration value
     */
-   public void updateAccelerometerGraph(double xVal, double yVal, double zVal)
+   public void updateAccelerometerGraph(final double xVal, final double yVal, final double zVal)
       {
       accelerometerPlotter.setCurrentValues(xVal, yVal, zVal);
       }
@@ -805,7 +804,7 @@ public final class Finch extends BaseFinchApplication
     * @param leftSensor  Variable containing left light sensor value
     * @param rightSensor  Variable containing right light sensor value
     */
-   public void updateLightSensorGraph(int leftSensor, int rightSensor)
+   public void updateLightSensorGraph(final int leftSensor, final int rightSensor)
       {
       lightPlotter.setCurrentValues(leftSensor, rightSensor);
       }
@@ -871,7 +870,7 @@ public final class Finch extends BaseFinchApplication
     * @param temp   variable containing a temperature value
     */
 
-   public void updateTemperatureGraph(double temp)
+   public void updateTemperatureGraph(final double temp)
       {
       temperaturePlotter.setCurrentValues(temp);
       }
@@ -941,7 +940,7 @@ public final class Finch extends BaseFinchApplication
     * @return An 3-int array of the red, green, and blue values of the pixel.  Values are 0 to 255 and
     * represent the intensity of color.
     */
-   public int[] getPixelRGBValues(int x, int y)
+   public int[] getPixelRGBValues(final int x, final int y)
       {
       return video.getPixelRGBValues(x, y);
       }
@@ -952,7 +951,7 @@ public final class Finch extends BaseFinchApplication
     * @param y The column of the pixel
     * @return A Color object representing the color of the pixel
     */
-   public Color getPixelColor(int x, int y)
+   public Color getPixelColor(final int x, final int y)
       {
       return video.getPixelColor(x, y);
       }
@@ -968,7 +967,7 @@ public final class Finch extends BaseFinchApplication
     * @param maxY maximum Y coordinate of rectangle
     * @return a 3 element array holding the red, green, and blue intensities of the area
     */
-   public int[] getAreaRGBValues(int minX, int minY, int maxX, int maxY)
+   public int[] getAreaRGBValues(final int minX, final int minY, final int maxX, final int maxY)
       {
       return video.getAreaRGBValues(minX, minY, maxX, maxY);
       }
@@ -985,7 +984,7 @@ public final class Finch extends BaseFinchApplication
     * @return a Color object holding the average color of the area
     */
 
-   public Color getAreaColor(int minX, int minY, int maxX, int maxY)
+   public Color getAreaColor(final int minX, final int minY, final int maxX, final int maxY)
       {
       return video.getAreaColor(minX, minY, maxX, maxY);
       }
@@ -1023,7 +1022,7 @@ public final class Finch extends BaseFinchApplication
     * might not pick up very much of the object being tracked.  A suggested value for a brightly colored object is 10.
     * @return An array containing the center, top left, and bottom right x,y coordinates of the blob.
     */
-   public int[] blobDetector(int[] calibrationVals, int sensitivity)
+   public int[] blobDetector(final int[] calibrationVals, final int sensitivity)
       {
       return video.blobDetector(calibrationVals, sensitivity);
       }
@@ -1033,7 +1032,7 @@ public final class Finch extends BaseFinchApplication
     * through program calls to the method updateVideoScreen().
     * @param name the name to give the window
     */
-   public void showVideoScreen(String name)
+   public void showVideoScreen(final String name)
       {
       video.drawVideo(name);
       videoScreenOn = true;
@@ -1070,7 +1069,7 @@ public final class Finch extends BaseFinchApplication
     * @param maxX minimum Y coordinate of rectangle
     * @param maxY maximum Y coordinate of rectangle
     */
-   public void drawRectangle(int minX, int minY, int maxX, int maxY)
+   public void drawRectangle(final int minX, final int minY, final int maxX, final int maxY)
       {
       video.drawRectangle(minX, minY, maxX, maxY);
       }
@@ -1081,7 +1080,7 @@ public final class Finch extends BaseFinchApplication
     * @param centerX The X coordinate of the center of the circle
     * @param centerY The Y coordinate of the center of the circle
     */
-   public void drawCircle(int radius, int centerX, int centerY)
+   public void drawCircle(final int radius, final int centerX, final int centerY)
       {
       video.drawCircle(radius, centerX, centerY);
       }
@@ -1100,7 +1099,7 @@ public final class Finch extends BaseFinchApplication
     * the image.
     * @param polyColor The color to set the polygon to.
     */
-   public void setPolygonColor(Color polyColor)
+   public void setPolygonColor(final Color polyColor)
       {
       video.setPolygonColor(polyColor);
       }
@@ -1109,7 +1108,7 @@ public final class Finch extends BaseFinchApplication
     * Sets whether the polygon is filled in or an outline.
     * @param setting true sets the polygon to be filled in, false sets it to outline
     */
-   public void setFillPolygon(boolean setting)
+   public void setFillPolygon(final boolean setting)
       {
       video.setFillPolygon(setting);
       }
@@ -1122,7 +1121,7 @@ public final class Finch extends BaseFinchApplication
     * or filled in, call setFillPolygon.
     * @param poly The polygon object to draw into the image
     */
-   public void drawPolygon(Polygon poly)
+   public void drawPolygon(final Polygon poly)
       {
       video.drawPolygon(poly);
       }
