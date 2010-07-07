@@ -1,9 +1,8 @@
-package edu.cmu.ri.createlab.terk.robot.finch.application;
+package edu.cmu.ri.createlab.terk.robot.finch;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
 import edu.cmu.ri.createlab.util.ArrayUtils;
@@ -350,10 +349,9 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
                final File file = new File(filePath);
                if (file.exists() && file.isFile())
                   {
-                  final byte[] data;
                   try
                      {
-                     data = FileUtils.getFileAsBytes(file);
+                     final byte[] data = FileUtils.getFileAsBytes(file);
                      playClip(data);
                      }
                   catch (IOException e)

@@ -28,11 +28,11 @@ import com.lti.civil.awt.AWTImageConverter;
  * @author Tom Lauwers (tlauwers@andrew.cmu.edu)
  */
 
+@SuppressWarnings({"UseOfSystemOutOrSystemErr"})
 final class VideoPlayer
    {
-
-   CaptureStream captureStream;
-   CaptureSystem system;
+   private CaptureStream captureStream;
+   private CaptureSystem system;
 
    // Stores the most recent image to be received from
    // the capture observer
@@ -44,10 +44,6 @@ final class VideoPlayer
    // Video panel is a class that extends JPanel to
    // create a panel to display the videoImage
    private VideoPanel videoPanel;
-
-   // Create a graphics object to allow drawing polygons
-   // into the videoImage
-   private Graphics2D videoDrawer;
 
    // Create a generic polygon object to draw rectangles,
    // circles, etc into the image
@@ -77,14 +73,14 @@ final class VideoPlayer
     */
    VideoPlayer()
       {
-      CaptureSystemFactory factory = DefaultCaptureSystemFactorySingleton.instance();
+      final CaptureSystemFactory factory = DefaultCaptureSystemFactorySingleton.instance();
 
       try
          {
          system = factory.createCaptureSystem();
          system.init();
-         List list = system.getCaptureDeviceInfoList();
-         CaptureDeviceInfo info = (CaptureDeviceInfo)list.get(0);
+         final List list = system.getCaptureDeviceInfoList();
+         final CaptureDeviceInfo info = (CaptureDeviceInfo)list.get(0);
          captureStream = system.openCaptureDeviceStream(info.getDeviceID());
          }
       catch (CaptureException e)
@@ -104,9 +100,9 @@ final class VideoPlayer
    public void startVideoStream()
       {
       captureStream.setObserver(new MyCaptureObserver());
-      VideoFormat format = null;
       try
          {
+         VideoFormat format = null;
          for (int i = 0; i < captureStream.enumVideoFormats().size(); i++)
             {
             format = captureStream.enumVideoFormats().get(i);
@@ -180,12 +176,12 @@ final class VideoPlayer
 
    // Converts video Format object to a printable string
 
-   private static String videoFormatToString(VideoFormat f)
+   private static String videoFormatToString(final VideoFormat f)
       {
       return "Type=" + formatTypeToString(f.getFormatType()) + " Width=" + f.getWidth() + " Height=" + f.getHeight() + " FPS=" + f.getFPS();
       }
 
-   private static String formatTypeToString(int f)
+   private static String formatTypeToString(final int f)
       {
       switch (f)
          {
@@ -228,14 +224,14 @@ final class VideoPlayer
     * @param y the y-coordinate of the pixel to get
     * @return a 3 element array holding the red, green, and blue intensity of the pixel
     */
-   public int[] getPixelRGBValues(int x, int y)
+   public int[] getPixelRGBValues(final int x, final int y)
       {
       if (videoImage != null)
          {
          if (x < getImageWidth() && x >= 0 && y < getImageHeight() && y >= 0)
             {
-            int pixelVals = videoImage.getRGB(x, y);
-            int[] vals = new int[3];
+            final int pixelVals = videoImage.getRGB(x, y);
+            final int[] vals = new int[3];
             // Converting from ARGB format
             vals[0] = 255 + ((pixelVals % 16777216) / 65536);
             vals[1] = 255 + ((pixelVals % 65536) / 256);
@@ -261,14 +257,13 @@ final class VideoPlayer
     * @param y The column of the pixel
     * @return A Color object representing the color of the pixel
     */
-   public Color getPixelColor(int x, int y)
+   public Color getPixelColor(final int x, final int y)
       {
-      int[] vals = getPixelRGBValues(x, y);
+      final int[] vals = getPixelRGBValues(x, y);
 
       if (vals != null)
          {
-         Color pixelColor = new Color(vals[0], vals[1], vals[2]);
-         return pixelColor;
+         return new Color(vals[0], vals[1], vals[2]);
          }
       else
          {
@@ -288,31 +283,29 @@ final class VideoPlayer
     * @param maxY maximum Y coordinate of rectangle
     * @return a 3 element array holding the red, green, and blue intensities of the area
     */
-   public int[] getAreaRGBValues(int minX, int minY, int maxX, int maxY)
+   public int[] getAreaRGBValues(final int minX, final int minY, final int maxX, final int maxY)
       {
-      int[] vals = {0, 0, 0};
-      int[] tempVals = new int[3];
-
       if (minX > maxX || minY > maxY)
          {
          System.out.println("Error: Minimum is greater than maximum for getAreaRGBValues");
          return null;
          }
 
+      final int[] vals = {0, 0, 0};
       for (int j = minY; j <= maxY; j++)
          {
          for (int i = minX; i <= maxX; i++)
             {
-            tempVals = getPixelRGBValues(i, j);
+            final int[] tempVals = getPixelRGBValues(i, j);
             vals[0] += tempVals[0]; // red
             vals[1] += tempVals[1]; // green
             vals[2] += tempVals[2]; // blue
             }
          }
-      int numPixels = (maxY - minY + 1) * (maxX - minX + 1);
-      vals[0] = vals[0] / numPixels;
-      vals[1] = vals[1] / numPixels;
-      vals[2] = vals[2] / numPixels;
+      final int numPixels = (maxY - minY + 1) * (maxX - minX + 1);
+      vals[0] /= numPixels;
+      vals[1] /= numPixels;
+      vals[2] /= numPixels;
 
       return vals;
       }
@@ -329,13 +322,12 @@ final class VideoPlayer
     * @return a Color object holding the average color of the area
     */
 
-   public Color getAreaColor(int minX, int minY, int maxX, int maxY)
+   public Color getAreaColor(final int minX, final int minY, final int maxX, final int maxY)
       {
-      int[] vals = getAreaRGBValues(minX, minY, maxX, maxY);
+      final int[] vals = getAreaRGBValues(minX, minY, maxX, maxY);
       if (vals != null)
          {
-         Color areaColor = new Color(vals[0], vals[1], vals[2]);
-         return areaColor;
+         return new Color(vals[0], vals[1], vals[2]);
          }
       else
          {
@@ -432,10 +424,10 @@ final class VideoPlayer
     * @param maxX minimum Y coordinate of rectangle
     * @param maxY maximum Y coordinate of rectangle
     */
-   public void drawRectangle(int minX, int minY, int maxX, int maxY)
+   public void drawRectangle(final int minX, final int minY, final int maxX, final int maxY)
       {
-      int[] xpoints = {minX, minX, maxX, maxX};
-      int[] ypoints = {minY, maxY, maxY, minY};
+      final int[] xpoints = {minX, minX, maxX, maxX};
+      final int[] ypoints = {minY, maxY, maxY, minY};
       myPolygon = new Polygon(xpoints, ypoints, 4);
       }
 
@@ -447,7 +439,7 @@ final class VideoPlayer
     * or filled in, call setFillPolygon.
     * @param poly The polygon object to draw into the image
     */
-   public void drawPolygon(Polygon poly)
+   public void drawPolygon(final Polygon poly)
       {
       myPolygon = poly;
       }
@@ -457,7 +449,7 @@ final class VideoPlayer
     * the image.
     * @param polyColor The color to set the polygon to.
     */
-   public void setPolygonColor(Color polyColor)
+   public void setPolygonColor(final Color polyColor)
       {
       polygonColor = polyColor;
       }
@@ -466,7 +458,7 @@ final class VideoPlayer
     * Sets whether the polygon is filled in or an outline.
     * @param setting true sets the polygon to be filled in, false sets it to outline
     */
-   public void setFillPolygon(boolean setting)
+   public void setFillPolygon(final boolean setting)
       {
       setFill = setting;
       }
@@ -477,11 +469,11 @@ final class VideoPlayer
     * @param centerX The X coordinate of the center of the circle
     * @param centerY The Y coordinate of the center of the circle
     */
-   public void drawCircle(int radius, int centerX, int centerY)
+   public void drawCircle(final int radius, final int centerX, final int centerY)
       {
-      int numPoints = 20;
-      int[] xpoints = new int[numPoints];
-      int[] ypoints = new int[numPoints];
+      final int numPoints = 20;
+      final int[] xpoints = new int[numPoints];
+      final int[] ypoints = new int[numPoints];
 
       for (int i = 0; i < numPoints; i++)
          {
@@ -531,7 +523,7 @@ final class VideoPlayer
                e.printStackTrace();
                }
             }
-         int[] calibrateVals = getAreaRGBValues(videoImage.getWidth() / 2 - 20, videoImage.getHeight() / 2 - 20, videoImage.getWidth() / 2 + 20, videoImage.getHeight() / 2 + 20);
+         final int[] calibrateVals = getAreaRGBValues(videoImage.getWidth() / 2 - 20, videoImage.getHeight() / 2 - 20, videoImage.getWidth() / 2 + 20, videoImage.getHeight() / 2 + 20);
          drawNothing();
          updateVideo();
          return calibrateVals;
@@ -562,29 +554,22 @@ final class VideoPlayer
     * might not pick up very much of the object being tracked.  A suggested value for a brightly colored object is 10.
     * @return An array containing the center, top left, and bottom right x,y coordinates of the blob.
     */
-   public int[] blobDetector(int[] calibrationVals, int sensitivity)
+   public int[] blobDetector(final int[] calibrationVals, final int sensitivity)
       {
-
-      int[] pixelVals = new int[3];
-
-      int minX = 0;
-      int maxX = 0;
-      int minY = 0;
-      int maxY = 0;
 
       int centerX = 0;
       int centerY = 0;
       int totalFound = 0;
 
-      int[] rowsFound = new int[videoImage.getWidth()];
-      int[] colsFound = new int[videoImage.getHeight()];
+      final int[] rowsFound = new int[videoImage.getWidth()];
+      final int[] colsFound = new int[videoImage.getHeight()];
 
       // Looks for all pixels that fit within the color range of the calibrations values +/- sensitivity
       for (int j = 0; j < videoImage.getHeight(); j++)
          {
          for (int i = 0; i < videoImage.getWidth(); i++)
             {
-            pixelVals = getPixelRGBValues(i, j);
+            final int[] pixelVals = getPixelRGBValues(i, j);
             if (pixelVals[0] < (calibrationVals[0] + sensitivity) && pixelVals[0] > (calibrationVals[0] - sensitivity)
                 && pixelVals[1] < (calibrationVals[1] + sensitivity) && pixelVals[1] > (calibrationVals[1] - sensitivity)
                 && pixelVals[2] < (calibrationVals[2] + sensitivity) && pixelVals[2] > (calibrationVals[2] - sensitivity))
@@ -609,8 +594,9 @@ final class VideoPlayer
          }
 
       // The following four loops find the edges of the blob
+      final int divisor = 10;
       int pointCounter = 0;
-      int divisor = 10;
+      int minX = 0;
       for (int i = 0; i < videoImage.getWidth(); i++)
          {
          pointCounter += rowsFound[i];
@@ -621,6 +607,7 @@ final class VideoPlayer
             }
          }
       pointCounter = 0;
+      int minY = 0;
       for (int i = 0; i < videoImage.getHeight(); i++)
          {
          pointCounter += colsFound[i];
@@ -631,6 +618,7 @@ final class VideoPlayer
             }
          }
       pointCounter = 0;
+      int maxX = 0;
       for (int i = videoImage.getWidth() - 1; i >= 0; i--)
          {
          pointCounter += rowsFound[i];
@@ -641,6 +629,7 @@ final class VideoPlayer
             }
          }
       pointCounter = 0;
+      int maxY = 0;
       for (int i = videoImage.getHeight() - 1; i >= 0; i--)
          {
          pointCounter += colsFound[i];
@@ -655,8 +644,7 @@ final class VideoPlayer
       centerX /= totalFound;
       centerY /= totalFound;
 
-      int[] returnVals = {centerX, centerY, minX, maxX, minY, maxY};
-      return returnVals;
+      return new int[]{centerX, centerY, minX, maxX, minY, maxY};
       }
 
    /** Updates the video in the video frame - we suggest you call this in a loop to
@@ -674,7 +662,9 @@ final class VideoPlayer
             videoPanel.update();
             if (myPolygon != null)
                {
-               videoDrawer = videoImage.createGraphics();
+               // Create a graphics object to allow drawing polygons
+               // into the videoImage
+               final Graphics2D videoDrawer = videoImage.createGraphics();
                videoDrawer.setColor(polygonColor);
                if (setFill)
                   {
@@ -714,7 +704,7 @@ final class VideoPlayer
          repaint();
          }
 
-      public void paint(Graphics g)
+      public void paint(final Graphics g)
          {
          g.drawImage(videoImage, 0, 0, null);
          }
@@ -726,15 +716,13 @@ final class VideoPlayer
 
    class MyCaptureObserver implements CaptureObserver
       {
-      int counter = 0;
-
-      public void onError(CaptureStream sender, CaptureException e)
+      public void onError(final CaptureStream sender, final CaptureException e)
          {
          System.err.println("onError " + sender);
          e.printStackTrace();
          }
 
-      public void onNewImage(CaptureStream sender, Image image)
+      public void onNewImage(final CaptureStream sender, final Image image)
          {
          setImage(image);
          }

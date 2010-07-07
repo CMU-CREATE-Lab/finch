@@ -8,7 +8,7 @@ import edu.cmu.ri.createlab.terk.services.BaseDeviceControllingService;
  */
 public abstract class BaseFinchServiceImpl extends BaseDeviceControllingService implements FinchService
    {
-   public BaseFinchServiceImpl(final PropertyManager propertyManager, final int deviceCount)
+   protected BaseFinchServiceImpl(final PropertyManager propertyManager, final int deviceCount)
       {
       super(propertyManager, deviceCount);
       }
