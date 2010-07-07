@@ -127,6 +127,17 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="LTI-CIVIL">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/lti-civil/lti-civil.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="http://lti-civil.org/doc/" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="Log4j">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/java/lib/log4j/log4j-1.2.15.jar!/" />
@@ -135,6 +146,17 @@
           <root url="http://logging.apache.org/log4j/1.2/apidocs" />
         </JAVADOC>
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Swing Layout">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/swing-layout/swing-layout-1.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/swing-layout/swing-layout-1.0.4-src.zip!/swing-layout-1.0.4/src/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
