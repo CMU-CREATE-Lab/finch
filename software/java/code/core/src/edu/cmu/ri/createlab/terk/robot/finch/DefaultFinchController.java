@@ -27,6 +27,10 @@ import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStr
 import edu.cmu.ri.createlab.usb.hid.HIDCommandExecutionQueue;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandStrategy;
+import edu.cmu.ri.createlab.usb.hid.HIDConnectionException;
+import edu.cmu.ri.createlab.usb.hid.HIDDevice;
+import edu.cmu.ri.createlab.usb.hid.HIDDeviceFactory;
+import edu.cmu.ri.createlab.usb.hid.HIDDeviceNotFoundException;
 import edu.cmu.ri.createlab.util.MathUtils;
 import edu.cmu.ri.createlab.util.thread.DaemonThreadFactory;
 import org.apache.commons.lang.NotImplementedException;
@@ -45,21 +49,40 @@ public final class DefaultFinchController implements FinchController
       {
       try
          {
+         // create the HID device
+         if (LOG.isDebugEnabled())
+            {
+            LOG.debug("DefaultFinchController.create(): creating HID device for vendor ID [" + FinchConstants.USB_VENDOR_ID + "] and product ID [" + FinchConstants.USB_PRODUCT_ID + "]");
+            }
+         final HIDDevice hidDevice = HIDDeviceFactory.create(FinchConstants.USB_VENDOR_ID, FinchConstants.USB_PRODUCT_ID);
+
+         LOG.debug("DefaultFinchController.create(): attempting connection...");
+         hidDevice.connectExclusively();
+
          // create the HID device command execution queue (which will attempt to connect to the device)
-         final HIDCommandExecutionQueue commandExecutionQueue = HIDCommandExecutionQueue.create(FinchConstants.USB_VENDOR_ID, FinchConstants.USB_PRODUCT_ID);
+         final HIDCommandExecutionQueue commandExecutionQueue = new HIDCommandExecutionQueue(hidDevice);
          if (commandExecutionQueue != null)
             {
-            return new DefaultFinchController(commandExecutionQueue);
+            return new DefaultFinchController(commandExecutionQueue, hidDevice);
             }
          }
       catch (NotImplementedException e)
          {
          LOG.error("NotImplementedException caught while trying to create the HIDCommandExecutionQueue", e);
          }
+      catch (HIDConnectionException e)
+         {
+         LOG.error("HIDConnectionException while trying to connect to the Finch, returning null", e);
+         }
+      catch (HIDDeviceNotFoundException e)
+         {
+         LOG.error("HIDDeviceNotFoundException while trying to connect to the Finch, returning null", e);
+         }
       return null;
       }
 
    private final HIDCommandExecutionQueue commandExecutionQueue;
+   private final HIDDevice hidDevice;
    private final ScheduledExecutorService peerPingScheduler = Executors.newScheduledThreadPool(1, new DaemonThreadFactory("FinchController.peerPingScheduler"));
    private final ScheduledFuture<?> peerPingScheduledFuture;
    private final HIDCommandStrategy disconnectHIDCommandStrategy = new DisconnectCommandStrategy();
@@ -72,9 +95,10 @@ public final class DefaultFinchController implements FinchController
    private final ThermistorUnitConversionStrategy thermistorUnitConversionStrategy = ThermistorUnitConversionStrategyFinder.getInstance().lookup(FinchConstants.THERMISTOR_DEVICE_ID);
    private final Collection<CreateLabDevicePingFailureEventListener> createLabDevicePingFailureEventListeners = new HashSet<CreateLabDevicePingFailureEventListener>();
 
-   private DefaultFinchController(final HIDCommandExecutionQueue commandExecutionQueue)
+   private DefaultFinchController(final HIDCommandExecutionQueue commandExecutionQueue, final HIDDevice hidDevice)
       {
       this.commandExecutionQueue = commandExecutionQueue;
+      this.hidDevice = hidDevice;
 
       // schedule periodic peer pings
       peerPingScheduledFuture = peerPingScheduler.scheduleAtFixedRate(new FinchPinger(),
@@ -85,8 +109,7 @@ public final class DefaultFinchController implements FinchController
 
    public String getPortName()
       {
-      // TODO: return the actual USB HID port name
-      return "USB HID";
+      return hidDevice.getDeviceFilename();
       }
 
    public void addCreateLabDevicePingFailureEventListener(final CreateLabDevicePingFailureEventListener listener)
