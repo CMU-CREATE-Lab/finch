@@ -1,7 +1,7 @@
 package edu.cmu.ri.createlab.terk.robot.finch;
 
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConversionStrategy;
-import edu.cmu.ri.createlab.terk.services.accelerometer.unitconversionstrategies.AccelerometerUnitConversionStrategyMMA7260Q;
+import edu.cmu.ri.createlab.terk.services.accelerometer.unitconversionstrategies.AccelerometerUnitConversionStrategyFreescaleMMA7660FC;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStrategy;
 import edu.cmu.ri.createlab.terk.services.thermistor.unitconversionstrategies.ThermistorUnitConversionStrategyMF52A103F3380;
 
@@ -26,7 +26,7 @@ public class FinchConstants
     * The unique device id for the accelerometer used by all finches.  This value is used to lookup the appropriate
     * {@link AccelerometerUnitConversionStrategy} for converting acclerometer values into g's.
     */
-   public static final String ACCELEROMETER_DEVICE_ID = AccelerometerUnitConversionStrategyMMA7260Q.DEVICE_ID;
+   public static final String ACCELEROMETER_DEVICE_ID = AccelerometerUnitConversionStrategyFreescaleMMA7660FC.DEVICE_ID;
 
    /** The number of audio outputs */
    public static final int AUDIO_DEVICE_COUNT = 1;
@@ -56,13 +56,13 @@ public class FinchConstants
    public static final int BUZZER_DEVICE_MIN_DURATION = 0;
 
    /** The maximum supported buzzer duration */
-   public static final int BUZZER_DEVICE_MAX_DURATION = 32767; // TODO: is this correct?
+   public static final int BUZZER_DEVICE_MAX_DURATION = 65535;
 
    /** The minimum supported buzzer frequency */
    public static final int BUZZER_DEVICE_MIN_FREQUENCY = 0;
 
    /** The maximum supported buzzer frequency */
-   public static final int BUZZER_DEVICE_MAX_FREQUENCY = 32767; // TODO: is this correct?
+   public static final int BUZZER_DEVICE_MAX_FREQUENCY = 65535;
 
    /** The number of finches */
    public static final int FINCH_DEVICE_COUNT = 1;
