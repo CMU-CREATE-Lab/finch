@@ -1,13 +1,12 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
-import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
 import edu.cmu.ri.createlab.util.ByteUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class GetObstacleSensorCommandStrategy extends CreateLabHIDCommandStrategy
+public final class GetObstacleSensorCommandStrategy extends ReturnValueCommandStrategy<boolean[]>
    {
    /** The command character used to request the value of the finch's obstacle sensors. */
    private static final byte[] COMMAND = {'I'};
@@ -27,7 +26,7 @@ public final class GetObstacleSensorCommandStrategy extends CreateLabHIDCommandS
 
    public boolean[] convertResult(final HIDCommandResult result)
       {
-      if (result.wasSuccessful())
+      if (result != null && result.wasSuccessful())
          {
          final byte[] responseData = result.getData();
          return new boolean[]{ByteUtils.unsignedByteToInt(responseData[0]) == 1,

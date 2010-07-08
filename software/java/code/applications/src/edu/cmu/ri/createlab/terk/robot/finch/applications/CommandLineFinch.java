@@ -69,6 +69,11 @@ public final class CommandLineFinch extends BaseCommandLineFinch
          }
       }
 
+   protected boolean isConnected()
+      {
+      return finchController != null && !finchController.isDisconnected();
+      }
+
    protected void setFullColorLED(final int r, final int g, final int b)
       {
       ((FullColorLEDService)serviceManager.getServiceByTypeId(FullColorLEDService.TYPE_ID)).set(0, new Color(r, g, b));
@@ -94,12 +99,12 @@ public final class CommandLineFinch extends BaseCommandLineFinch
       return ((PhotoresistorService)serviceManager.getServiceByTypeId(PhotoresistorService.TYPE_ID)).getPhotoresistorValues();
       }
 
-   protected int getThermistor()
+   protected Integer getThermistor()
       {
       return ((ThermistorService)serviceManager.getServiceByTypeId(ThermistorService.TYPE_ID)).getThermistorValue(0);
       }
 
-   protected double convertToCelsiusTemperature(final Integer rawValue)
+   protected Double convertToCelsiusTemperature(final Integer rawValue)
       {
       return ((ThermistorService)serviceManager.getServiceByTypeId(ThermistorService.TYPE_ID)).convertToCelsius(rawValue);
       }
