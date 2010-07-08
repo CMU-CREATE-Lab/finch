@@ -109,4 +109,9 @@ public interface FinchController extends CreateLabDeviceProxy
    boolean emergencyStop();
 
    void disconnect();
+
+   /**
+    * Returns <code>true</code> if {@link #disconnect()} has been called; <code>false</code> otherwise.
+    */
+   boolean isDisconnected();
    }

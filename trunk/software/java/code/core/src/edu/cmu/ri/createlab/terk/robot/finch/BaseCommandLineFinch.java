@@ -467,14 +467,19 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
 
    private String convertThermistorStateToString()
       {
-      final int rawValue = getThermistor();
-      return "Thermistor: " + rawValue + " = " + convertToCelsiusTemperature(rawValue) + " degrees C";
+      final Integer rawValue = getThermistor();
+      if (rawValue != null)
+         {
+         return "Thermistor: " + rawValue + " = " + convertToCelsiusTemperature(rawValue) + " degrees C";
+         }
+
+      return "Thermistor: failed to read value";
       }
 
    private void poll(final Runnable strategy)
       {
       final long startTime = System.currentTimeMillis();
-      while (System.currentTimeMillis() - startTime < THIRTY_SECONDS_IN_MILLIS)
+      while (isConnected() && System.currentTimeMillis() - startTime < THIRTY_SECONDS_IN_MILLIS)
          {
          strategy.run();
          try
@@ -490,6 +495,8 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
 
    protected abstract boolean connect();
 
+   protected abstract boolean isConnected();
+
    protected abstract boolean disconnect();
 
    protected abstract void setFullColorLED(final int r, final int g, final int b);
@@ -502,9 +509,9 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
 
    protected abstract int[] getPhotoresistors();
 
-   protected abstract int getThermistor();
+   protected abstract Integer getThermistor();
 
-   protected abstract double convertToCelsiusTemperature(final Integer rawValue);
+   protected abstract Double convertToCelsiusTemperature(final Integer rawValue);
 
    protected abstract boolean setMotorVelocities(final int leftVelocity, final int rightVelocity);
 

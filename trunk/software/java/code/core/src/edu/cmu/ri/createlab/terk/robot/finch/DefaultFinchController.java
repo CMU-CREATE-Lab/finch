@@ -18,18 +18,22 @@ import edu.cmu.ri.createlab.terk.robot.finch.commands.GetObstacleSensorCommandSt
 import edu.cmu.ri.createlab.terk.robot.finch.commands.GetPhotoresistorCommandStrategy;
 import edu.cmu.ri.createlab.terk.robot.finch.commands.GetThermistorCommandStrategy;
 import edu.cmu.ri.createlab.terk.robot.finch.commands.MotorVelocityCommandStrategy;
+import edu.cmu.ri.createlab.terk.robot.finch.commands.ReturnValueCommandStrategy;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConversionStrategy;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConversionStrategyFinder;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStrategy;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStrategyFinder;
+import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandExecutionQueue;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandStrategy;
 import edu.cmu.ri.createlab.usb.hid.HIDConnectionException;
 import edu.cmu.ri.createlab.usb.hid.HIDDevice;
 import edu.cmu.ri.createlab.usb.hid.HIDDeviceFactory;
+import edu.cmu.ri.createlab.usb.hid.HIDDeviceFailureException;
+import edu.cmu.ri.createlab.usb.hid.HIDDeviceNotConnectedException;
 import edu.cmu.ri.createlab.usb.hid.HIDDeviceNotFoundException;
 import edu.cmu.ri.createlab.util.MathUtils;
 import edu.cmu.ri.createlab.util.thread.DaemonThreadFactory;
@@ -81,16 +85,19 @@ public final class DefaultFinchController implements FinchController
       return null;
       }
 
+   private boolean isDisconnected = false;
    private final HIDCommandExecutionQueue commandExecutionQueue;
    private final HIDDevice hidDevice;
+   private final FinchPinger finchPinger = new FinchPinger();
    private final ScheduledExecutorService peerPingScheduler = Executors.newScheduledThreadPool(1, new DaemonThreadFactory("FinchController.peerPingScheduler"));
    private final ScheduledFuture<?> peerPingScheduledFuture;
    private final HIDCommandStrategy disconnectHIDCommandStrategy = new DisconnectCommandStrategy();
-   private final HIDCommandStrategy emergencyStopHIDCommandStrategy = new EmergencyStopCommandStrategy();
-   private final GetAccelerometerCommandStrategy getAccelerometerHIDCommandStrategy = new GetAccelerometerCommandStrategy();
-   private final GetObstacleSensorCommandStrategy getObstacleSensorHIDCommandStrategy = new GetObstacleSensorCommandStrategy();
-   private final GetPhotoresistorCommandStrategy getPhotoresistorHIDCommandStrategy = new GetPhotoresistorCommandStrategy();
-   private final GetThermistorCommandStrategy getThermistorHIDCommandStrategy = new GetThermistorCommandStrategy();
+   private final ReturnValueCommandExecutor<AccelerometerState> getAccelerometerStateCommandExecutor = new ReturnValueCommandExecutor<AccelerometerState>(new GetAccelerometerCommandStrategy());
+   private final ReturnValueCommandExecutor<boolean[]> areObstaclesDetectedCommandExecutor = new ReturnValueCommandExecutor<boolean[]>(new GetObstacleSensorCommandStrategy());
+   private final ReturnValueCommandExecutor<int[]> getPhotoresistorsCommandExecutor = new ReturnValueCommandExecutor<int[]>(new GetPhotoresistorCommandStrategy());
+   private final ReturnValueCommandExecutor<Integer> getThermistorCommandExecutor = new ReturnValueCommandExecutor<Integer>(new GetThermistorCommandStrategy());
+   private final NoReturnValueCommandExecutor emergencyStopCommandExecutor = new NoReturnValueCommandExecutor(new EmergencyStopCommandStrategy());
+
    private final AccelerometerUnitConversionStrategy accelerometerUnitConversionStrategy = AccelerometerUnitConversionStrategyFinder.getInstance().lookup(FinchConstants.ACCELEROMETER_DEVICE_ID);
    private final ThermistorUnitConversionStrategy thermistorUnitConversionStrategy = ThermistorUnitConversionStrategyFinder.getInstance().lookup(FinchConstants.THERMISTOR_DEVICE_ID);
    private final Collection<CreateLabDevicePingFailureEventListener> createLabDevicePingFailureEventListeners = new HashSet<CreateLabDevicePingFailureEventListener>();
@@ -101,7 +108,7 @@ public final class DefaultFinchController implements FinchController
       this.hidDevice = hidDevice;
 
       // schedule periodic peer pings
-      peerPingScheduledFuture = peerPingScheduler.scheduleAtFixedRate(new FinchPinger(),
+      peerPingScheduledFuture = peerPingScheduler.scheduleAtFixedRate(finchPinger,
                                                                       DELAY_BETWEEN_PEER_PINGS, // delay before first ping
                                                                       DELAY_BETWEEN_PEER_PINGS, // delay between pings
                                                                       TimeUnit.SECONDS);
@@ -130,32 +137,24 @@ public final class DefaultFinchController implements FinchController
 
    public AccelerometerState getAccelerometerState()
       {
-      final HIDCommandResult response = commandExecutionQueue.execute(getAccelerometerHIDCommandStrategy);
-
-      return getAccelerometerHIDCommandStrategy.convertResult(response);
+      return getAccelerometerStateCommandExecutor.execute();
       }
 
    public boolean[] areObstaclesDetected()
       {
-      final HIDCommandResult result = commandExecutionQueue.execute(getObstacleSensorHIDCommandStrategy);
-
-      return getObstacleSensorHIDCommandStrategy.convertResult(result);
+      return areObstaclesDetectedCommandExecutor.execute();
       }
 
    public int[] getPhotoresistors()
       {
-      final HIDCommandResult result = commandExecutionQueue.execute(getPhotoresistorHIDCommandStrategy);
-
-      return getPhotoresistorHIDCommandStrategy.convertResult(result);
+      return getPhotoresistorsCommandExecutor.execute();
       }
 
    public Integer getThermistor(final int id)
       {
       if (id >= 0 && id < FinchConstants.THERMISTOR_DEVICE_COUNT)
          {
-         final HIDCommandResult result = commandExecutionQueue.execute(getThermistorHIDCommandStrategy);
-
-         return getThermistorHIDCommandStrategy.convertResult(result);
+         return getThermistorCommandExecutor.execute();
          }
 
       return null;
@@ -163,18 +162,21 @@ public final class DefaultFinchController implements FinchController
 
    public boolean setFullColorLED(final int red, final int green, final int blue)
       {
-      return commandExecutionQueue.executeAndReturnStatus(new FullColorLEDCommandStrategy(red, green, blue));
+      final NoReturnValueCommandExecutor commandExecutor = new NoReturnValueCommandExecutor(new FullColorLEDCommandStrategy(red, green, blue));
+      return commandExecutor.executeAndReturnStatus();
       }
 
    public boolean setMotorVelocities(final int leftVelocity, final int rightVelocity)
       {
-      return commandExecutionQueue.executeAndReturnStatus(new MotorVelocityCommandStrategy(MathUtils.ensureRange(leftVelocity, FinchConstants.MOTOR_DEVICE_MIN_VELOCITY, FinchConstants.MOTOR_DEVICE_MAX_VELOCITY),
-                                                                                           MathUtils.ensureRange(rightVelocity, FinchConstants.MOTOR_DEVICE_MIN_VELOCITY, FinchConstants.MOTOR_DEVICE_MAX_VELOCITY)));
+      final NoReturnValueCommandExecutor commandExecutor = new NoReturnValueCommandExecutor(new MotorVelocityCommandStrategy(MathUtils.ensureRange(leftVelocity, FinchConstants.MOTOR_DEVICE_MIN_VELOCITY, FinchConstants.MOTOR_DEVICE_MAX_VELOCITY),
+                                                                                                                             MathUtils.ensureRange(rightVelocity, FinchConstants.MOTOR_DEVICE_MIN_VELOCITY, FinchConstants.MOTOR_DEVICE_MAX_VELOCITY)));
+      return commandExecutor.executeAndReturnStatus();
       }
 
    public boolean playBuzzerTone(final int frequency, final int durationInMilliseconds)
       {
-      return commandExecutionQueue.executeAndReturnStatus(new BuzzerCommandStrategy(frequency, durationInMilliseconds));
+      final NoReturnValueCommandExecutor commandExecutor = new NoReturnValueCommandExecutor(new BuzzerCommandStrategy(frequency, durationInMilliseconds));
+      return commandExecutor.executeAndReturnStatus();
       }
 
    public void playTone(final int frequency, final int amplitude, final int duration)
@@ -189,7 +191,7 @@ public final class DefaultFinchController implements FinchController
 
    public boolean emergencyStop()
       {
-      return commandExecutionQueue.executeAndReturnStatus(emergencyStopHIDCommandStrategy);
+      return emergencyStopCommandExecutor.executeAndReturnStatus();
       }
 
    public void disconnect()
@@ -215,13 +217,24 @@ public final class DefaultFinchController implements FinchController
       if (willAddDisconnectCommandToQueue)
          {
          LOG.debug("DefaultFinchController.disconnect(): Now attempting to send the disconnect command to the finch");
-         if (commandExecutionQueue.executeAndReturnStatus(disconnectHIDCommandStrategy))
+         try
             {
-            LOG.debug("DefaultFinchController.disconnect(): Successfully disconnected from the finch.");
+            if (commandExecutionQueue.executeAndReturnStatus(disconnectHIDCommandStrategy))
+               {
+               LOG.debug("DefaultFinchController.disconnect(): Successfully disconnected from the finch.");
+               }
+            else
+               {
+               LOG.error("DefaultFinchController.disconnect(): Failed to disconnect from the finch.");
+               }
             }
-         else
+         catch (HIDDeviceNotConnectedException e)
             {
-            LOG.error("DefaultFinchController.disconnect(): Failed to disconnect from the finch.");
+            LOG.error("HIDDeviceNotConnectedException while trying to disconnect from the finch", e);
+            }
+         catch (HIDDeviceFailureException e)
+            {
+            LOG.error("HIDDeviceFailureException while trying to disconnect from the finch", e);
             }
          }
       else
@@ -231,6 +244,12 @@ public final class DefaultFinchController implements FinchController
 
       LOG.debug("DefaultFinchController.disconnect(): Now shutting down the HIDCommandExecutionQueue...");
       commandExecutionQueue.shutdown();
+      isDisconnected = true;
+      }
+
+   public boolean isDisconnected()
+      {
+      return isDisconnected;
       }
 
    /**
@@ -301,42 +320,113 @@ public final class DefaultFinchController implements FinchController
             // probably won't work) and then notify the listeners
             if (!pingSuccessful)
                {
-               try
-                  {
-                  LOG.error("FinchProxy$FinchPinger.run(): Peer ping failed (received a null state).  Attempting to disconnect...");
-                  disconnect(false);
-                  LOG.error("FinchProxy$FinchPinger.run(): Done disconnecting from the finch");
-                  }
-               catch (Exception e)
-                  {
-                  LOG.error("FinchProxy$FinchPinger.run(): Exeption caught while trying to disconnect from the finch", e);
-                  }
-
-               if (LOG.isDebugEnabled())
-                  {
-                  LOG.debug("FinchProxy$FinchPinger.run(): Notifying " + createLabDevicePingFailureEventListeners.size() + " listeners of ping failure...");
-                  }
-               for (final CreateLabDevicePingFailureEventListener listener : createLabDevicePingFailureEventListeners)
-                  {
-                  try
-                     {
-                     if (LOG.isDebugEnabled())
-                        {
-                        LOG.debug("   FinchProxy$FinchPinger.run(): Notifying " + listener);
-                        }
-                     listener.handlePingFailureEvent();
-                     }
-                  catch (Exception e)
-                     {
-                     LOG.error("FinchProxy$FinchPinger.run(): Exeption caught while notifying CreateLabDevicePingFailureEventListener", e);
-                     }
-                  }
+               handlePingFailure();
                }
             }
          catch (Exception e)
             {
             LOG.error("FinchProxy$FinchPinger.run(): Exception caught while executing the peer pinger", e);
             }
+         }
+
+      private void handlePingFailure()
+         {
+         try
+            {
+            LOG.error("FinchProxy$FinchPinger.run(): Peer ping failed (received a null state).  Attempting to disconnect...");
+            disconnect(false);
+            LOG.error("FinchProxy$FinchPinger.run(): Done disconnecting from the finch");
+            }
+         catch (Exception e)
+            {
+            LOG.error("FinchProxy$FinchPinger.run(): Exeption caught while trying to disconnect from the finch", e);
+            }
+
+         if (LOG.isDebugEnabled())
+            {
+            LOG.debug("FinchProxy$FinchPinger.run(): Notifying " + createLabDevicePingFailureEventListeners.size() + " listeners of ping failure...");
+            }
+         for (final CreateLabDevicePingFailureEventListener listener : createLabDevicePingFailureEventListeners)
+            {
+            try
+               {
+               if (LOG.isDebugEnabled())
+                  {
+                  LOG.debug("   FinchProxy$FinchPinger.run(): Notifying " + listener);
+                  }
+               listener.handlePingFailureEvent();
+               }
+            catch (Exception e)
+               {
+               LOG.error("FinchProxy$FinchPinger.run(): Exeption caught while notifying CreateLabDevicePingFailureEventListener", e);
+               }
+            }
+         }
+
+      private void forceFailure()
+         {
+         handlePingFailure();
+         }
+      }
+
+   private final class ReturnValueCommandExecutor<T>
+      {
+      private final ReturnValueCommandStrategy<T> commandStrategy;
+
+      private ReturnValueCommandExecutor(final ReturnValueCommandStrategy<T> commandStrategy)
+         {
+         this.commandStrategy = commandStrategy;
+         }
+
+      private T execute()
+         {
+         try
+            {
+            final HIDCommandResult response = commandExecutionQueue.execute(commandStrategy);
+            return commandStrategy.convertResult(response);
+            }
+         catch (HIDDeviceNotConnectedException e)
+            {
+            LOG.error("DefaultFinchController.getAccelerometerState(): HIDDeviceNotConnectedException caught, forcing a ping failure");
+            finchPinger.forceFailure();
+            }
+         catch (HIDDeviceFailureException e)
+            {
+            LOG.error("DefaultFinchController.getAccelerometerState(): HIDDeviceFailureException caught, forcing a ping failure");
+            finchPinger.forceFailure();
+            }
+
+         return null;
+         }
+      }
+
+   private final class NoReturnValueCommandExecutor
+      {
+      private final CreateLabHIDCommandStrategy commandStrategy;
+
+      private NoReturnValueCommandExecutor(final CreateLabHIDCommandStrategy commandStrategy)
+         {
+         this.commandStrategy = commandStrategy;
+         }
+
+      private boolean executeAndReturnStatus()
+         {
+         try
+            {
+            return commandExecutionQueue.executeAndReturnStatus(commandStrategy);
+            }
+         catch (HIDDeviceNotConnectedException ignored)
+            {
+            LOG.error("DefaultFinchController.getAccelerometerState(): HIDDeviceNotConnectedException caught, forcing a ping failure");
+            finchPinger.forceFailure();
+            }
+         catch (HIDDeviceFailureException ignored)
+            {
+            LOG.error("DefaultFinchController.getAccelerometerState(): HIDDeviceFailureException caught, forcing a ping failure");
+            finchPinger.forceFailure();
+            }
+
+         return false;
          }
       }
    }

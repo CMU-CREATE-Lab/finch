@@ -1,13 +1,12 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
-import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
 import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
 import edu.cmu.ri.createlab.util.ByteUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class GetPhotoresistorCommandStrategy extends CreateLabHIDCommandStrategy
+public final class GetPhotoresistorCommandStrategy extends ReturnValueCommandStrategy<int[]>
    {
    /** The command character used to request the value of the finch's photoresistors. */
    private static final byte[] COMMAND = {'L'};
@@ -27,7 +26,7 @@ public final class GetPhotoresistorCommandStrategy extends CreateLabHIDCommandSt
 
    public int[] convertResult(final HIDCommandResult result)
       {
-      if (result.wasSuccessful())
+      if (result != null && result.wasSuccessful())
          {
          final byte[] responseData = result.getData();
          return new int[]{ByteUtils.unsignedByteToInt(responseData[0]),
