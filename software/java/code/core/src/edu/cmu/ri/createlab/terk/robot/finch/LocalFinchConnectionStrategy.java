@@ -28,7 +28,7 @@ public final class LocalFinchConnectionStrategy extends ConnectionStrategy
                {
                if (LOG.isDebugEnabled())
                   {
-                  LOG.debug("LocalFinchConnectionStrategy.handleConnectionStateChange(): OLD [" + oldState.getStateName() + "]  NEW [" + newState.getStateName() + "]");
+                  LOG.debug("LocalFinchConnectionStrategy.handleConnectionStateChange(): OLD [" + oldState.getStateName() + "]  NEW [" + newState.getStateName() + "]  port [" + portName + "]");
                   }
                switch (newState)
                   {
