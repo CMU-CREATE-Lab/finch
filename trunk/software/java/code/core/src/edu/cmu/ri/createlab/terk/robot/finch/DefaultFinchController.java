@@ -67,7 +67,13 @@ public final class DefaultFinchController implements FinchController
          final HIDCommandExecutionQueue commandExecutionQueue = new HIDCommandExecutionQueue(hidDevice);
          if (commandExecutionQueue != null)
             {
-            return new DefaultFinchController(commandExecutionQueue, hidDevice);
+            // create the FinchController
+            final DefaultFinchController finchController = new DefaultFinchController(commandExecutionQueue, hidDevice);
+
+            // call the emergency stop command immediately, to make sure the LED and motors are turned off.
+            finchController.emergencyStop();
+
+            return finchController;
             }
          }
       catch (NotImplementedException e)
