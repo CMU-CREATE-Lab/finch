@@ -1,7 +1,9 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
+import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
 import edu.cmu.ri.createlab.util.ByteUtils;
+import edu.cmu.ri.createlab.util.MathUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
@@ -19,9 +21,9 @@ public final class FullColorLEDCommandStrategy extends CreateLabHIDCommandStrate
    public FullColorLEDCommandStrategy(final int red, final int green, final int blue)
       {
       this.command = new byte[]{COMMAND_PREFIX,
-                                ByteUtils.intToUnsignedByte(red),
-                                ByteUtils.intToUnsignedByte(green),
-                                ByteUtils.intToUnsignedByte(blue)};
+                                ByteUtils.intToUnsignedByte(MathUtils.ensureRange(red, FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY, FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)),
+                                ByteUtils.intToUnsignedByte(MathUtils.ensureRange(green, FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY, FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)),
+                                ByteUtils.intToUnsignedByte(MathUtils.ensureRange(blue, FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY, FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY))};
       }
 
    protected int getSizeOfExpectedResponse()
