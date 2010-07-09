@@ -79,6 +79,7 @@ public final class DefaultFinchController implements FinchController
       catch (NotImplementedException e)
          {
          LOG.error("NotImplementedException caught while trying to create the HIDCommandExecutionQueue", e);
+         System.exit(1);
          }
       catch (HIDConnectionException e)
          {
