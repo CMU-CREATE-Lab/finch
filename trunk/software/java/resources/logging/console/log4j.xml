@@ -9,19 +9,10 @@
          <param name="ConversionPattern" value="%d{HH:mm:ss,SSS} [%t] %-5p: %m%n"/>
       </layout>
    </appender>
-   <!--
-   <appender name="LogFileAppender" class="org.apache.log4j.FileAppender">
-      <param name="File" value="FinchApplications.log"/>
-      <layout class="org.apache.log4j.PatternLayout">
-         <param name="ConversionPattern" value="%d [%t] %-5p: %c: %m%n"/>
-      </layout>
-   </appender>
-   -->
 
    <root>
       <priority value="debug"/>
       <appender-ref ref="ConsoleAppender"/>
-      <!--<appender-ref ref="LogFileAppender"/>-->
    </root>
 
 </log4j:configuration>
