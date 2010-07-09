@@ -21,8 +21,29 @@
    </path>
 
    <path id="finch-applications-classpath">
+      <!-- other classes within this project -->
+      <pathelement path="${finch-core.build.dir}"/>
+
       <!-- third-party jars -->
-      <pathelement path="${finch.jar}"/>
+      <pathelement path="${create-lab-commons-audio.jar}"/>
+      <pathelement path="${create-lab-commons-collections.jar}"/>
+      <pathelement path="${create-lab-commons-device.jar}"/>
+      <pathelement path="${create-lab-commons-speech.jar}"/>
+      <pathelement path="${create-lab-commons-usb-hid.jar}"/>
+      <pathelement path="${create-lab-commons-user-interface.jar}"/>
+      <pathelement path="${create-lab-commons-util.jar}"/>
+      <pathelement path="${commons-lang.jar}"/>
+      <pathelement path="${commons-logging.jar}"/>
+      <pathelement path="${freetts.jar}"/>
+      <pathelement path="${freetts-extra1.jar}"/>
+      <pathelement path="${freetts-extra2.jar}"/>
+      <pathelement path="${freetts-extra3.jar}"/>
+      <pathelement path="${lti-civil.jar}"/>
+      <pathelement path="${log4j.jar}"/>
+      <pathelement path="${jna.jar}"/>
+      <pathelement path="${swing-layout.jar}"/>
+      <pathelement path="${terk-core.jar}"/>
+      <pathelement path="${terk-services.jar}"/>
    </path>
 
    <!-- Compiler resources -->
@@ -52,13 +73,6 @@
       <include name="**/?*.ice"/>
       <include name="**/?*.pem"/>
    </patternset>
-
-   <!-- Task definitions -->
-   <taskdef resource="net/sf/antcontrib/antlib.xml">
-      <classpath>
-         <pathelement location="${ant-contrib.jar}"/>
-      </classpath>
-   </taskdef>
 
    <tstamp>
       <format property="build.timestamp" pattern="yyyy-MM-dd hh:mm:ss a z"/>
@@ -91,7 +105,7 @@
       <property name="build-finch-core-is-complete" value="true"/>
    </target>
 
-   <target name="build-finch-applications" depends="build-finch-jar" description="builds the finch-applications source code" unless="build-finch-applications-is-complete">
+   <target name="build-finch-applications" depends="build-finch-core" description="builds the finch-applications source code" unless="build-finch-applications-is-complete">
       <compile-code-and-copy-resources src.dir="${finch-applications.src.dir}"
                                        build.dir="${finch-applications.build.dir}"
                                        classpath-ref="finch-applications-classpath"/>
@@ -107,7 +121,6 @@
       <create-dist component.name="finch-core">
          <additional-files-to-copy>
             <fileset file="${commons-lang.jar}"/>
-            <fileset file="${commons-logging.jar}"/>
             <fileset file="${create-lab-commons-audio.jar}"/>
             <fileset file="${create-lab-commons-collections.jar}"/>
             <fileset file="${create-lab-commons-device.jar}"/>
@@ -115,7 +128,6 @@
             <fileset file="${create-lab-commons-user-interface.jar}"/>
             <fileset file="${create-lab-commons-util.jar}"/>
             <fileset file="${jna.jar}"/>
-            <fileset file="${log4j.jar}"/>
             <fileset file="${terk-core.jar}"/>
             <fileset file="${terk-services.jar}"/>
          </additional-files-to-copy>
@@ -124,54 +136,86 @@
       <property name="dist-finch-core-is-complete" value="true"/>
    </target>
 
-   <target name="dist-finch-applications" depends="build-finch-applications" description="builds finch-applications" unless="dist-finch-applications-is-complete">
+   <target name="dist-finch-applications" depends="dist-finch-core, build-finch-applications" description="builds finch-applications" unless="dist-finch-applications-is-complete">
+      <mkdir dir="${finch-applications.dist.dir}"/>
+
+      <!-- create jar of resources, using the logging config file required for console-only logging -->
+      <jar destfile="${finch-applications.dist.dir}/${finch-applications-resources-jar.filename}"
+           update="no"
+           compress="true">
+         <fileset dir="${resources.logging.dir}/console" includes="**/*"/>
+      </jar>
+
       <create-dist component.name="finch-applications">
          <additional-files-to-copy>
-            <fileset dir="${finch.jar.dir}" excludes="README.txt"/>
+            <fileset file="${finch-core.dist.dir}/${finch-core.jar.filename}"/>
+            <fileset file="${commons-lang.jar}"/>
+            <fileset file="${create-lab-commons-audio.jar}"/>
+            <fileset file="${create-lab-commons-collections.jar}"/>
+            <fileset file="${create-lab-commons-device.jar}"/>
+            <fileset file="${create-lab-commons-speech.jar}"/>
+            <fileset file="${create-lab-commons-usb-hid.jar}"/>
+            <fileset file="${create-lab-commons-user-interface.jar}"/>
+            <fileset file="${create-lab-commons-util.jar}"/>
+            <fileset file="${freetts.jar}"/>
+            <fileset file="${freetts-extra1.jar}"/>
+            <fileset file="${freetts-extra2.jar}"/>
+            <fileset file="${freetts-extra3.jar}"/>
+            <fileset file="${jna.jar}"/>
+            <fileset file="${lti-civil.jar}"/>
+            <fileset file="${lti-civil-1.native}"/>
+            <fileset file="${lti-civil-2.native}"/>
+            <fileset file="${swing-layout.jar}"/>
+            <fileset file="${terk-core.jar}"/>
+            <fileset file="${terk-services.jar}"/>
          </additional-files-to-copy>
       </create-dist>
 
       <property name="dist-finch-applications-is-complete" value="true"/>
    </target>
 
-   <target name="build-finch-jar" description="creates the finch.jar used by finch-applications, but only if it doesn't already exist" unless="build-finch-jar-is-complete">
-      <if>
-         <available file="${finch.jar}" type="file"/>
-         <then>
-            <echo message="The finch.jar already exists, so I won't try to build it."/>
-         </then>
-         <else>
-            <echo message="The finch.jar doesn't exist, so I will build it."/>
-            <antcall target="force-build-finch-jar" inheritall="true" inheritrefs="true"/>
-         </else>
-      </if>
-      <property name="build-finch-jar-is-complete" value="true"/>
-   </target>
+   <target name="create-distro-zip" depends="dist" description="builds the zip for distributing to students, etc." unless="create-distro-zip-is-complete">
+      <!-- create the temporary zip directory -->
+      <mkdir dir="${zip.dir}"/>
 
-   <target name="force-build-finch-jar" description="creates the finch.jar used by finch-applications, overwriting it if already exists" unless="force-build-finch-jar-is-complete">
-      <antcall target="dist-finch-core" inheritall="true" inheritrefs="true"/>
-
-      <!-- Create the big honkin' jar containing all the jars from dist-finch-core.  We'll also include some other jars
-      required by classes in finch-applications, but not used by classes in finch-core. -->
+      <!-- Create the big honkin' jar containing all the jars from dist-finch-applications and the log4j.xml file for
+      file logging. -->
       <jar destfile="${finch.jar}" update="yes" compress="true">
-         <zipgroupfileset dir="${finch-core.dist.dir}" includes="**/*.jar"/>
-         <zipgroupfileset dir="${create-lab-commons-speech.dir}" includes="**/*.jar"/>
-         <zipgroupfileset dir="${freetts.dir}" includes="**/*.jar"/>
-         <zipgroupfileset dir="${lti-civil.dir}" includes="**/*.jar"/>
-         <zipgroupfileset dir="${swing-layout.dir}" includes="**/*.jar"/>
+         <zipfileset dir="${resources.logging.dir}/file" includes="**/*"/>
+         <zipgroupfileset dir="${finch-applications.dist.dir}" includes="**/*.jar" excludes="${finch-applications-resources-jar.filename}"/>
       </jar>
 
-      <!-- copy other resources -->
-      <copy todir="${finch.jar.dir}">
-         <fileset dir="${lti-civil.dir}">
-            <include name="**/*.dll"/>
-            <include name="**/*.so"/>
-         </fileset>
-      </copy>
+      <!-- create javadocs -->
+      <javadoc packagenames="*"
+               destdir="${zip.dir}/javadoc"
+               author="true"
+               version="true"
+               windowtitle="Finch API"
+               doctitle="Finch API"
+               protected="true"
+               notree="true"
+               noindex="true">
+         <classpath>
+            <path refid="finch-applications-classpath"/>
+         </classpath>
+         <!-- Use fileset instead of packageset since it has classes in the default package -->
+         <fileset dir="${finch-applications.src.dir}" includes="**/*.java"/>
+         <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+      </javadoc>
 
-      <property name="force-build-finch-jar-is-complete" value="true"/>
+      <!-- create zip of the directory -->
+      <zip destfile="${base.directory}/${zip.filename}"
+           compress="true">
+         <zipfileset dir="${zip.dir}" prefix="finch"/>
+         <zipfileset file="${lti-civil-1.native}" prefix="finch"/>
+         <zipfileset file="${lti-civil-2.native}" prefix="finch"/>
+      </zip>
+
+      <!-- delete the temporary zip directory -->
+      <delete dir="${zip.dir}"/>
+
+      <property name="create-distro-zip-is-complete" value="true"/>
    </target>
-
    <!-- ============================================================================================================ -->
    <!-- Macro definitions -->
    <!-- ============================================================================================================ -->
@@ -220,6 +264,8 @@
 
          <!-- copy required jar files and native lib -->
          <copy todir="${@{component.name}.dist.dir}" flatten="true">
+            <fileset file="${commons-logging.jar}"/>
+            <fileset file="${log4j.jar}"/>
             <additional-files-to-copy/>
          </copy>
 
