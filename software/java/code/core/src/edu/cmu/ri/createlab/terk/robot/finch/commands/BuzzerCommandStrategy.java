@@ -1,6 +1,8 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
+import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
+import edu.cmu.ri.createlab.util.MathUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
@@ -17,11 +19,13 @@ public final class BuzzerCommandStrategy extends CreateLabHIDCommandStrategy
 
    public BuzzerCommandStrategy(final int frequency, final int durationInMilliseconds)
       {
+      final int cleanedFrequency = MathUtils.ensureRange(frequency, FinchConstants.BUZZER_DEVICE_MIN_FREQUENCY, FinchConstants.BUZZER_DEVICE_MAX_FREQUENCY);
+      final int cleanedDurationInMilliseconds = MathUtils.ensureRange(durationInMilliseconds, FinchConstants.BUZZER_DEVICE_MIN_DURATION, FinchConstants.BUZZER_DEVICE_MAX_DURATION);
       this.command = new byte[]{COMMAND_PREFIX,
-                                getHighByteFromInt(durationInMilliseconds),
-                                getLowByteFromInt(durationInMilliseconds),
-                                getHighByteFromInt(frequency),
-                                getLowByteFromInt(frequency)};
+                                getHighByteFromInt(cleanedDurationInMilliseconds),
+                                getLowByteFromInt(cleanedDurationInMilliseconds),
+                                getHighByteFromInt(cleanedFrequency),
+                                getLowByteFromInt(cleanedFrequency)};
       }
 
    private byte getHighByteFromInt(final int val)

@@ -1,11 +1,15 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
+import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
+import edu.cmu.ri.createlab.util.MathUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class MotorVelocityCommandStrategy extends CreateLabHIDCommandStrategy
+public final class
+
+      MotorVelocityCommandStrategy extends CreateLabHIDCommandStrategy
    {
    /** The command character used to set the motor velocities. */
    private static final byte COMMAND_PREFIX = 'M';
@@ -17,10 +21,12 @@ public final class MotorVelocityCommandStrategy extends CreateLabHIDCommandStrat
 
    public MotorVelocityCommandStrategy(final int leftVelocity, final int rightVelocity)
       {
-      final byte leftDirection = (byte)((leftVelocity < 0) ? 1 : 0);
-      final byte leftSpeed = (byte)Math.abs(leftVelocity);
-      final byte rightDirection = (byte)((rightVelocity < 0) ? 1 : 0);
-      final byte rightSpeed = (byte)Math.abs(rightVelocity);
+      final int cleanedLeftVelocity = MathUtils.ensureRange(leftVelocity, FinchConstants.MOTOR_DEVICE_MIN_VELOCITY, FinchConstants.MOTOR_DEVICE_MAX_VELOCITY);
+      final int cleanedRightVelocity = MathUtils.ensureRange(rightVelocity, FinchConstants.MOTOR_DEVICE_MIN_VELOCITY, FinchConstants.MOTOR_DEVICE_MAX_VELOCITY);
+      final byte leftDirection = (byte)((cleanedLeftVelocity < 0) ? 1 : 0);
+      final byte leftSpeed = (byte)Math.abs(cleanedLeftVelocity);
+      final byte rightDirection = (byte)((cleanedRightVelocity < 0) ? 1 : 0);
+      final byte rightSpeed = (byte)Math.abs(cleanedRightVelocity);
       this.command = new byte[]{COMMAND_PREFIX,
                                 leftDirection,
                                 leftSpeed,
