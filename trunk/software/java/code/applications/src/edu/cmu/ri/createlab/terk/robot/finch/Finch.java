@@ -236,7 +236,7 @@ public final class Finch extends BaseFinchApplication
              rightVelocity >= FinchConstants.MOTOR_DEVICE_MIN_VELOCITY)
             {
             service.setVelocities(new int[]{leftVelocity, rightVelocity});
-            if (Math.abs(timeToHold) > 0)
+            if (timeToHold > 0)
                {
                sleep(timeToHold);
                stopWheels();
