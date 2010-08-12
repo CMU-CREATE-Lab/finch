@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Contains all methods necessary to program for the Finch robot
- * @author Tom Lauwers (tlauwers@andrew.cmu.edu)
+ * @author Tom Lauwers (tlauwers@birdbraintechnologies.com)
  * @author Chris Bartley
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
@@ -364,6 +364,120 @@ public final class Finch extends BaseFinchApplication
          }
       }
 
+
+   /**
+    * This method returns true if the beak is up (Finch sitting on its tail), false otherwise
+    * 
+    * @return  true if beak is pointed at ceiling
+    */
+   public boolean isBeakUp() {
+	   double[] accels = getAccelerations();
+	   if(accels[0] > 0.5 && accels[0] < 1.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -0.5 && accels[2] < 0.5) {
+		   return true;
+	   }
+	   else {
+		   return false;
+	   }
+   }
+
+   /**
+    * This method returns true if the beak is pointed at the floor, false otherwise
+    * 
+    * @return  true if beak is pointed at the floor
+    */
+   public boolean isBeakDown() {
+	   double[] accels = getAccelerations();
+	   if(accels[0] > -1.5 && accels[0] < -0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -0.5 && accels[2] < 0.5) {
+		   return true;
+	   }
+	   else {
+		   return false;
+	   }
+   }
+
+   /**
+    * This method returns true if the Finch is on a flat surface
+    * 
+    * @return  true if the Finch is level
+    */
+   public boolean isFinchLevel() {
+	   double[] accels = getAccelerations();
+	   if(accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > 0.5 && accels[2] < 1.5) {
+		   return true;
+	   }
+	   else {
+		   return false;
+	   }
+   }   
+   
+
+   /**
+    * This method returns true if the Finch is upside down, false otherwise
+    * 
+    * @return  true if Finch is upside down
+    */
+   public boolean isFinchUpsideDown() {
+	   double[] accels = getAccelerations();
+	   if(accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -1.5 && accels[2] < -0.5) {
+		   return true;
+	   }
+	   else {
+		   return false;
+	   }
+   }
+   
+
+   /**
+    * This method returns true if the Finch's left wing is pointed at the ground
+    * 
+    * @return  true if Finch's left wing is down
+    */
+   public boolean isLeftWingDown() {
+	   double[] accels = getAccelerations();
+	   if(accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > 0.5 && accels[1] < 1.5 && accels[2] > -0.5 && accels[2] < 0.5) {
+		   return true;
+	   }
+	   else {
+		   return false;
+	   }
+   }
+   
+
+   /**
+    * This method returns true if the Finch's right wing is pointed at the ground
+    * 
+    * @return  true if Finch's right wing is down
+    */
+   public boolean isRightWingDown() {
+	   double[] accels = getAccelerations();
+	   if(accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -1.5 && accels[1] < -0.5 && accels[2] > -0.5 && accels[2] < 0.5) {
+		   return true;
+	   }
+	   else {
+		   return false;
+	   }
+   }
+   
+   
+   /**
+    *  Returns true if the Finch has been shaken since the last accelerometer read
+    *  
+    *  @return true if the Finch was recently shaken
+    */
+   public boolean isShaken() {
+	   return false;
+   }
+   
+   /**
+    *  Returns true if the Finch has been tapped since the last accelerometer read
+    *  
+    *  @return true if the Finch was recently tapped
+    */
+   public boolean isTapped() {
+	   return false;
+   }
+   
+   
    /**
     * Plays a tone over the computer speakers or headphones at a given frequency (in Hertz) for
     * a specified duration in milliseconds.  Middle C is about 262Hz.  Visit http://www.phy.mtu.edu/~suits/notefreqs.html for
@@ -400,7 +514,7 @@ public final class Finch extends BaseFinchApplication
       }
 
    /**
-    * Plays a wav or mp3 file at the specificied fileLocation path.  If you place the audio
+    * Plays a wav file at the specificied fileLocation path.  If you place the audio
     * file in the same path as your source, you can just specify the name of the file.
     *
     * @param     fileLocation Absolute path of the file or name of the file if located in some directory as source code
@@ -463,6 +577,8 @@ public final class Finch extends BaseFinchApplication
     * Middle C is about 262Hz.
     * Visit http://www.phy.mtu.edu/~suits/notefreqs.html for frequencies of musical notes.
     * Note that this is different from playTone, which plays a tone on the computer's speakers.
+    * Also note that buzz is non-blocking - so if you call two buzz methods in a row without
+    * an intervening sleep, you will only hear the second buzz (it will over-write the first buzz).
     *
     * @param     frequency Frequency in Hertz of the tone to be played
     * @param     duration  Duration in milliseconds of the tone
@@ -611,7 +727,7 @@ public final class Finch extends BaseFinchApplication
     * Returns true if either left or right obstacle sensor detect an obstacle.
     *
     *
-    * @return Whether an obstacle exists in front of the robot.
+    * @return Whether either obstacle sensor sees an obstacle.
     */
    public boolean isObstacle()
       {
@@ -1130,7 +1246,7 @@ public final class Finch extends BaseFinchApplication
     * This method properly closes the connection with the Finch and resets the Finch so that
     * it is immediately ready to be controlled by subsequent programs.  Note that if this
     * method is not called at the end of the program, the Finch will continue to act on its
-    * most recent command (such as drive forward) for 30 seconds before automatically timing
+    * most recent command (such as drive forward) for 5 seconds before automatically timing
     * out and resetting.  This is why we recommend you always call the quit method at the end
     * of your program.
     */
