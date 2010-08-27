@@ -14,8 +14,8 @@ import edu.cmu.ri.createlab.terk.services.thermistor.unitconversionstrategies.Th
  */
 public class FinchConstants
    {
-   public static final short USB_VENDOR_ID = 0x03EB;
-   public static final short USB_PRODUCT_ID = 0x2050;
+   public static final short USB_VENDOR_ID = 0x2354;
+   public static final short USB_PRODUCT_ID = 0x1111;
 
    public static final int HID_COMMAND_LENGTH_IN_BYTES = 8;
 
