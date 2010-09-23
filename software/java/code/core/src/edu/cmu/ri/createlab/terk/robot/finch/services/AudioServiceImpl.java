@@ -10,15 +10,14 @@ import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.ExceptionHandler;
 import edu.cmu.ri.createlab.terk.services.audio.AudioService;
 import edu.cmu.ri.createlab.terk.services.audio.BaseAudioServiceImpl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 final class AudioServiceImpl extends BaseAudioServiceImpl
    {
-   private static final Log LOG = LogFactory.getLog(AudioServiceImpl.class);
+   private static final Logger LOG = Logger.getLogger(AudioServiceImpl.class);
 
    static AudioServiceImpl create(final FinchController finchController)
       {

@@ -7,15 +7,14 @@ import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.motor.BaseOpenLoopVelocityControllableMotorServiceImpl;
 import edu.cmu.ri.createlab.terk.services.motor.OpenLoopVelocityControllableMotorService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVelocityControllableMotorServiceImpl
    {
-   private static final Log LOG = LogFactory.getLog(OpenLoopVelocityControllableMotorServiceImpl.class);
+   private static final Logger LOG = Logger.getLogger(OpenLoopVelocityControllableMotorServiceImpl.class);
 
    static OpenLoopVelocityControllableMotorServiceImpl create(final FinchController finchController)
       {

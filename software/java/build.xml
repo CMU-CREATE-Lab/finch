@@ -13,7 +13,6 @@
       <pathelement path="${create-lab-commons-user-interface.jar}"/>
       <pathelement path="${create-lab-commons-util.jar}"/>
       <pathelement path="${commons-lang.jar}"/>
-      <pathelement path="${commons-logging.jar}"/>
       <pathelement path="${log4j.jar}"/>
       <pathelement path="${jna.jar}"/>
       <pathelement path="${terk-core.jar}"/>
@@ -33,7 +32,6 @@
       <pathelement path="${create-lab-commons-user-interface.jar}"/>
       <pathelement path="${create-lab-commons-util.jar}"/>
       <pathelement path="${commons-lang.jar}"/>
-      <pathelement path="${commons-logging.jar}"/>
       <pathelement path="${freetts.jar}"/>
       <pathelement path="${freetts-extra1.jar}"/>
       <pathelement path="${freetts-extra2.jar}"/>
@@ -264,7 +262,6 @@
 
          <!-- copy required jar files and native lib -->
          <copy todir="${@{component.name}.dist.dir}" flatten="true">
-            <fileset file="${commons-logging.jar}"/>
             <fileset file="${log4j.jar}"/>
             <additional-files-to-copy/>
          </copy>

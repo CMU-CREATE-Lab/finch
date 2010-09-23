@@ -8,8 +8,7 @@ import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
 import edu.cmu.ri.createlab.util.ArrayUtils;
 import edu.cmu.ri.createlab.util.FileUtils;
 import edu.cmu.ri.createlab.util.commandline.BaseCommandLineApplication;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
@@ -17,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
 public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
    {
-   private static final Log LOG = LogFactory.getLog(BaseCommandLineFinch.class);
+   private static final Logger LOG = Logger.getLogger(BaseCommandLineFinch.class);
    private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
 
    private final Runnable connectToFinchAction =

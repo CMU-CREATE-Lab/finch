@@ -8,15 +8,14 @@ import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.led.BaseFullColorLEDServiceImpl;
 import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 final class FullColorLEDServiceImpl extends BaseFullColorLEDServiceImpl
    {
-   private static final Log LOG = LogFactory.getLog(FullColorLEDServiceImpl.class);
+   private static final Logger LOG = Logger.getLogger(FullColorLEDServiceImpl.class);
 
    static FullColorLEDServiceImpl create(final FinchController finchController)
       {
