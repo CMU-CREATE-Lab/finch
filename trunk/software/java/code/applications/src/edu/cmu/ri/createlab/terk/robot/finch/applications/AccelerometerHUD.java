@@ -68,12 +68,12 @@ public final class AccelerometerHUD
                            .add(plotComponent)
                            .add(horizontalSpacer)
                            .add(
-                           groupLayout.createParallelGroup(GroupLayout.CENTER)
-                                 .add(xPlotComponent)
-                                 .add(topVerticalSpacer)
-                                 .add(yPlotComponent)
-                                 .add(bottomVerticalSpacer)
-                                 .add(zPlotComponent))
+                                 groupLayout.createParallelGroup(GroupLayout.CENTER)
+                                       .add(xPlotComponent)
+                                       .add(topVerticalSpacer)
+                                       .add(yPlotComponent)
+                                       .add(bottomVerticalSpacer)
+                                       .add(zPlotComponent))
                );
 
                groupLayout.setVerticalGroup(
@@ -81,12 +81,12 @@ public final class AccelerometerHUD
                            .add(plotComponent)
                            .add(horizontalSpacer)
                            .add(
-                           groupLayout.createSequentialGroup()
-                                 .add(xPlotComponent)
-                                 .add(topVerticalSpacer)
-                                 .add(yPlotComponent)
-                                 .add(bottomVerticalSpacer)
-                                 .add(zPlotComponent))
+                                 groupLayout.createSequentialGroup()
+                                       .add(xPlotComponent)
+                                       .add(topVerticalSpacer)
+                                       .add(yPlotComponent)
+                                       .add(bottomVerticalSpacer)
+                                       .add(zPlotComponent))
                );
 
                // create the main frame

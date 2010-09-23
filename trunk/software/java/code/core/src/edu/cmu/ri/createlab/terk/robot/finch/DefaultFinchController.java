@@ -38,17 +38,17 @@ import edu.cmu.ri.createlab.usb.hid.HIDDeviceNotFoundException;
 import edu.cmu.ri.createlab.util.MathUtils;
 import edu.cmu.ri.createlab.util.thread.DaemonThreadFactory;
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 public final class DefaultFinchController implements FinchController
    {
-   private static final Log LOG = LogFactory.getLog(DefaultFinchController.class);
+   private static final Logger LOG = Logger.getLogger(DefaultFinchController.class);
    private static final int DELAY_BETWEEN_PEER_PINGS = 2;
 
+   @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
    public static FinchController create()
       {
       try
@@ -79,6 +79,7 @@ public final class DefaultFinchController implements FinchController
       catch (NotImplementedException e)
          {
          LOG.error("NotImplementedException caught while trying to create the HIDCommandExecutionQueue", e);
+         System.err.println(e);
          System.exit(1);
          }
       catch (HIDConnectionException e)
@@ -264,14 +265,14 @@ public final class DefaultFinchController implements FinchController
     * the state.
     */
    public AccelerometerGs getAccelerometerGs()
+   {
+   if (accelerometerUnitConversionStrategy != null)
       {
-      if (accelerometerUnitConversionStrategy != null)
-         {
-         return accelerometerUnitConversionStrategy.convert(getAccelerometerState());
-         }
-
-      return null;
+      return accelerometerUnitConversionStrategy.convert(getAccelerometerState());
       }
+
+   return null;
+   }
 
    public Boolean isObstacleDetected(final int id)
       {
@@ -306,11 +307,11 @@ public final class DefaultFinchController implements FinchController
     * succeeded, <code>null</code> otherwise.
     */
    public boolean setFullColorLED(final Color color)
-      {
-      return setFullColorLED(color.getRed(),
-                             color.getGreen(),
-                             color.getBlue());
-      }
+   {
+   return setFullColorLED(color.getRed(),
+                          color.getGreen(),
+                          color.getBlue());
+   }
 
    private class FinchPinger implements Runnable
       {

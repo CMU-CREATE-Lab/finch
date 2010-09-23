@@ -13,15 +13,14 @@ import edu.cmu.ri.createlab.terk.services.motor.OpenLoopVelocityControllableMoto
 import edu.cmu.ri.createlab.terk.services.obstacle.SimpleObstacleDetectorService;
 import edu.cmu.ri.createlab.terk.services.photoresistor.PhotoresistorService;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 public final class FinchServiceFactory
    {
-   private static final Log LOG = LogFactory.getLog(FinchServiceFactory.class);
+   private static final Logger LOG = Logger.getLogger(FinchServiceFactory.class);
 
    private interface ServiceCreator
       {

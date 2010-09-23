@@ -63,33 +63,33 @@ final class SearchGameTiltControl
     * Fetch finch tilt and move x, y positions appropriately
     */
    public void update()
+   {
+   //X,Y axis switched for more intuitive control
+   //note that x movement is inverted.
+   int dx = (int)(-xScale * myFinch.getYAcceleration());
+
+   int dy = (int)(yScale * myFinch.getXAcceleration());
+
+   //update x and y positions
+   xPosition += dx;
+   yPosition += dy;
+
+   //test to prevent x/y from leaving set bounds
+   if (xPosition < minX)
       {
-      //X,Y axis switched for more intuitive control
-      //note that x movement is inverted.
-      int dx = (int)(-xScale * myFinch.getYAcceleration());
-
-      int dy = (int)(yScale * myFinch.getXAcceleration());
-
-      //update x and y positions
-      xPosition += dx;
-      yPosition += dy;
-
-      //test to prevent x/y from leaving set bounds
-      if (xPosition < minX)
-         {
-         xPosition = minX;
-         }
-      if (yPosition < minY)
-         {
-         yPosition = minY;
-         }
-      if (xPosition > maxX)
-         {
-         xPosition = maxX;
-         }
-      if (yPosition > maxY)
-         {
-         yPosition = maxY;
-         }
+      xPosition = minX;
       }
+   if (yPosition < minY)
+      {
+      yPosition = minY;
+      }
+   if (xPosition > maxX)
+      {
+      xPosition = maxX;
+      }
+   if (yPosition > maxY)
+      {
+      yPosition = maxY;
+      }
+   }
    }

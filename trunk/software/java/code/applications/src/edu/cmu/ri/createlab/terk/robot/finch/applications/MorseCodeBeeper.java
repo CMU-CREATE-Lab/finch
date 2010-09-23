@@ -215,20 +215,20 @@ public class MorseCodeBeeper
             //Numbers start at 26 in the lookup table.
             }
          else if (currChar >= '0' && currChar <= '9')
-               {
-               MorseIndex = currChar - '0' + 26;
-               }
-            else if (currChar == ' ')
-                  {
-                  //If the input was a space append two spaces to our output. We end
-                  //up with three total because each letter has a space after it already.
-                  Morse = Morse + "  ";
-                  continue;
-                  }
-               else
-                  {
-                  continue;
-                  }
+            {
+            MorseIndex = currChar - '0' + 26;
+            }
+         else if (currChar == ' ')
+            {
+            //If the input was a space append two spaces to our output. We end
+            //up with three total because each letter has a space after it already.
+            Morse = Morse + "  ";
+            continue;
+            }
+         else
+            {
+            continue;
+            }
          //This adds the string of dots and dashes that represent the letter, followed
          //by a space.
          Morse = Morse + MorseLookup[MorseIndex] + " ";
@@ -372,11 +372,11 @@ public class MorseCodeBeeper
             }
          //Plays a dash and then delays for one tick
          else if (Morse.charAt(i) == '-')
-               {
-               finch.buzz(frequency, oneTick * 3);
-               //three delays for the buzz and one for the space
-               MCB_DelayTicks(4 * oneTick);
-               }
+            {
+            finch.buzz(frequency, oneTick * 3);
+            //three delays for the buzz and one for the space
+            MCB_DelayTicks(4 * oneTick);
+            }
          }
       }
 

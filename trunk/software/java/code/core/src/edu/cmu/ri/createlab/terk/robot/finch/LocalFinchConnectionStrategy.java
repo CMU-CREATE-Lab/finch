@@ -6,15 +6,15 @@ import edu.cmu.ri.createlab.device.connectivity.FinchConnectivityManager;
 import edu.cmu.ri.createlab.terk.application.ConnectionStrategy;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
 import edu.cmu.ri.createlab.terk.services.ServiceManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 public final class LocalFinchConnectionStrategy extends ConnectionStrategy
    {
-   private static final Log LOG = LogFactory.getLog(LocalFinchConnectionStrategy.class);
+   private static final Logger LOG = Logger.getLogger(LocalFinchConnectionStrategy.class);
 
    private ServiceManager serviceManager = null;
    private final FinchConnectivityManager finchConnectivityManager = new FinchConnectivityManager();
@@ -44,7 +44,7 @@ public final class LocalFinchConnectionStrategy extends ConnectionStrategy
                      notifyListenersOfAttemptingConnectionEvent();
                      break;
                   default:
-                     if (LOG.isErrorEnabled())
+                     if (LOG.isEnabledFor(Level.ERROR))
                         {
                         LOG.error("Unexpected CreateLabDeviceConnectionState [" + newState + "]");
                         }
