@@ -12,7 +12,7 @@ import edu.cmu.ri.createlab.terk.services.thermistor.unitconversionstrategies.Th
  *
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public class FinchConstants
+public final class FinchConstants
    {
    public static final short USB_VENDOR_ID = 0x2354;
    public static final short USB_PRODUCT_ID = 0x1111;
