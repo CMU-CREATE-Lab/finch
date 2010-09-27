@@ -9,7 +9,7 @@ import edu.cmu.ri.createlab.util.MathUtils;
  */
 public final class BuzzerCommandStrategy extends CreateLabHIDCommandStrategy
    {
-   /** The command character used to set the motor velocities. */
+   /** The command character used to set the buzzer frequency. */
    private static final byte COMMAND_PREFIX = 'B';
 
    /** The size of the expected response, in bytes */
