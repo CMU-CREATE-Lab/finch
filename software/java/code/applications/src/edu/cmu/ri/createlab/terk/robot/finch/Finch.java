@@ -621,13 +621,15 @@ public final class Finch extends BaseFinchApplication
    final PhotoresistorService service = getPhotoresistorService();
    if (service != null)
       {
-      return service.getPhotoresistorValues()[0];
+      final int[] values = service.getPhotoresistorValues();
+      if (values != null)
+         {
+         return values[0];
+         }
       }
-   else
-      {
-      System.out.println("Light sensor not responding, check Finch connection");
-      return 0;
-      }
+
+   System.out.println("Light sensor not responding, check Finch connection");
+   return 0;
    }
 
    /**
@@ -642,13 +644,15 @@ public final class Finch extends BaseFinchApplication
    final PhotoresistorService service = getPhotoresistorService();
    if (service != null)
       {
-      return service.getPhotoresistorValues()[1];
+      final int[] values = service.getPhotoresistorValues();
+      if (values != null)
+         {
+         return values[1];
+         }
       }
-   else
-      {
-      System.out.println("Light sensor not responding, check Finch connection");
-      return 0;
-      }
+
+   System.out.println("Light sensor not responding, check Finch connection");
+   return 0;
    }
 
    /**
