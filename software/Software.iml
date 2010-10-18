@@ -59,6 +59,17 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="CREATE Lab Commons RSS">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-rss/create-lab-commons-rss.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-rss/create-lab-commons-rss-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="CREATE Lab Commons Speech">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-speech/create-lab-commons-speech.jar!/" />
@@ -103,6 +114,28 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="CREATE Lab Commons Video">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-video/create-lab-commons-video.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-video/create-lab-commons-video-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="JDOM">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/jdom/jdom.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="http://www.jdom.org/docs/apidocs" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="JNA">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/java/lib/JNA/jna.jar!/" />
@@ -133,6 +166,17 @@
           <root url="http://lti-civil.org/doc/" />
         </JAVADOC>
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ROME">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/ROME/rome-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/ROME/rome-1.0-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">

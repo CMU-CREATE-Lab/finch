@@ -26,6 +26,7 @@ import edu.cmu.ri.createlab.terk.services.photoresistor.PhotoresistorService;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
 import edu.cmu.ri.createlab.userinterface.component.DatasetPlotter;
 import edu.cmu.ri.createlab.util.FileUtils;
+import edu.cmu.ri.createlab.video.VideoPlayer;
 import org.apache.log4j.Logger;
 
 /**
