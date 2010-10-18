@@ -11,41 +11,40 @@ package edu.cmu.ri.createlab.terk.robot.finch.applications;
 
 import java.awt.Color;
 import edu.cmu.ri.createlab.terk.robot.finch.Finch;
+import edu.cmu.ri.createlab.terk.robot.finch.VideoHelper;
 
+@SuppressWarnings({"UseOfSystemOutOrSystemErr"})
 public class VideoTester
    {
-
-   public static void main(String[] args)
+   public static void main(final String[] args)
       {
-
       // Instantiating the Finch object
-      Finch myFinch = new Finch();
+      final Finch myFinch = new Finch();
+      final VideoHelper videoHelper = new VideoHelper();
+
       System.out.println("Finch connecting");
 
       // Initializing the video
-      myFinch.initVideo();
+      videoHelper.initVideo();
       System.out.println("Init video");
 
       // Display the video screen
-      myFinch.showVideoScreen("I'm on TV");
+      videoHelper.showVideoScreen("I'm on TV");
       System.out.println("Video drawing");
 
       // Start by drawing a circle in the center of the image
-      myFinch.setPolygonColor(Color.MAGENTA);
-      myFinch.drawCircle(30, 160, 120);
-
-      // Holds the average color of the center of the screen
-      Color areaColor;
+      videoHelper.setPolygonColor(Color.MAGENTA);
+      videoHelper.drawCircle(30, 160, 120);
 
       // Continue doing this as long as the left light sensor is above 80
       while (myFinch.getLeftLightSensor() > 80)
          {
 
          // Update the video screen with the most recent image
-         myFinch.updateVideoScreen();
+         videoHelper.updateVideoScreen();
 
          // Get the average color value of the rectangle bounded by (100,70) and (220, 170)
-         areaColor = myFinch.getAreaColor(myFinch.getImageWidth() / 2 - 20, myFinch.getImageHeight() / 2 - 20, myFinch.getImageWidth() / 2 + 20, myFinch.getImageHeight() / 2 + 20);
+         final Color areaColor = videoHelper.getAreaColor(videoHelper.getImageWidth() / 2 - 20, videoHelper.getImageHeight() / 2 - 20, videoHelper.getImageWidth() / 2 + 20, videoHelper.getImageHeight() / 2 + 20);
 
          // Print out the color
          System.out.println("Color is " + areaColor);
@@ -53,25 +52,31 @@ public class VideoTester
          // If the right light sensor is greater than 180, draw a circle
          if (myFinch.getRightLightSensor() > 180)
             {
-            myFinch.drawCircle(50, 160, 120);
+            videoHelper.drawCircle(50, 160, 120);
             // Set the circle color to Magenta
-            myFinch.setPolygonColor(Color.MAGENTA);
+            videoHelper.setPolygonColor(Color.MAGENTA);
             // Set the circle to be an outline
-            myFinch.setFillPolygon(false);
+            videoHelper.setFillPolygon(false);
             }
 
          // Else draw a filled in rectangle and set its color to the average color of the
          // image in the rectangle.
          else
             {
-            myFinch.drawRectangle(myFinch.getImageWidth() - 50, myFinch.getImageHeight() - 80, myFinch.getImageWidth() - 1, myFinch.getImageHeight() - 1);
-            myFinch.setPolygonColor(areaColor);
-            myFinch.setFillPolygon(true);
+            videoHelper.drawRectangle(videoHelper.getImageWidth() - 50, videoHelper.getImageHeight() - 80, videoHelper.getImageWidth() - 1, videoHelper.getImageHeight() - 1);
+            videoHelper.setPolygonColor(areaColor);
+            videoHelper.setFillPolygon(true);
             }
          }
       // Close the video screen and disconnect from the Finch
-      myFinch.closeVideoScreen();
+      videoHelper.closeVideoScreen();
+      videoHelper.closeVideo();
       myFinch.quit();
       System.exit(0);
+      }
+
+   private VideoTester()
+      {
+      // private to prevent instantiation
       }
    }
