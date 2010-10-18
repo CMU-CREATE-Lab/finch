@@ -9,6 +9,7 @@ package edu.cmu.ri.createlab.terk.robot.finch.applications;
 
 import java.awt.Color;
 import edu.cmu.ri.createlab.terk.robot.finch.Finch;
+import edu.cmu.ri.createlab.terk.robot.finch.VideoHelper;
 
 public class LEDVideoControl
    {
@@ -16,31 +17,33 @@ public class LEDVideoControl
       {
       // Instantiating the Finch object
       final Finch myFinch = new Finch();
+      final VideoHelper videoHelper = new VideoHelper();
 
       // Initializing the video stream
-      myFinch.initVideo();
+      videoHelper.initVideo();
 
       // Showing the camera image
-      myFinch.showVideoScreen("Look mom, I'm on TV!");
+      videoHelper.showVideoScreen("Look mom, I'm on TV!");
 
       // Continue running this program so long as the light sensor is more than 70
       while (myFinch.getLeftLightSensor() > 70)
          {
          // Update the video window and image data with the most recent camera image
-         myFinch.updateVideoScreen();
+         videoHelper.updateVideoScreen();
 
          // Draw a rectangle in the area to be used to set LED color
-         myFinch.drawRectangle(myFinch.getImageWidth() / 2 - 40, myFinch.getImageHeight() / 2 - 40, myFinch.getImageWidth() / 2 + 40, myFinch.getImageHeight() / 2 + 40);
-         myFinch.setPolygonColor(Color.RED);
+         videoHelper.drawRectangle(videoHelper.getImageWidth() / 2 - 40, videoHelper.getImageHeight() / 2 - 40, videoHelper.getImageWidth() / 2 + 40, videoHelper.getImageHeight() / 2 + 40);
+         videoHelper.setPolygonColor(Color.RED);
 
          // Get the average color in the center area
-         final Color areaColor = myFinch.getAreaColor(myFinch.getImageWidth() / 2 - 40, myFinch.getImageHeight() / 2 - 40, myFinch.getImageWidth() / 2 + 40, myFinch.getImageHeight() / 2 + 40);
+         final Color areaColor = videoHelper.getAreaColor(videoHelper.getImageWidth() / 2 - 40, videoHelper.getImageHeight() / 2 - 40, videoHelper.getImageWidth() / 2 + 40, videoHelper.getImageHeight() / 2 + 40);
 
          // Set the LED to that color
          myFinch.setLED(areaColor);
          }
       // Close the video screen and disconnect from the Finch
-      myFinch.closeVideoScreen();
+      videoHelper.closeVideoScreen();
+      videoHelper.closeVideo();
       myFinch.quit();
       System.exit(0);
       }
