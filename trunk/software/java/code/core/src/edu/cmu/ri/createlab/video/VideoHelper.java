@@ -1,9 +1,8 @@
-package edu.cmu.ri.createlab.terk.robot.finch;
+package edu.cmu.ri.createlab.video;
 
 import java.awt.Color;
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
-import edu.cmu.ri.createlab.video.VideoPlayer;
 
 /**
  * @author Tom Lauwers (tlauwers@birdbraintechnologies.com)
@@ -78,7 +77,7 @@ public final class VideoHelper
    }
 
    /**
-    * Gets the Color of a given pixel at the coordinate specified by x,y
+    * Gets the color of a given pixel as a Java Color object at the coordinate specified by x,y
     * @param x The row of the pixel
     * @param y The column of the pixel
     * @return A Color object representing the color of the pixel
@@ -194,8 +193,9 @@ public final class VideoHelper
    }
 
    /**
-    * Draws a rectangle in the video window showing the camera image.  Note
-    * that once called, the rectangle will be persistent across all calls
+    * Draws a rectangle in the video window.  Useful for displaying where the
+    * blob tracker thinks a blob is located.
+    * Once called, the rectangle will be persistent across all calls
     * of updateVideoScreen.  To remove it, call drawNothing.  To change its color,
     * call setPolygonColor.  To change whether the rectangle is an outline
     * or filled in, call setFillPolygon.
@@ -210,7 +210,12 @@ public final class VideoHelper
    }
 
    /**
-    * Draws a circle on the camera image
+    * Draws a circle on the camera image. Useful for displaying where the
+    * blob tracker thinks a blob is located.
+    * Once called, the circle will be persistent across all calls
+    * of updateVideoScreen.  To remove it, call drawNothing.  To change its color,
+    * call setPolygonColor.  To change whether the rectangle is an outline
+    * or filled in, call setFillPolygon.
     * @param radius The radius of the circle in pixels
     * @param centerX The X coordinate of the center of the circle
     * @param centerY The Y coordinate of the center of the circle
