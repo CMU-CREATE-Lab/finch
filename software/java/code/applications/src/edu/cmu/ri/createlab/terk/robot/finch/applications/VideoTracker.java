@@ -1,7 +1,7 @@
 package edu.cmu.ri.createlab.terk.robot.finch.applications;
 
 import edu.cmu.ri.createlab.terk.robot.finch.Finch;
-import edu.cmu.ri.createlab.terk.robot.finch.VideoHelper;
+import edu.cmu.ri.createlab.video.VideoHelper;
 
 /*
  * VideoTracker.java - Tracks an object using the camera.  The program exits when the

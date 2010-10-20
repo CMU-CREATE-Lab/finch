@@ -109,9 +109,7 @@ public final class Finch extends BaseFinchApplication
       }
 
    /**
-    * Sets the color of the LED in the Finch's beak.  The LED can be any color that can be
-    * created by mixing red, green, and blue; turning on all three colors in equal amounts results
-    * in white light.  Valid ranges for the red, green, and blue elements are 0 to 255.
+    * Sets the color of the LED in the Finch's beak using a Color object.
     *
     * @param     color is a Color object that determines the beaks color
     */
@@ -188,7 +186,7 @@ public final class Finch extends BaseFinchApplication
    }
 
    /**
-    * Stops both wheels in their current position.
+    * Stops both wheels.
     */
    public void stopWheels()
    {
@@ -196,11 +194,11 @@ public final class Finch extends BaseFinchApplication
    }
 
    /**
-    * This method simultaneously sets the velocities of both wheels in native units. Current valid values range from
-    * -255 to 255.
+    * This method simultaneously sets the velocities of both wheels. Current valid values range from
+    * -255 to 255; negative values cause a wheel to move backwards.
     *
-    * @param leftVelocity The velocity in native units at which to move the left wheel
-    * @param rightVelocity The velocity in native units at which to move the right wheel
+    * @param leftVelocity The velocity at which to move the left wheel
+    * @param rightVelocity The velocity at which to move the right wheel
     */
    public void setWheelVelocities(final int leftVelocity, final int rightVelocity)
    {
@@ -208,7 +206,7 @@ public final class Finch extends BaseFinchApplication
    }
 
    /**
-    * This method simultaneously sets the velocities of both wheels in native units. Current valid values range from
+    * This method simultaneously sets the velocities of both wheels. Current valid values range from
     * -255 to 255.  If <code>timeToHold</code> is positive, this method blocks further program execution for the amount
     * of time specified by timeToHold, and then stops the wheels once time has elapsed.
     *
@@ -271,10 +269,10 @@ public final class Finch extends BaseFinchApplication
    }
 
    /**
-    * This method returns the current X acceleration value experienced by the robot.  Values for acceleration
-    * range from -1.5 to +1.5g.
+    * This method returns the current X-axis acceleration value experienced by the robot.  Values for acceleration
+    * range from -1.5 to +1.5g.  The X-axis is the beak-tail axis.
     *
-    * @return The X acceleration value
+    * @return The X-axis acceleration value
     */
    public double getXAcceleration()
    {
@@ -291,10 +289,10 @@ public final class Finch extends BaseFinchApplication
    }
 
    /**
-    * This method returns the current Y acceleration value experienced by the robot.  Values for acceleration
-    * range from -1.5 to +1.5g.
+    * This method returns the current Y-axis acceleration value experienced by the robot.  Values for acceleration
+    * range from -1.5 to +1.5g.  The Y-axis is the wheel-to-wheel axis.
     *
-    * @return The Y acceleration value
+    * @return The Y-axis acceleration value
     */
    public double getYAcceleration()
    {
@@ -311,10 +309,10 @@ public final class Finch extends BaseFinchApplication
    }
 
    /**
-    * This method returns the current Z acceleration value experienced by the robot.  Values for acceleration
-    * range from -1.5 to +1.5g.
+    * This method returns the current Z-axis acceleration value experienced by the robot.  Values for acceleration
+    * range from -1.5 to +1.5g.  The Z-axis runs perpendicular to the Finch's circuit board.
     *
-    * @return The Z acceleration value
+    * @return The Z-axis acceleration value
     */
    public double getZAcceleration()
    {
@@ -331,7 +329,7 @@ public final class Finch extends BaseFinchApplication
    }
 
    /**
-    * Use this method to simultanesouly return the current X, Y, and Z accelerations experienced by the robot.
+    * Use this method to simultaneously return the current X, Y, and Z accelerations experienced by the robot.
     * Values for acceleration can be in the range of -1.5g to +1.5g.  When the robot is on a flat surface,
     * X and Y should be close to 0g, and Z should be near +1.0g.
     *
@@ -363,7 +361,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isBeakUp()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > 0.5 && accels[0] < 1.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -0.5 && accels[2] < 0.5)
+   if (accels[0] > 0.8 && accels[0] < 1.3 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
       {
       return true;
       }
@@ -381,7 +379,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isBeakDown()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > -1.5 && accels[0] < -0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -0.5 && accels[2] < 0.5)
+   if (accels[0] > -1.3 && accels[0] < -0.8 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
       {
       return true;
       }
@@ -399,7 +397,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isFinchLevel()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > 0.5 && accels[2] < 1.5)
+   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > 0.65 && accels[2] < 1.5)
       {
       return true;
       }
@@ -417,7 +415,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isFinchUpsideDown()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -1.5 && accels[2] < -0.5)
+   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -1.5 && accels[2] < -0.65)
       {
       return true;
       }
@@ -435,7 +433,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isLeftWingDown()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > 0.5 && accels[1] < 1.5 && accels[2] > -0.5 && accels[2] < 0.5)
+   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > 0.7 && accels[1] < 1.5 && accels[2] > -0.5 && accels[2] < 0.5)
       {
       return true;
       }
@@ -453,7 +451,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isRightWingDown()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -1.5 && accels[1] < -0.5 && accels[2] > -0.5 && accels[2] < 0.5)
+   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -1.5 && accels[1] < -0.7 && accels[2] > -0.5 && accels[2] < 0.5)
       {
       return true;
       }
@@ -468,22 +466,22 @@ public final class Finch extends BaseFinchApplication
     *
     *  @return true if the Finch was recently shaken
     */
-   public boolean isShaken()
+   /*public boolean isShaken()
    {
    // TODO
    return false;
-   }
+   } */
 
    /**
     *  Returns true if the Finch has been tapped since the last accelerometer read
     *
     *  @return true if the Finch was recently tapped
     */
-   public boolean isTapped()
+   /*public boolean isTapped()
    {
    // TODO
    return false;
-   }
+   } */
 
    /**
     * Plays a tone over the computer speakers or headphones at a given frequency (in Hertz) for
@@ -554,7 +552,7 @@ public final class Finch extends BaseFinchApplication
     * computer speakers.  sayThis can be arbitrarily long and can include variable arguments.
     *
     * Example:
-    *   finch.saySomething("My light sensor has a value of "+ lightSensor + " and temperature is " + tempInCelcius);
+    *   myFinch.saySomething("My light sensor has a value of "+ lightSensor + " and temperature is " + tempInCelcius);
     *
     * @param     sayThis The string of text that will be spoken by the computer
     */

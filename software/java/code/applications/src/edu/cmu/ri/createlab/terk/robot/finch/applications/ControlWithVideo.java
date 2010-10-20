@@ -1,7 +1,7 @@
 package edu.cmu.ri.createlab.terk.robot.finch.applications;
 
 import edu.cmu.ri.createlab.terk.robot.finch.Finch;
-import edu.cmu.ri.createlab.terk.robot.finch.VideoHelper;
+import edu.cmu.ri.createlab.video.VideoHelper;
 
 /*
 * ControlWithVideo.java - this program controls how the Finch moves using the camera.  The camera
