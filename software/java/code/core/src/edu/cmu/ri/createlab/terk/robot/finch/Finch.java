@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 /**
  * Contains all methods necessary to program for the Finch robot
  * @author Tom Lauwers (tlauwers@birdbraintechnologies.com)
- * @author Chris Bartley
+ * @author Chris Bartley (bartley@cmu.edu)
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
 public final class Finch extends BaseFinchApplication
