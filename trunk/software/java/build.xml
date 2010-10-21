@@ -188,12 +188,35 @@
       <!-- create the temporary zip directory -->
       <mkdir dir="${zip.dir}"/>
 
-      <!-- Create the big honkin' jar containing all the jars from dist-finch-applications and the log4j.xml file for
-      file logging. -->
+      <!-- Create the big honkin' jar containing all the third-party jars from dist-finch-applications
+      and the log4j.xml file for file logging. We don't actually inclue the classes from finch-applications since those
+      will be provided as samples. -->
       <jar destfile="${finch.jar}" update="yes" compress="true">
          <zipfileset dir="${resources.logging.dir}/file" includes="**/*"/>
-         <zipgroupfileset dir="${finch-applications.dist.dir}" includes="**/*.jar" excludes="${finch-applications-resources-jar.filename}"/>
+         <zipgroupfileset dir="${finch-applications.dist.dir}" includes="**/*.jar" excludes="${finch-applications.jar.filename},${finch-applications-resources-jar.filename}"/>
       </jar>
+
+      <!-- make a directory for the finch-applications examples -->
+      <mkdir dir="${zip.dir}/examples"/>
+      <copy todir="${zip.dir}/examples">
+         <fileset dir="${finch-applications.src.dir}"/>
+      </copy>
+
+      <!-- make a directory for the finch-applications examples -->
+      <mkdir dir="${zip.dir}/licenses"/>
+      <copy file="${lib.dir}/README.txt" todir="${zip.dir}/licenses"/>
+      <copy file="${commons-lang.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/commons-lang-license.txt"/>
+      <copy file="${freetts.dir}/license.txt" tofile="${zip.dir}/licenses/freetts-license.txt"/>
+      <copy file="${jdom.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/jdom-license.txt"/>
+      <copy file="${jna.dir}/license.txt" tofile="${zip.dir}/licenses/jna-license.txt"/>
+      <copy file="${log4j.dir}/LICENSE" tofile="${zip.dir}/licenses/log4j-license.txt"/>
+      <copy file="${lti-civil.dir}/LICENSE" tofile="${zip.dir}/licenses/lti-civil-license.txt"/>
+      <copy file="${rome.dir}/License.txt" tofile="${zip.dir}/licenses/rome-license.txt"/>
+      <copy file="${swing-layout.dir}/License.txt" tofile="${zip.dir}/licenses/swing-layout-license.txt"/>
+
+      <!-- Make a temp directory into which we'll unjar the create-lab-commons-rss-src.jar so we can javadoc it -->
+      <mkdir dir="${zip.dir}/create-lab-commons-rss-src"/>
+      <unzip src="${create-lab-commons-rss-src.jar}" dest="${zip.dir}/create-lab-commons-rss-src"/>
 
       <!-- create javadocs -->
       <javadoc packagenames="*"
@@ -206,13 +229,19 @@
                notree="true"
                noindex="true">
          <classpath>
+            <pathelement location="${finch-core.build.dir}"/>
             <path refid="finch-core-classpath"/>
+            <pathelement location="${create-lab-commons-rss.jar}"/>
+            <pathelement location="${rome.jar}"/>
          </classpath>
-         <!-- Use fileset instead of packageset since it has classes in the default package -->
          <fileset dir="${finch-core.src.dir}" includes="**/VideoHelper.java"/>
          <fileset dir="${finch-core.src.dir}" includes="**/Finch.java"/>
-         <link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
+         <fileset dir="${zip.dir}/create-lab-commons-rss-src" includes="**/*.java"/>
+         <link href="http://download.oracle.com/javase/1.5.0/docs/api//"/>
       </javadoc>
+
+      <!-- delete the temp directory containing the create-lab-commons-rss-src.jar source -->
+      <delete dir="${zip.dir}/create-lab-commons-rss-src"/>
 
       <!-- create zip of the directory -->
       <zip destfile="${base.directory}/${zip.filename}"
