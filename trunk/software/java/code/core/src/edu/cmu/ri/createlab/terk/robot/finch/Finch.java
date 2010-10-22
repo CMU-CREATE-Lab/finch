@@ -361,7 +361,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isBeakUp()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > 0.8 && accels[0] < 1.3 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+   if (accels[0] < -0.8 && accels[0] > -1.5 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
       {
       return true;
       }
@@ -379,7 +379,7 @@ public final class Finch extends BaseFinchApplication
    public boolean isBeakDown()
    {
    double[] accels = getAccelerations();
-   if (accels[0] > -1.3 && accels[0] < -0.8 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+   if (accels[0] < 1.5 && accels[0] > 0.8 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
       {
       return true;
       }
