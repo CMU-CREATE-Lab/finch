@@ -106,6 +106,9 @@ public final class Finch extends BaseFinchApplication
          }
 
       LOG.trace("Finch.Finch(): 6) All done!");
+
+      // Set system properties to point to the freeTTS directory for saySomething support
+      System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
       }
 
    /**
