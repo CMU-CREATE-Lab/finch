@@ -17,6 +17,7 @@
       <pathelement path="${commons-lang.jar}"/>
       <pathelement path="${log4j.jar}"/>
       <pathelement path="${jna.jar}"/>
+      <pathelement path="${jnaerator.jar}"/>
       <pathelement path="${terk-core.jar}"/>
       <pathelement path="${terk-services.jar}"/>
    </path>
@@ -44,6 +45,7 @@
       <pathelement path="${log4j.jar}"/>
       <pathelement path="${jdom.jar}"/>
       <pathelement path="${jna.jar}"/>
+      <pathelement path="${jnaerator.jar}"/>
       <pathelement path="${rome.jar}"/>
       <pathelement path="${swing-layout.jar}"/>
       <pathelement path="${terk-core.jar}"/>
@@ -134,6 +136,7 @@
             <fileset file="${create-lab-commons-util.jar}"/>
             <fileset file="${create-lab-commons-video.jar}"/>
             <fileset file="${jna.jar}"/>
+            <fileset file="${jnaerator.jar}"/>
             <fileset file="${terk-core.jar}"/>
             <fileset file="${terk-services.jar}"/>
          </additional-files-to-copy>
@@ -169,8 +172,10 @@
             <fileset file="${freetts-extra1.jar}"/>
             <fileset file="${freetts-extra2.jar}"/>
             <fileset file="${freetts-extra3.jar}"/>
+            <fileset file="${hidapi.native}"/>
             <fileset file="${jdom.jar}"/>
             <fileset file="${jna.jar}"/>
+            <fileset file="${jnaerator.jar}"/>
             <fileset file="${lti-civil.jar}"/>
             <fileset file="${lti-civil-1.native}"/>
             <fileset file="${lti-civil-2.native}"/>
@@ -207,8 +212,10 @@
       <copy file="${lib.dir}/README.txt" todir="${zip.dir}/licenses"/>
       <copy file="${commons-lang.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/commons-lang-license.txt"/>
       <copy file="${freetts.dir}/license.txt" tofile="${zip.dir}/licenses/freetts-license.txt"/>
+      <copy file="${hidapi.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/hidapi-license.txt"/>
       <copy file="${jdom.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/jdom-license.txt"/>
       <copy file="${jna.dir}/license.txt" tofile="${zip.dir}/licenses/jna-license.txt"/>
+      <copy file="${jnaerator.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/jnaerator-license.txt"/>
       <copy file="${log4j.dir}/LICENSE" tofile="${zip.dir}/licenses/log4j-license.txt"/>
       <copy file="${lti-civil.dir}/LICENSE" tofile="${zip.dir}/licenses/lti-civil-license.txt"/>
       <copy file="${rome.dir}/License.txt" tofile="${zip.dir}/licenses/rome-license.txt"/>
