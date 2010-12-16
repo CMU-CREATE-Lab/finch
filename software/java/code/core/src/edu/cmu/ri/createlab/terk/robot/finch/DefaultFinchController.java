@@ -56,7 +56,7 @@ public final class DefaultFinchController implements FinchController
          // create the HID device
          if (LOG.isDebugEnabled())
             {
-            LOG.debug("DefaultFinchController.create(): creating HID device for vendor ID [" + FinchConstants.USB_VENDOR_ID + "] and product ID [" + FinchConstants.USB_PRODUCT_ID + "]");
+            LOG.debug("DefaultFinchController.create(): creating HID device for vendor ID [" + Integer.toHexString(FinchConstants.USB_VENDOR_ID) + "] and product ID [" + Integer.toHexString(FinchConstants.USB_PRODUCT_ID) + "]");
             }
          final HIDDevice hidDevice = HIDDeviceFactory.create(FinchConstants.USB_VENDOR_ID, FinchConstants.USB_PRODUCT_ID);
 
@@ -393,12 +393,12 @@ public final class DefaultFinchController implements FinchController
             final HIDCommandResult response = commandExecutionQueue.execute(commandStrategy);
             return commandStrategy.convertResult(response);
             }
-         catch (HIDDeviceNotConnectedException e)
+         catch (HIDDeviceNotConnectedException ignored)
             {
             LOG.error("DefaultFinchController.getAccelerometerState(): HIDDeviceNotConnectedException caught, forcing a ping failure");
             finchPinger.forceFailure();
             }
-         catch (HIDDeviceFailureException e)
+         catch (HIDDeviceFailureException ignored)
             {
             LOG.error("DefaultFinchController.getAccelerometerState(): HIDDeviceFailureException caught, forcing a ping failure");
             finchPinger.forceFailure();
