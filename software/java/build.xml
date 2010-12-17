@@ -172,7 +172,8 @@
             <fileset file="${freetts-extra1.jar}"/>
             <fileset file="${freetts-extra2.jar}"/>
             <fileset file="${freetts-extra3.jar}"/>
-            <fileset file="${hidapi.native}"/>
+            <fileset file="${hidapi.native1}"/>
+            <fileset file="${hidapi.native2}"/>
             <fileset file="${jdom.jar}"/>
             <fileset file="${jna.jar}"/>
             <fileset file="${jnaerator.jar}"/>
