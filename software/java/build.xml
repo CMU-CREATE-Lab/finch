@@ -255,6 +255,8 @@
       <zip destfile="${base.directory}/${zip.filename}"
            compress="true">
          <zipfileset dir="${zip.dir}" prefix="finch"/>
+         <zipfileset file="${hidapi1.native}" prefix="finch"/>
+         <zipfileset file="${hidapi2.native}" prefix="finch"/>
          <zipfileset file="${lti-civil-1.native}" prefix="finch"/>
          <zipfileset file="${lti-civil-2.native}" prefix="finch"/>
       </zip>
@@ -310,7 +312,7 @@
          <!-- create the dist directory -->
          <mkdir dir="${@{component.name}.dist.dir}"/>
 
-         <!-- copy required jar files and native lib -->
+         <!-- copy required jar files -->
          <copy todir="${@{component.name}.dist.dir}" flatten="true">
             <fileset file="${log4j.jar}"/>
             <additional-files-to-copy/>
