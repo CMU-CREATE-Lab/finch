@@ -199,7 +199,7 @@
       will be provided as samples. -->
       <jar destfile="${finch.jar}" update="yes" compress="true">
          <zipfileset dir="${resources.logging.dir}/file" includes="**/*"/>
-         <zipgroupfileset dir="${finch-applications.dist.dir}" includes="**/*.jar" excludes="${finch-applications.jar.filename},${finch-applications-resources-jar.filename}"/>
+         <zipgroupfileset dir="${finch-applications.dist.dir}" includes="**/*.jar" excludes="${finch-applications.jar.filename},${finch-applications-resources-jar.filename},${jnaerator.jar.filename}"/>
       </jar>
 
       <!-- make a directory for the finch-applications examples -->
@@ -259,6 +259,7 @@
          <zipfileset file="${hidapi2.native}" prefix="finch"/>
          <zipfileset file="${lti-civil-1.native}" prefix="finch"/>
          <zipfileset file="${lti-civil-2.native}" prefix="finch"/>
+         <zipfileset file="${jnaerator.jar}" prefix="finch"/>
       </zip>
 
       <!-- delete the temporary zip directory -->
