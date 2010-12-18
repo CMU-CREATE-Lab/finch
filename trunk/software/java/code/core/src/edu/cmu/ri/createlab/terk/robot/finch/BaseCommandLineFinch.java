@@ -417,6 +417,10 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
       registerAction("t", playToneAction);
       registerAction("s", playClipAction);
       registerAction("x", emergencyStopAction);
+      registerAction("i", new MovementAction(200, 200));
+      registerAction("j", new MovementAction(0, 150));
+      registerAction("k", new MovementAction(150, 0));
+      registerAction("m", new MovementAction(-200, -200));
       registerAction(QUIT_COMMAND, quitAction);
       }
 
@@ -441,6 +445,11 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
       println("b         Play a tone using the finch's buzzer");
       println("t         Play a tone using the computer's speaker");
       println("s         Play a sound clip using the computer's speaker");
+      println("");
+      println("i         Drive forward");
+      println("j         Turn left");
+      println("k         Turn right");
+      println("l         Drive backward");
       println("");
       println("x         Turn motors and LED off");
       println("q         Quit");
@@ -523,4 +532,31 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
    protected abstract void emergencyStop();
 
    protected abstract boolean isInitialized();
+
+   private class MovementAction implements Runnable
+      {
+      private final int leftVelocity;
+      private final int rightVelocity;
+
+      private MovementAction(final int leftVelocity, final int rightVelocity)
+         {
+         this.leftVelocity = leftVelocity;
+         this.rightVelocity = rightVelocity;
+         }
+
+      public void run()
+         {
+         if (isInitialized())
+            {
+            if (!setMotorVelocities(leftVelocity, rightVelocity))
+               {
+               println("Failed to set the motor velocities");
+               }
+            }
+         else
+            {
+            println("You must be connected to a finch first.");
+            }
+         }
+      }
    }
