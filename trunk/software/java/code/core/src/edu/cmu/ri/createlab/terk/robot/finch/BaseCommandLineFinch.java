@@ -449,7 +449,7 @@ public abstract class BaseCommandLineFinch extends BaseCommandLineApplication
       println("i         Drive forward");
       println("j         Turn left");
       println("k         Turn right");
-      println("l         Drive backward");
+      println("m         Drive backward");
       println("");
       println("x         Turn motors and LED off");
       println("q         Quit");
