@@ -17,8 +17,6 @@ public final class FinchConstants
    public static final short USB_VENDOR_ID = 0x2354;
    public static final short USB_PRODUCT_ID = 0x1111;
 
-   public static final int HID_COMMAND_LENGTH_IN_BYTES = 8;
-
    /** The number of accelerometers */
    public static final int ACCELEROMETER_DEVICE_COUNT = 1;
 
