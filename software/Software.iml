@@ -171,11 +171,11 @@
     <orderEntry type="module-library">
       <library name="ROME">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/java/lib/ROME/rome-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/java/lib/ROME/rome-0.9.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/java/lib/ROME/rome-1.0-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/java/lib/ROME/rome-0.9-src.zip!/rome-0.9/src/java" />
         </SOURCES>
       </library>
     </orderEntry>
