@@ -14,7 +14,9 @@ import javax.swing.WindowConstants;
 import edu.cmu.ri.createlab.audio.AudioHelper;
 import edu.cmu.ri.createlab.speech.Mouth;
 import edu.cmu.ri.createlab.terk.application.ConnectionStrategyEventHandlerAdapter;
+import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;
+import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
 import edu.cmu.ri.createlab.terk.services.audio.AudioService;
 import edu.cmu.ri.createlab.terk.services.buzzer.BuzzerService;
 import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
@@ -282,13 +284,14 @@ public final class Finch extends BaseFinchApplication
    final AccelerometerService service = getAccelerometerService();
    if (service != null)
       {
-      return service.getAccelerometerGs(0).getX();
+      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+      if (accelerometerGs != null)
+         {
+         return accelerometerGs.getX();
+         }
       }
-   else
-      {
-      System.out.println("Accelerometer not responding, check Finch connection");
-      return 0.0;
-      }
+   System.out.println("Accelerometer not responding, check Finch connection");
+   return 0.0;
    }
 
    /**
@@ -302,13 +305,14 @@ public final class Finch extends BaseFinchApplication
    final AccelerometerService service = getAccelerometerService();
    if (service != null)
       {
-      return service.getAccelerometerGs(0).getY();
+      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+      if (accelerometerGs != null)
+         {
+         return accelerometerGs.getY();
+         }
       }
-   else
-      {
-      System.out.println("Accelerometer not responding, check Finch connection");
-      return 0.0;
-      }
+   System.out.println("Accelerometer not responding, check Finch connection");
+   return 0.0;
    }
 
    /**
@@ -322,13 +326,14 @@ public final class Finch extends BaseFinchApplication
    final AccelerometerService service = getAccelerometerService();
    if (service != null)
       {
-      return service.getAccelerometerGs(0).getZ();
+      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+      if (accelerometerGs != null)
+         {
+         return accelerometerGs.getZ();
+         }
       }
-   else
-      {
-      System.out.println("Accelerometer not responding, check Finch connection");
-      return 0.0;
-      }
+   System.out.println("Accelerometer not responding, check Finch connection");
+   return 0.0;
    }
 
    /**
@@ -343,17 +348,18 @@ public final class Finch extends BaseFinchApplication
    final AccelerometerService service = getAccelerometerService();
    if (service != null)
       {
-      final double[] accelerations = new double[3];
-      accelerations[0] = service.getAccelerometerGs(0).getX();
-      accelerations[1] = service.getAccelerometerGs(0).getY();
-      accelerations[2] = service.getAccelerometerGs(0).getZ();
-      return accelerations;
+      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+      if (accelerometerGs != null)
+         {
+         final double[] accelerations = new double[3];
+         accelerations[0] = accelerometerGs.getX();
+         accelerations[1] = accelerometerGs.getY();
+         accelerations[2] = accelerometerGs.getZ();
+         return accelerations;
+         }
       }
-   else
-      {
-      System.out.println("Accelerometer not responding, check Finch connection");
-      return null;
-      }
+   System.out.println("Accelerometer not responding, check Finch connection");
+   return null;
    }
 
    /**
@@ -363,15 +369,15 @@ public final class Finch extends BaseFinchApplication
     */
    public boolean isBeakUp()
    {
-   double[] accels = getAccelerations();
-   if (accels[0] < -0.8 && accels[0] > -1.5 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+   final double[] accels = getAccelerations();
+   if (accels != null)
       {
-      return true;
+      if (accels[0] < -0.8 && accels[0] > -1.5 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+         {
+         return true;
+         }
       }
-   else
-      {
-      return false;
-      }
+   return false;
    }
 
    /**
@@ -381,15 +387,15 @@ public final class Finch extends BaseFinchApplication
     */
    public boolean isBeakDown()
    {
-   double[] accels = getAccelerations();
-   if (accels[0] < 1.5 && accels[0] > 0.8 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+   final double[] accels = getAccelerations();
+   if (accels != null)
       {
-      return true;
+      if (accels[0] < 1.5 && accels[0] > 0.8 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+         {
+         return true;
+         }
       }
-   else
-      {
-      return false;
-      }
+   return false;
    }
 
    /**
@@ -399,15 +405,15 @@ public final class Finch extends BaseFinchApplication
     */
    public boolean isFinchLevel()
    {
-   double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > 0.65 && accels[2] < 1.5)
+   final double[] accels = getAccelerations();
+   if (accels != null)
       {
-      return true;
+      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > 0.65 && accels[2] < 1.5)
+         {
+         return true;
+         }
       }
-   else
-      {
-      return false;
-      }
+   return false;
    }
 
    /**
@@ -417,15 +423,15 @@ public final class Finch extends BaseFinchApplication
     */
    public boolean isFinchUpsideDown()
    {
-   double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -1.5 && accels[2] < -0.65)
+   final double[] accels = getAccelerations();
+   if (accels != null)
       {
-      return true;
+      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -1.5 && accels[2] < -0.65)
+         {
+         return true;
+         }
       }
-   else
-      {
-      return false;
-      }
+   return false;
    }
 
    /**
@@ -435,15 +441,15 @@ public final class Finch extends BaseFinchApplication
     */
    public boolean isLeftWingDown()
    {
-   double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > 0.7 && accels[1] < 1.5 && accels[2] > -0.5 && accels[2] < 0.5)
+   final double[] accels = getAccelerations();
+   if (accels != null)
       {
-      return true;
+      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > 0.7 && accels[1] < 1.5 && accels[2] > -0.5 && accels[2] < 0.5)
+         {
+         return true;
+         }
       }
-   else
-      {
-      return false;
-      }
+   return false;
    }
 
    /**
@@ -453,15 +459,15 @@ public final class Finch extends BaseFinchApplication
     */
    public boolean isRightWingDown()
    {
-   double[] accels = getAccelerations();
-   if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -1.5 && accels[1] < -0.7 && accels[2] > -0.5 && accels[2] < 0.5)
+   final double[] accels = getAccelerations();
+   if (accels != null)
       {
-      return true;
+      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -1.5 && accels[1] < -0.7 && accels[2] > -0.5 && accels[2] < 0.5)
+         {
+         return true;
+         }
       }
-   else
-      {
-      return false;
-      }
+   return false;
    }
 
    /**
@@ -469,22 +475,40 @@ public final class Finch extends BaseFinchApplication
     *
     *  @return true if the Finch was recently shaken
     */
-   /*public boolean isShaken()
+   public boolean isShaken()
    {
-   // TODO
+   final AccelerometerService service = getAccelerometerService();
+   if (service != null)
+      {
+      final AccelerometerState accelerometerState = service.getAccelerometerState(0);
+      if (accelerometerState != null)
+         {
+         return accelerometerState.wasShaken();
+         }
+      }
+   System.out.println("Accelerometer not responding, check Finch connection");
    return false;
-   } */
+   }
 
    /**
     *  Returns true if the Finch has been tapped since the last accelerometer read
     *
     *  @return true if the Finch was recently tapped
     */
-   /*public boolean isTapped()
+   public boolean isTapped()
    {
-   // TODO
+   final AccelerometerService service = getAccelerometerService();
+   if (service != null)
+      {
+      final AccelerometerState accelerometerState = service.getAccelerometerState(0);
+      if (accelerometerState != null)
+         {
+         return accelerometerState.wasTapped();
+         }
+      }
+   System.out.println("Accelerometer not responding, check Finch connection");
    return false;
-   } */
+   }
 
    /**
     * Plays a tone over the computer speakers or headphones at a given frequency (in Hertz) for

@@ -13,10 +13,10 @@ public final class GetAccelerometerCommandStrategy extends ReturnValueCommandStr
    private static final byte[] COMMAND = {'A'};
 
    /**
-    * The size of the expected response, in bytes.  This is 4 bytes because the first byte is bogus data, the next three
-    * are the X, Y, and Z values.
+    * The size of the expected response, in bytes.  This is 5 bytes because the first byte is bogus data, the next three
+    * are the X, Y, and Z values, and the last byte contains the bits for determining whether it was tapped or shaken.
     */
-   private static final int SIZE_IN_BYTES_OF_EXPECTED_RESPONSE = 4;
+   private static final int SIZE_IN_BYTES_OF_EXPECTED_RESPONSE = 5;
 
    protected int getSizeOfExpectedResponse()
       {
@@ -33,11 +33,16 @@ public final class GetAccelerometerCommandStrategy extends ReturnValueCommandStr
       if (result != null && result.wasSuccessful())
          {
          final byte[] responseData = result.getData();
+         final byte tapShake = responseData[4];
+         final boolean wasTapped = (tapShake & 32) == 32;
+         final boolean wasShaken = (tapShake & 128) == 128;
 
          // NOTE: we're ignoring responseData[0] here on purpose since it's bogus data (see SIZE_IN_BYTES_OF_EXPECTED_RESPONSE above)
          return new AccelerometerState(ByteUtils.unsignedByteToInt(responseData[1]),
                                        ByteUtils.unsignedByteToInt(responseData[2]),
-                                       ByteUtils.unsignedByteToInt(responseData[3]));
+                                       ByteUtils.unsignedByteToInt(responseData[3]),
+                                       wasShaken,
+                                       wasTapped);
          }
 
       return null;
