@@ -20,49 +20,49 @@ public final class VideoHelper
     * the camera image - call showVideoScreen() to show that.
     */
    public void initVideo()
-   {
-   video = new VideoPlayer();
-   video.startVideoStream();
-   videoOn = true;
-   }
+      {
+      video = new VideoPlayer();
+      video.startVideoStream();
+      videoOn = true;
+      }
 
    /** Closes the video stream. */
    public void closeVideo()
-   {
-   if (videoOn)
       {
-      video.stopVideoStream();
-      video.closeVideoStream();
-      videoOn = false;
+      if (videoOn)
+         {
+         video.stopVideoStream();
+         video.closeVideoStream();
+         videoOn = false;
+         }
       }
-   }
 
    /**
     * Returns as a BufferedImage object the most recent image retrieved from the camera
     * @return The image data
     */
    public BufferedImage getImage()
-   {
-   return video.getImage();
-   }
+      {
+      return video.getImage();
+      }
 
    /**
     * Get the image height
     * @return image height as an int
     */
    public int getImageHeight()
-   {
-   return video.getImageHeight();
-   }
+      {
+      return video.getImageHeight();
+      }
 
    /**
     * Get the image width
     * @return image width as an int
     */
    public int getImageWidth()
-   {
-   return video.getImageWidth();
-   }
+      {
+      return video.getImageWidth();
+      }
 
    /**
     * Gets the Red, Green, and Blue values of the pixel at the coordinate specified by x,y
@@ -72,9 +72,9 @@ public final class VideoHelper
     * represent the intensity of color.
     */
    public int[] getPixelRGBValues(final int x, final int y)
-   {
-   return video.getPixelRGBValues(x, y);
-   }
+      {
+      return video.getPixelRGBValues(x, y);
+      }
 
    /**
     * Gets the color of a given pixel as a Java Color object at the coordinate specified by x,y
@@ -83,9 +83,9 @@ public final class VideoHelper
     * @return A Color object representing the color of the pixel
     */
    public Color getPixelColor(final int x, final int y)
-   {
-   return video.getPixelColor(x, y);
-   }
+      {
+      return video.getPixelColor(x, y);
+      }
 
    /**
     * Gets the AVERAGE RGB values of the pixels in a portion of the image.
@@ -99,9 +99,9 @@ public final class VideoHelper
     * @return a 3 element array holding the red, green, and blue intensities of the area
     */
    public int[] getAreaRGBValues(final int minX, final int minY, final int maxX, final int maxY)
-   {
-   return video.getAreaRGBValues(minX, minY, maxX, maxY);
-   }
+      {
+      return video.getAreaRGBValues(minX, minY, maxX, maxY);
+      }
 
    /**
     * Gets the AVERAGE Color value of the pixels in a portion of the image.
@@ -116,9 +116,9 @@ public final class VideoHelper
     */
 
    public Color getAreaColor(final int minX, final int minY, final int maxX, final int maxY)
-   {
-   return video.getAreaColor(minX, minY, maxX, maxY);
-   }
+      {
+      return video.getAreaColor(minX, minY, maxX, maxY);
+      }
 
    /**
     * Method for getting back calibration values for the blob detector method.
@@ -130,9 +130,9 @@ public final class VideoHelper
     * @return a 3 element array of red, green, and blue color values of the blob to be tracked
     */
    public int[] blobCalibration()
-   {
-   return video.blobCalibration();
-   }
+      {
+      return video.blobCalibration();
+      }
 
    /**
     * The blob detector detects all of the pixels that are within a certain range of the CalibrationVals,
@@ -154,9 +154,9 @@ public final class VideoHelper
     * @return An array containing the center, top left, and bottom right x,y coordinates of the blob.
     */
    public int[] blobDetector(final int[] calibrationVals, final int sensitivity)
-   {
-   return video.blobDetector(calibrationVals, sensitivity);
-   }
+      {
+      return video.blobDetector(calibrationVals, sensitivity);
+      }
 
    /**
     * Displays a window that shows the camera image.  Note that the image must be updated
@@ -164,10 +164,10 @@ public final class VideoHelper
     * @param name the name to give the window
     */
    public void showVideoScreen(final String name)
-   {
-   video.drawVideo(name);
-   videoScreenOn = true;
-   }
+      {
+      video.drawVideo(name);
+      videoScreenOn = true;
+      }
 
    /**
     * Updates the image in the video window.  Note that this method also updates the image data
@@ -176,21 +176,21 @@ public final class VideoHelper
     * it does display a window.
     */
    public void updateVideoScreen()
-   {
-   video.updateVideo();
-   }
+      {
+      video.updateVideo();
+      }
 
    /**
     * Closes the video window
     */
    public void closeVideoScreen()
-   {
-   if (videoScreenOn)
       {
-      video.closeVideo();
-      videoScreenOn = false;
+      if (videoScreenOn)
+         {
+         video.closeVideo();
+         videoScreenOn = false;
+         }
       }
-   }
 
    /**
     * Draws a rectangle in the video window.  Useful for displaying where the
@@ -205,9 +205,9 @@ public final class VideoHelper
     * @param maxY maximum Y coordinate of rectangle
     */
    public void drawRectangle(final int minX, final int minY, final int maxX, final int maxY)
-   {
-   video.drawRectangle(minX, minY, maxX, maxY);
-   }
+      {
+      video.drawRectangle(minX, minY, maxX, maxY);
+      }
 
    /**
     * Draws a circle on the camera image. Useful for displaying where the
@@ -221,18 +221,18 @@ public final class VideoHelper
     * @param centerY The Y coordinate of the center of the circle
     */
    public void drawCircle(final int radius, final int centerX, final int centerY)
-   {
-   video.drawCircle(radius, centerX, centerY);
-   }
+      {
+      video.drawCircle(radius, centerX, centerY);
+      }
 
    /**
     * Call this if you want to no longer display a polygon on the
     * camera image.
     */
    public void drawNothing()
-   {
-   video.drawNothing();
-   }
+      {
+      video.drawNothing();
+      }
 
    /**
     * Sets the color of any polygon, rectangle, or circle drawn into
@@ -240,18 +240,18 @@ public final class VideoHelper
     * @param polyColor The color to set the polygon to.
     */
    public void setPolygonColor(final Color polyColor)
-   {
-   video.setPolygonColor(polyColor);
-   }
+      {
+      video.setPolygonColor(polyColor);
+      }
 
    /**
     * Sets whether the polygon is filled in or an outline.
     * @param setting true sets the polygon to be filled in, false sets it to outline
     */
    public void setFillPolygon(final boolean setting)
-   {
-   video.setFillPolygon(setting);
-   }
+      {
+      video.setFillPolygon(setting);
+      }
 
    /**
     * Draws a generic polygon into the image.  Note
@@ -262,7 +262,7 @@ public final class VideoHelper
     * @param poly The polygon object to draw into the image
     */
    public void drawPolygon(final Polygon poly)
-   {
-   video.drawPolygon(poly);
-   }
+      {
+      video.drawPolygon(poly);
+      }
    }

@@ -119,24 +119,24 @@ public final class Finch extends BaseFinchApplication
     * @param     color is a Color object that determines the beaks color
     */
    public void setLED(final Color color)
-   {
-   if (color != null)
       {
-      final FullColorLEDService service = getFullColorLEDService();
-      if (service != null)
+      if (color != null)
          {
-         service.set(0, color);
+         final FullColorLEDService service = getFullColorLEDService();
+         if (service != null)
+            {
+            service.set(0, color);
+            }
+         else
+            {
+            System.out.println("LED not responding, check Finch connection");
+            }
          }
       else
          {
-         System.out.println("LED not responding, check Finch connection");
+         System.out.println("Color object was null, LED could not be set");
          }
       }
-   else
-      {
-      System.out.println("Color object was null, LED could not be set");
-      }
-   }
 
    /**
     * Sets the color of the LED in the Finch's beak.  The LED can be any color that can be
@@ -149,54 +149,54 @@ public final class Finch extends BaseFinchApplication
     */
 
    public void setLED(final int red, final int green, final int blue)
-   {
-   boolean inRange = true;
-   if (red > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
       {
-      inRange = false;
-      System.out.println("Red value exceeds appropriate values (0-255), LED will not be set");
-      }
-   if (red < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
-      {
-      inRange = false;
-      System.out.println("Red value is negative, LED will not be set");
-      }
+      boolean inRange = true;
+      if (red > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+         {
+         inRange = false;
+         System.out.println("Red value exceeds appropriate values (0-255), LED will not be set");
+         }
+      if (red < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+         {
+         inRange = false;
+         System.out.println("Red value is negative, LED will not be set");
+         }
 
-   if (green > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
-      {
-      inRange = false;
-      System.out.println("Green value exceeds appropriate values (0-255), LED will not be set");
-      }
-   if (green < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
-      {
-      inRange = false;
-      System.out.println("Green value is negative, LED will not be set");
-      }
+      if (green > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+         {
+         inRange = false;
+         System.out.println("Green value exceeds appropriate values (0-255), LED will not be set");
+         }
+      if (green < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+         {
+         inRange = false;
+         System.out.println("Green value is negative, LED will not be set");
+         }
 
-   if (blue > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
-      {
-      inRange = false;
-      System.out.println("Blue value exceeds appropriate values (0-255), LED will not be set");
-      }
-   if (blue < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
-      {
-      inRange = false;
-      System.out.println("Blue value is negative, LED will not be set");
-      }
+      if (blue > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+         {
+         inRange = false;
+         System.out.println("Blue value exceeds appropriate values (0-255), LED will not be set");
+         }
+      if (blue < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+         {
+         inRange = false;
+         System.out.println("Blue value is negative, LED will not be set");
+         }
 
-   if (inRange)
-      {
-      setLED(new Color(red, green, blue));
+      if (inRange)
+         {
+         setLED(new Color(red, green, blue));
+         }
       }
-   }
 
    /**
     * Stops both wheels.
     */
    public void stopWheels()
-   {
-   setWheelVelocities(0, 0);
-   }
+      {
+      setWheelVelocities(0, 0);
+      }
 
    /**
     * This method simultaneously sets the velocities of both wheels. Current valid values range from
@@ -206,9 +206,9 @@ public final class Finch extends BaseFinchApplication
     * @param rightVelocity The velocity at which to move the right wheel
     */
    public void setWheelVelocities(final int leftVelocity, final int rightVelocity)
-   {
-   setWheelVelocities(leftVelocity, rightVelocity, -1);
-   }
+      {
+      setWheelVelocities(leftVelocity, rightVelocity, -1);
+      }
 
    /**
     * This method simultaneously sets the velocities of both wheels. Current valid values range from
@@ -221,32 +221,32 @@ public final class Finch extends BaseFinchApplication
     *                   execution is not blocked and the wheels are not stopped.
     */
    public void setWheelVelocities(final int leftVelocity, final int rightVelocity, final int timeToHold)
-   {
-   final OpenLoopVelocityControllableMotorService service = getOpenLoopVelocityControllableMotorService();
-   if (service != null)
       {
-      if (leftVelocity <= FinchConstants.MOTOR_DEVICE_MAX_VELOCITY &&
-          leftVelocity >= FinchConstants.MOTOR_DEVICE_MIN_VELOCITY &&
-          rightVelocity <= FinchConstants.MOTOR_DEVICE_MAX_VELOCITY &&
-          rightVelocity >= FinchConstants.MOTOR_DEVICE_MIN_VELOCITY)
+      final OpenLoopVelocityControllableMotorService service = getOpenLoopVelocityControllableMotorService();
+      if (service != null)
          {
-         service.setVelocities(new int[]{leftVelocity, rightVelocity});
-         if (timeToHold > 0)
+         if (leftVelocity <= FinchConstants.MOTOR_DEVICE_MAX_VELOCITY &&
+             leftVelocity >= FinchConstants.MOTOR_DEVICE_MIN_VELOCITY &&
+             rightVelocity <= FinchConstants.MOTOR_DEVICE_MAX_VELOCITY &&
+             rightVelocity >= FinchConstants.MOTOR_DEVICE_MIN_VELOCITY)
             {
-            sleep(timeToHold);
-            stopWheels();
+            service.setVelocities(new int[]{leftVelocity, rightVelocity});
+            if (timeToHold > 0)
+               {
+               sleep(timeToHold);
+               stopWheels();
+               }
+            }
+         else
+            {
+            System.out.println("Velocity values out of range");
             }
          }
       else
          {
-         System.out.println("Velocity values out of range");
+         System.out.println("Couldn't set motors, check Finch connection");
          }
       }
-   else
-      {
-      System.out.println("Couldn't set motors, check Finch connection");
-      }
-   }
 
    /**
     * This method uses Thread.sleep to cause the currently running program to sleep for the
@@ -255,23 +255,23 @@ public final class Finch extends BaseFinchApplication
     * @param ms - the number of milliseconds to sleep for.  Valid values are all positive integers.
     */
    public void sleep(final int ms)
-   {
-   if (ms < 0)
       {
-      System.out.println("Program sent a negative time to sleep for");
-      }
-   else
-      {
-      try
+      if (ms < 0)
          {
-         Thread.sleep(ms);
+         System.out.println("Program sent a negative time to sleep for");
          }
-      catch (InterruptedException ignored)
+      else
          {
-         System.out.println("Error:  sleep was interrupted for some reason");
+         try
+            {
+            Thread.sleep(ms);
+            }
+         catch (InterruptedException ignored)
+            {
+            System.out.println("Error:  sleep was interrupted for some reason");
+            }
          }
       }
-   }
 
    /**
     * This method returns the current X-axis acceleration value experienced by the robot.  Values for acceleration
@@ -280,19 +280,19 @@ public final class Finch extends BaseFinchApplication
     * @return The X-axis acceleration value
     */
    public double getXAcceleration()
-   {
-   final AccelerometerService service = getAccelerometerService();
-   if (service != null)
       {
-      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-      if (accelerometerGs != null)
+      final AccelerometerService service = getAccelerometerService();
+      if (service != null)
          {
-         return accelerometerGs.getX();
+         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+         if (accelerometerGs != null)
+            {
+            return accelerometerGs.getX();
+            }
          }
+      System.out.println("Accelerometer not responding, check Finch connection");
+      return 0.0;
       }
-   System.out.println("Accelerometer not responding, check Finch connection");
-   return 0.0;
-   }
 
    /**
     * This method returns the current Y-axis acceleration value experienced by the robot.  Values for acceleration
@@ -301,19 +301,19 @@ public final class Finch extends BaseFinchApplication
     * @return The Y-axis acceleration value
     */
    public double getYAcceleration()
-   {
-   final AccelerometerService service = getAccelerometerService();
-   if (service != null)
       {
-      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-      if (accelerometerGs != null)
+      final AccelerometerService service = getAccelerometerService();
+      if (service != null)
          {
-         return accelerometerGs.getY();
+         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+         if (accelerometerGs != null)
+            {
+            return accelerometerGs.getY();
+            }
          }
+      System.out.println("Accelerometer not responding, check Finch connection");
+      return 0.0;
       }
-   System.out.println("Accelerometer not responding, check Finch connection");
-   return 0.0;
-   }
 
    /**
     * This method returns the current Z-axis acceleration value experienced by the robot.  Values for acceleration
@@ -322,19 +322,19 @@ public final class Finch extends BaseFinchApplication
     * @return The Z-axis acceleration value
     */
    public double getZAcceleration()
-   {
-   final AccelerometerService service = getAccelerometerService();
-   if (service != null)
       {
-      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-      if (accelerometerGs != null)
+      final AccelerometerService service = getAccelerometerService();
+      if (service != null)
          {
-         return accelerometerGs.getZ();
+         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+         if (accelerometerGs != null)
+            {
+            return accelerometerGs.getZ();
+            }
          }
+      System.out.println("Accelerometer not responding, check Finch connection");
+      return 0.0;
       }
-   System.out.println("Accelerometer not responding, check Finch connection");
-   return 0.0;
-   }
 
    /**
     * Use this method to simultaneously return the current X, Y, and Z accelerations experienced by the robot.
@@ -344,23 +344,23 @@ public final class Finch extends BaseFinchApplication
     * @return a an array of 3 doubles containing the X, Y, and Z acceleration values
     */
    public double[] getAccelerations()
-   {
-   final AccelerometerService service = getAccelerometerService();
-   if (service != null)
       {
-      final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-      if (accelerometerGs != null)
+      final AccelerometerService service = getAccelerometerService();
+      if (service != null)
          {
-         final double[] accelerations = new double[3];
-         accelerations[0] = accelerometerGs.getX();
-         accelerations[1] = accelerometerGs.getY();
-         accelerations[2] = accelerometerGs.getZ();
-         return accelerations;
+         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
+         if (accelerometerGs != null)
+            {
+            final double[] accelerations = new double[3];
+            accelerations[0] = accelerometerGs.getX();
+            accelerations[1] = accelerometerGs.getY();
+            accelerations[2] = accelerometerGs.getZ();
+            return accelerations;
+            }
          }
+      System.out.println("Accelerometer not responding, check Finch connection");
+      return null;
       }
-   System.out.println("Accelerometer not responding, check Finch connection");
-   return null;
-   }
 
    /**
     * This method returns true if the beak is up (Finch sitting on its tail), false otherwise
@@ -368,17 +368,17 @@ public final class Finch extends BaseFinchApplication
     * @return true if beak is pointed at ceiling
     */
    public boolean isBeakUp()
-   {
-   final double[] accels = getAccelerations();
-   if (accels != null)
       {
-      if (accels[0] < -0.8 && accels[0] > -1.5 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+      final double[] accels = getAccelerations();
+      if (accels != null)
          {
-         return true;
+         if (accels[0] < -0.8 && accels[0] > -1.5 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+            {
+            return true;
+            }
          }
+      return false;
       }
-   return false;
-   }
 
    /**
     * This method returns true if the beak is pointed at the floor, false otherwise
@@ -386,17 +386,17 @@ public final class Finch extends BaseFinchApplication
     * @return true if beak is pointed at the floor
     */
    public boolean isBeakDown()
-   {
-   final double[] accels = getAccelerations();
-   if (accels != null)
       {
-      if (accels[0] < 1.5 && accels[0] > 0.8 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+      final double[] accels = getAccelerations();
+      if (accels != null)
          {
-         return true;
+         if (accels[0] < 1.5 && accels[0] > 0.8 && accels[1] > -0.3 && accels[1] < 0.3 && accels[2] > -0.3 && accels[2] < 0.3)
+            {
+            return true;
+            }
          }
+      return false;
       }
-   return false;
-   }
 
    /**
     * This method returns true if the Finch is on a flat surface
@@ -404,17 +404,17 @@ public final class Finch extends BaseFinchApplication
     * @return true if the Finch is level
     */
    public boolean isFinchLevel()
-   {
-   final double[] accels = getAccelerations();
-   if (accels != null)
       {
-      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > 0.65 && accels[2] < 1.5)
+      final double[] accels = getAccelerations();
+      if (accels != null)
          {
-         return true;
+         if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > 0.65 && accels[2] < 1.5)
+            {
+            return true;
+            }
          }
+      return false;
       }
-   return false;
-   }
 
    /**
     * This method returns true if the Finch is upside down, false otherwise
@@ -422,17 +422,17 @@ public final class Finch extends BaseFinchApplication
     * @return true if Finch is upside down
     */
    public boolean isFinchUpsideDown()
-   {
-   final double[] accels = getAccelerations();
-   if (accels != null)
       {
-      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -1.5 && accels[2] < -0.65)
+      final double[] accels = getAccelerations();
+      if (accels != null)
          {
-         return true;
+         if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -0.5 && accels[1] < 0.5 && accels[2] > -1.5 && accels[2] < -0.65)
+            {
+            return true;
+            }
          }
+      return false;
       }
-   return false;
-   }
 
    /**
     * This method returns true if the Finch's left wing is pointed at the ground
@@ -440,17 +440,17 @@ public final class Finch extends BaseFinchApplication
     * @return true if Finch's left wing is down
     */
    public boolean isLeftWingDown()
-   {
-   final double[] accels = getAccelerations();
-   if (accels != null)
       {
-      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > 0.7 && accels[1] < 1.5 && accels[2] > -0.5 && accels[2] < 0.5)
+      final double[] accels = getAccelerations();
+      if (accels != null)
          {
-         return true;
+         if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > 0.7 && accels[1] < 1.5 && accels[2] > -0.5 && accels[2] < 0.5)
+            {
+            return true;
+            }
          }
+      return false;
       }
-   return false;
-   }
 
    /**
     * This method returns true if the Finch's right wing is pointed at the ground
@@ -458,17 +458,17 @@ public final class Finch extends BaseFinchApplication
     * @return true if Finch's right wing is down
     */
    public boolean isRightWingDown()
-   {
-   final double[] accels = getAccelerations();
-   if (accels != null)
       {
-      if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -1.5 && accels[1] < -0.7 && accels[2] > -0.5 && accels[2] < 0.5)
+      final double[] accels = getAccelerations();
+      if (accels != null)
          {
-         return true;
+         if (accels[0] > -0.5 && accels[0] < 0.5 && accels[1] > -1.5 && accels[1] < -0.7 && accels[2] > -0.5 && accels[2] < 0.5)
+            {
+            return true;
+            }
          }
+      return false;
       }
-   return false;
-   }
 
    /**
     *  Returns true if the Finch has been shaken since the last accelerometer read
@@ -476,19 +476,19 @@ public final class Finch extends BaseFinchApplication
     *  @return true if the Finch was recently shaken
     */
    public boolean isShaken()
-   {
-   final AccelerometerService service = getAccelerometerService();
-   if (service != null)
       {
-      final AccelerometerState accelerometerState = service.getAccelerometerState(0);
-      if (accelerometerState != null)
+      final AccelerometerService service = getAccelerometerService();
+      if (service != null)
          {
-         return accelerometerState.wasShaken();
+         final AccelerometerState accelerometerState = service.getAccelerometerState(0);
+         if (accelerometerState != null)
+            {
+            return accelerometerState.wasShaken();
+            }
          }
+      System.out.println("Accelerometer not responding, check Finch connection");
+      return false;
       }
-   System.out.println("Accelerometer not responding, check Finch connection");
-   return false;
-   }
 
    /**
     *  Returns true if the Finch has been tapped since the last accelerometer read
@@ -496,19 +496,19 @@ public final class Finch extends BaseFinchApplication
     *  @return true if the Finch was recently tapped
     */
    public boolean isTapped()
-   {
-   final AccelerometerService service = getAccelerometerService();
-   if (service != null)
       {
-      final AccelerometerState accelerometerState = service.getAccelerometerState(0);
-      if (accelerometerState != null)
+      final AccelerometerService service = getAccelerometerService();
+      if (service != null)
          {
-         return accelerometerState.wasTapped();
+         final AccelerometerState accelerometerState = service.getAccelerometerState(0);
+         if (accelerometerState != null)
+            {
+            return accelerometerState.wasTapped();
+            }
          }
+      System.out.println("Accelerometer not responding, check Finch connection");
+      return false;
       }
-   System.out.println("Accelerometer not responding, check Finch connection");
-   return false;
-   }
 
    /**
     * Plays a tone over the computer speakers or headphones at a given frequency (in Hertz) for
@@ -519,9 +519,9 @@ public final class Finch extends BaseFinchApplication
     * @param duration The time to play the tone in milliseconds
     */
    public void playTone(final int frequency, final int duration)
-   {
-   playTone(frequency, FinchConstants.AUDIO_DEVICE_MAX_AMPLITUDE, duration);
-   }
+      {
+      playTone(frequency, FinchConstants.AUDIO_DEVICE_MAX_AMPLITUDE, duration);
+      }
 
    /**
     * Plays a tone over the computer speakers or headphones at a given frequency (in Hertz) for
@@ -533,17 +533,17 @@ public final class Finch extends BaseFinchApplication
     * @param duration The time to play the tone in milliseconds
     */
    public void playTone(final int frequency, final int volume, final int duration)
-   {
-   final AudioService service = getAudioService();
-   if (service != null)
       {
-      service.playTone(frequency, volume, duration);
+      final AudioService service = getAudioService();
+      if (service != null)
+         {
+         service.playTone(frequency, volume, duration);
+         }
+      else
+         {
+         System.out.println("Audio not responding, check Finch connection");
+         }
       }
-   else
-      {
-      System.out.println("Audio not responding, check Finch connection");
-      }
-   }
 
    /**
     * Plays a wav file at the specificied fileLocation path.  If you place the audio
@@ -552,27 +552,27 @@ public final class Finch extends BaseFinchApplication
     * @param     fileLocation Absolute path of the file or name of the file if located in some directory as source code
     */
    public void playClip(final String fileLocation)
-   {
-   final AudioService service = getAudioService();
-   if (service != null)
       {
-      try
+      final AudioService service = getAudioService();
+      if (service != null)
          {
-         final File file = new File(fileLocation);
-         final byte[] rawSound = FileUtils.getFileAsBytes(file);
-         service.playSound(rawSound);
+         try
+            {
+            final File file = new File(fileLocation);
+            final byte[] rawSound = FileUtils.getFileAsBytes(file);
+            service.playSound(rawSound);
+            }
+         catch (IOException e)
+            {
+            LOG.error("IOException while trying to play sound at [" + fileLocation + "]", e);
+            System.out.println("Failed to play sound.");
+            }
          }
-      catch (IOException e)
+      else
          {
-         LOG.error("IOException while trying to play sound at [" + fileLocation + "]", e);
-         System.out.println("Failed to play sound.");
+         System.out.println("Audio not responding, check Finch connection");
          }
       }
-   else
-      {
-      System.out.println("Audio not responding, check Finch connection");
-      }
-   }
 
    /**
     * Takes the text of 'sayThis' and synthesizes it into a sound file.  Plays the sound file over
@@ -584,25 +584,25 @@ public final class Finch extends BaseFinchApplication
     * @param     sayThis The string of text that will be spoken by the computer
     */
    public void saySomething(final String sayThis)
-   {
-   if (sayThis != null && sayThis.length() > 0)
       {
-      final Mouth mouth = Mouth.getInstance();
-
-      if (mouth != null)
+      if (sayThis != null && sayThis.length() > 0)
          {
-         AudioHelper.playClip(mouth.getSpeech(sayThis));
+         final Mouth mouth = Mouth.getInstance();
+
+         if (mouth != null)
+            {
+            AudioHelper.playClip(mouth.getSpeech(sayThis));
+            }
+         else
+            {
+            System.out.println("Speech not working");
+            }
          }
       else
          {
-         System.out.println("Speech not working");
+         System.out.println("Given text to speak was null or empty");
          }
       }
-   else
-      {
-      System.out.println("Given text to speak was null or empty");
-      }
-   }
 
    /**
     * Plays a tone at the specified frequency for the specified duration on the Finch's internal buzzer.
@@ -616,17 +616,17 @@ public final class Finch extends BaseFinchApplication
     * @param     duration  Duration in milliseconds of the tone
     */
    public void buzz(final int frequency, final int duration)
-   {
-   final BuzzerService service = getBuzzerService();
-   if (service != null)
       {
-      service.playTone(0, frequency, duration);
+      final BuzzerService service = getBuzzerService();
+      if (service != null)
+         {
+         service.playTone(0, frequency, duration);
+         }
+      else
+         {
+         System.out.println("Buzzer not responding, check Finch connection");
+         }
       }
-   else
-      {
-      System.out.println("Buzzer not responding, check Finch connection");
-      }
-   }
 
    /**
     * Returns the value of the left light sensor.  Valid values range from 0 to 255, with higher
@@ -636,20 +636,20 @@ public final class Finch extends BaseFinchApplication
     * @return The current light level at the left light sensor
     */
    public int getLeftLightSensor()
-   {
-   final PhotoresistorService service = getPhotoresistorService();
-   if (service != null)
       {
-      final int[] values = service.getPhotoresistorValues();
-      if (values != null)
+      final PhotoresistorService service = getPhotoresistorService();
+      if (service != null)
          {
-         return values[0];
+         final int[] values = service.getPhotoresistorValues();
+         if (values != null)
+            {
+            return values[0];
+            }
          }
-      }
 
-   System.out.println("Light sensor not responding, check Finch connection");
-   return 0;
-   }
+      System.out.println("Light sensor not responding, check Finch connection");
+      return 0;
+      }
 
    /**
     * Returns the value of the right light sensor.  Valid values range from 0 to 255, with higher
@@ -659,20 +659,20 @@ public final class Finch extends BaseFinchApplication
     * @return The current light level at the right light sensor
     */
    public int getRightLightSensor()
-   {
-   final PhotoresistorService service = getPhotoresistorService();
-   if (service != null)
       {
-      final int[] values = service.getPhotoresistorValues();
-      if (values != null)
+      final PhotoresistorService service = getPhotoresistorService();
+      if (service != null)
          {
-         return values[1];
+         final int[] values = service.getPhotoresistorValues();
+         if (values != null)
+            {
+            return values[1];
+            }
          }
-      }
 
-   System.out.println("Light sensor not responding, check Finch connection");
-   return 0;
-   }
+      System.out.println("Light sensor not responding, check Finch connection");
+      return 0;
+      }
 
    /**
     * Returns a 2 integer array containing the current values of both light sensors.
@@ -682,18 +682,18 @@ public final class Finch extends BaseFinchApplication
     * @return A 2 int array containing both light sensor readings.
     */
    public int[] getLightSensors()
-   {
-   final PhotoresistorService service = getPhotoresistorService();
-   if (service != null)
       {
-      return service.getPhotoresistorValues();
+      final PhotoresistorService service = getPhotoresistorService();
+      if (service != null)
+         {
+         return service.getPhotoresistorValues();
+         }
+      else
+         {
+         System.out.println("Light sensor not responding, check Finch connection");
+         return null;
+         }
       }
-   else
-      {
-      System.out.println("Light sensor not responding, check Finch connection");
-      return null;
-      }
-   }
 
    /**
     * Returns true if the left light sensor is great than the value specified
@@ -703,9 +703,9 @@ public final class Finch extends BaseFinchApplication
     * @return whether the light sensor exceeds the value specified by limit
     */
    public boolean isLeftLightSensor(final int limit)
-   {
-   return (limit > getLeftLightSensor());
-   }
+      {
+      return (limit > getLeftLightSensor());
+      }
 
    /**
     * Returns true if the right light sensor is greater than the value specified
@@ -715,9 +715,9 @@ public final class Finch extends BaseFinchApplication
     * @return true if the light sensor exceeds the value specified by limit
     */
    public boolean isRightLightSensor(final int limit)
-   {
-   return (limit > getRightLightSensor());
-   }
+      {
+      return (limit > getRightLightSensor());
+      }
 
    /**
     * Returns true if there is an obstruction in front of the left side of the robot.
@@ -726,18 +726,18 @@ public final class Finch extends BaseFinchApplication
     * @return Whether an obstacle exists in front of the left side of the robot.
     */
    public boolean isObstacleLeftSide()
-   {
-   final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-   if (service != null)
       {
-      return service.isObstacleDetected(0);
+      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
+      if (service != null)
+         {
+         return service.isObstacleDetected(0);
+         }
+      else
+         {
+         System.out.println("Obstacle sensor not responding, check Finch connection");
+         return false;
+         }
       }
-   else
-      {
-      System.out.println("Obstacle sensor not responding, check Finch connection");
-      return false;
-      }
-   }
 
    /**
     * Returns true if there is an obstruction in front of the right side of the robot.
@@ -746,18 +746,18 @@ public final class Finch extends BaseFinchApplication
     * @return Whether an obstacle exists in front of the right side of the robot.
     */
    public boolean isObstacleRightSide()
-   {
-   final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-   if (service != null)
       {
-      return service.isObstacleDetected(1);
+      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
+      if (service != null)
+         {
+         return service.isObstacleDetected(1);
+         }
+      else
+         {
+         System.out.println("Obstacle sensor not responding, check Finch connection");
+         return false;
+         }
       }
-   else
-      {
-      System.out.println("Obstacle sensor not responding, check Finch connection");
-      return false;
-      }
-   }
 
    /**
     * Returns true if either left or right obstacle sensor detect an obstacle.
@@ -766,18 +766,18 @@ public final class Finch extends BaseFinchApplication
     * @return Whether either obstacle sensor sees an obstacle.
     */
    public boolean isObstacle()
-   {
-   final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-   if (service != null)
       {
-      return (service.isObstacleDetected(0) || service.isObstacleDetected(1));
+      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
+      if (service != null)
+         {
+         return (service.isObstacleDetected(0) || service.isObstacleDetected(1));
+         }
+      else
+         {
+         System.out.println("Obstacle sensor not responding, check Finch connection");
+         return false;
+         }
       }
-   else
-      {
-      System.out.println("Obstacle sensor not responding, check Finch connection");
-      return false;
-      }
-   }
 
    /**
     * Returns the value of both obstacle sensors as 2 element boolean array.
@@ -787,18 +787,18 @@ public final class Finch extends BaseFinchApplication
     * @return The values of left and right obstacle sensors in a 2 element array
     */
    public boolean[] getObstacleSensors()
-   {
-   final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-   if (service != null)
       {
-      return service.areObstaclesDetected();
+      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
+      if (service != null)
+         {
+         return service.areObstaclesDetected();
+         }
+      else
+         {
+         System.out.println("Obstacle sensors not responding, check Finch connection");
+         return null;
+         }
       }
-   else
-      {
-      System.out.println("Obstacle sensors not responding, check Finch connection");
-      return null;
-      }
-   }
 
    /**
     * The current temperature reading at the temperature probe.  The value
@@ -808,18 +808,18 @@ public final class Finch extends BaseFinchApplication
     * @return The current temperature in degrees Celsius
     */
    public double getTemperature()
-   {
-   final ThermistorService service = getThermistorService();
-   if (service != null)
       {
-      return service.getCelsiusTemperature(0);
+      final ThermistorService service = getThermistorService();
+      if (service != null)
+         {
+         return service.getCelsiusTemperature(0);
+         }
+      else
+         {
+         System.out.println("Temperature sensor not responding, check Finch connection");
+         return 0;
+         }
       }
-   else
-      {
-      System.out.println("Temperature sensor not responding, check Finch connection");
-      return 0;
-      }
-   }
 
    /**
     * Returns true if the temperature is greater than the value specified
@@ -829,9 +829,9 @@ public final class Finch extends BaseFinchApplication
     * @return true if the temperature exceeds the value specified by limit
     */
    public boolean isTemperature(final double limit)
-   {
-   return (limit > getTemperature());
-   }
+      {
+      return (limit > getTemperature());
+      }
 
    /**
     * Displays a graph of the X, Y, and Z accelerometer values.  Note that this graph
@@ -841,45 +841,45 @@ public final class Finch extends BaseFinchApplication
     */
 
    public void showAccelerometerGraph()
-   {
-   accelerometerPlotter.addDataset(Color.RED);
-   accelerometerPlotter.addDataset(Color.GREEN);
-   accelerometerPlotter.addDataset(Color.BLUE);
+      {
+      accelerometerPlotter.addDataset(Color.RED);
+      accelerometerPlotter.addDataset(Color.GREEN);
+      accelerometerPlotter.addDataset(Color.BLUE);
 
-   //Schedule a job for the event-dispatching thread: creating and showing this application's GUI.
-   SwingUtilities.invokeLater(
-         new Runnable()
-         {
-         public void run()
+      //Schedule a job for the event-dispatching thread: creating and showing this application's GUI.
+      SwingUtilities.invokeLater(
+            new Runnable()
             {
-            final Component plotComponent = accelerometerPlotter.getComponent();
+            public void run()
+               {
+               final Component plotComponent = accelerometerPlotter.getComponent();
 
-            // create the main frame
-            jFrameAccel = new JFrame("Accelerometer Values");
+               // create the main frame
+               jFrameAccel = new JFrame("Accelerometer Values");
 
-            // add the root panel to the JFrame
-            jFrameAccel.add(plotComponent);
+               // add the root panel to the JFrame
+               jFrameAccel.add(plotComponent);
 
-            // set various properties for the JFrame
-            jFrameAccel.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            jFrameAccel.addWindowListener(
-                  new WindowAdapter()
-                  {
-                  @Override
-                  public void windowClosing(final WindowEvent e)
+               // set various properties for the JFrame
+               jFrameAccel.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+               jFrameAccel.addWindowListener(
+                     new WindowAdapter()
                      {
-                     jFrameAccel.setVisible(false);
-                     jFrameAccel.dispose();
-                     }
-                  });
-            jFrameAccel.setBackground(Color.WHITE);
-            jFrameAccel.setResizable(false);
-            jFrameAccel.pack();
-            jFrameAccel.setLocation(400, 200);// center the window on the screen
-            jFrameAccel.setVisible(true);
-            }
-         });
-   }
+                     @Override
+                     public void windowClosing(final WindowEvent e)
+                        {
+                        jFrameAccel.setVisible(false);
+                        jFrameAccel.dispose();
+                        }
+                     });
+               jFrameAccel.setBackground(Color.WHITE);
+               jFrameAccel.setResizable(false);
+               jFrameAccel.pack();
+               jFrameAccel.setLocation(400, 200);// center the window on the screen
+               jFrameAccel.setVisible(true);
+               }
+            });
+      }
 
    /**
     * updates the accelerometer graph with accelerometer data specified by xVal,
@@ -890,18 +890,18 @@ public final class Finch extends BaseFinchApplication
     * @param zVal  The Z axis acceleration value
     */
    public void updateAccelerometerGraph(final double xVal, final double yVal, final double zVal)
-   {
-   accelerometerPlotter.setCurrentValues(xVal, yVal, zVal);
-   }
+      {
+      accelerometerPlotter.setCurrentValues(xVal, yVal, zVal);
+      }
 
    /**
     * Closes the opened Accelerometer Graph
     */
    public void closeAccelerometerGraph()
-   {
-   jFrameAccel.setVisible(false);
-   jFrameAccel.dispose();
-   }
+      {
+      jFrameAccel.setVisible(false);
+      jFrameAccel.dispose();
+      }
 
    /**
     * Displays a graph of the left and right light sensor values.  Note that this graph
@@ -911,44 +911,44 @@ public final class Finch extends BaseFinchApplication
     */
 
    public void showLightSensorGraph()
-   {
-   lightPlotter.addDataset(Color.RED);
-   lightPlotter.addDataset(Color.BLUE);
+      {
+      lightPlotter.addDataset(Color.RED);
+      lightPlotter.addDataset(Color.BLUE);
 
-   //Schedule a job for the event-dispatching thread: creating and showing this application's GUI.
-   SwingUtilities.invokeLater(
-         new Runnable()
-         {
-         public void run()
+      //Schedule a job for the event-dispatching thread: creating and showing this application's GUI.
+      SwingUtilities.invokeLater(
+            new Runnable()
             {
-            final Component plotComponent = lightPlotter.getComponent();
+            public void run()
+               {
+               final Component plotComponent = lightPlotter.getComponent();
 
-            // create the main frame
-            jFrameLight = new JFrame("Light Sensor Values");
+               // create the main frame
+               jFrameLight = new JFrame("Light Sensor Values");
 
-            // add the root panel to the JFrame
-            jFrameLight.add(plotComponent);
+               // add the root panel to the JFrame
+               jFrameLight.add(plotComponent);
 
-            // set various properties for the JFrame
-            jFrameLight.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            jFrameLight.addWindowListener(
-                  new WindowAdapter()
-                  {
-                  @Override
-                  public void windowClosing(final WindowEvent e)
+               // set various properties for the JFrame
+               jFrameLight.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+               jFrameLight.addWindowListener(
+                     new WindowAdapter()
                      {
-                     jFrameLight.setVisible(false);
-                     jFrameLight.dispose();
-                     }
-                  });
-            jFrameLight.setBackground(Color.WHITE);
-            jFrameLight.setResizable(false);
-            jFrameLight.pack();
-            jFrameLight.setLocation(20, 200);// center the window on the screen
-            jFrameLight.setVisible(true);
-            }
-         });
-   }
+                     @Override
+                     public void windowClosing(final WindowEvent e)
+                        {
+                        jFrameLight.setVisible(false);
+                        jFrameLight.dispose();
+                        }
+                     });
+               jFrameLight.setBackground(Color.WHITE);
+               jFrameLight.setResizable(false);
+               jFrameLight.pack();
+               jFrameLight.setLocation(20, 200);// center the window on the screen
+               jFrameLight.setVisible(true);
+               }
+            });
+      }
 
    /**
     * Updates the light sensor graph with the left and right light sensor data.
@@ -957,18 +957,18 @@ public final class Finch extends BaseFinchApplication
     * @param rightSensor  Variable containing right light sensor value
     */
    public void updateLightSensorGraph(final int leftSensor, final int rightSensor)
-   {
-   lightPlotter.setCurrentValues(leftSensor, rightSensor);
-   }
+      {
+      lightPlotter.setCurrentValues(leftSensor, rightSensor);
+      }
 
    /**
     * Closes the opened Light sensor Graph
     */
    public void closeLightSensorGraph()
-   {
-   jFrameLight.setVisible(false);
-   jFrameLight.dispose();
-   }
+      {
+      jFrameLight.setVisible(false);
+      jFrameLight.dispose();
+      }
 
    /**
     * Displays a graph of the temperature value.  Note that this graph
@@ -978,43 +978,43 @@ public final class Finch extends BaseFinchApplication
     */
 
    public void showTemperatureGraph()
-   {
-   temperaturePlotter.addDataset(Color.GREEN);
+      {
+      temperaturePlotter.addDataset(Color.GREEN);
 
-   //Schedule a job for the event-dispatching thread: creating and showing this application's GUI.
-   SwingUtilities.invokeLater(
-         new Runnable()
-         {
-         public void run()
+      //Schedule a job for the event-dispatching thread: creating and showing this application's GUI.
+      SwingUtilities.invokeLater(
+            new Runnable()
             {
-            final Component plotComponent = temperaturePlotter.getComponent();
+            public void run()
+               {
+               final Component plotComponent = temperaturePlotter.getComponent();
 
-            // create the main frame
-            jFrameTemp = new JFrame("Temperature Values");
+               // create the main frame
+               jFrameTemp = new JFrame("Temperature Values");
 
-            // add the root panel to the JFrame
-            jFrameTemp.add(plotComponent);
+               // add the root panel to the JFrame
+               jFrameTemp.add(plotComponent);
 
-            // set various properties for the JFrame
-            jFrameTemp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            jFrameTemp.addWindowListener(
-                  new WindowAdapter()
-                  {
-                  @Override
-                  public void windowClosing(final WindowEvent e)
+               // set various properties for the JFrame
+               jFrameTemp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+               jFrameTemp.addWindowListener(
+                     new WindowAdapter()
                      {
-                     jFrameTemp.setVisible(false);
-                     jFrameTemp.dispose();
-                     }
-                  });
-            jFrameTemp.setBackground(Color.WHITE);
-            jFrameTemp.setResizable(false);
-            jFrameTemp.pack();
-            jFrameTemp.setLocation(780, 200);// center the window on the screen
-            jFrameTemp.setVisible(true);
-            }
-         });
-   }
+                     @Override
+                     public void windowClosing(final WindowEvent e)
+                        {
+                        jFrameTemp.setVisible(false);
+                        jFrameTemp.dispose();
+                        }
+                     });
+               jFrameTemp.setBackground(Color.WHITE);
+               jFrameTemp.setResizable(false);
+               jFrameTemp.pack();
+               jFrameTemp.setLocation(780, 200);// center the window on the screen
+               jFrameTemp.setVisible(true);
+               }
+            });
+      }
 
    /**
     * Updates the temperature graph with the most recent temperature data.
@@ -1023,18 +1023,18 @@ public final class Finch extends BaseFinchApplication
     */
 
    public void updateTemperatureGraph(final double temp)
-   {
-   temperaturePlotter.setCurrentValues(temp);
-   }
+      {
+      temperaturePlotter.setCurrentValues(temp);
+      }
 
    /**
     * Closes the opened temperature Graph
     */
    public void closeTemperatureGraph()
-   {
-   jFrameTemp.setVisible(false);
-   jFrameTemp.dispose();
-   }
+      {
+      jFrameTemp.setVisible(false);
+      jFrameTemp.dispose();
+      }
 
    /**
     * This method properly closes the connection with the Finch and resets the Finch so that
@@ -1045,22 +1045,22 @@ public final class Finch extends BaseFinchApplication
     * of your program.
     */
    public void quit()
-   {
-   if (jFrameAccel != null)
       {
-      closeAccelerometerGraph();
-      }
-   if (jFrameLight != null)
-      {
-      closeLightSensorGraph();
-      }
-   if (jFrameTemp != null)
-      {
-      closeTemperatureGraph();
-      }
+      if (jFrameAccel != null)
+         {
+         closeAccelerometerGraph();
+         }
+      if (jFrameLight != null)
+         {
+         closeLightSensorGraph();
+         }
+      if (jFrameTemp != null)
+         {
+         closeTemperatureGraph();
+         }
 
-   shutdown();
-   }
+      shutdown();
+      }
    }
 
 
