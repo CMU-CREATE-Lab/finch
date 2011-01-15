@@ -112,27 +112,27 @@ final class SearchGameView
     * Display GUI
     */
    public void show()
-   {
-   frame.setVisible(true);
-   screenGraphics = screen.getGraphics();
-   }
+      {
+      frame.setVisible(true);
+      screenGraphics = screen.getGraphics();
+      }
 
    /**
     * Set listener to handle menu input
     */
    public void setListener(ActionListener listener)
-   {
-   startGame.addActionListener(listener);
-   endGame.addActionListener(listener);
+      {
+      startGame.addActionListener(listener);
+      endGame.addActionListener(listener);
 
-   voiceToggle.addActionListener(listener);
-   buzzToggle.addActionListener(listener);
-   ledToggle.addActionListener(listener);
+      voiceToggle.addActionListener(listener);
+      buzzToggle.addActionListener(listener);
+      ledToggle.addActionListener(listener);
 
-   highSense.addActionListener(listener);
-   midSense.addActionListener(listener);
-   lowSense.addActionListener(listener);
-   }
+      highSense.addActionListener(listener);
+      midSense.addActionListener(listener);
+      lowSense.addActionListener(listener);
+      }
 
    public boolean isVoiceOn()
       {
@@ -153,112 +153,112 @@ final class SearchGameView
     * Return 3-level sensitivity setting
     */
    public int getSensitivityLevel()
-   {
-   if (highSense.isSelected())
       {
-      return 2;
+      if (highSense.isSelected())
+         {
+         return 2;
+         }
+      else if (midSense.isSelected())
+         {
+         return 1;
+         }
+      else
+         {
+         return 0;
+         }
       }
-   else if (midSense.isSelected())
-      {
-      return 1;
-      }
-   else
-      {
-      return 0;
-      }
-   }
 
    /**
     * return current screen width
     */
    public int getScreenWidth()
-   {
-   return (int)(screen.getSize().getWidth());
-   }
+      {
+      return (int)(screen.getSize().getWidth());
+      }
 
    /**
     * return current screen height
     */
    public int getScreenHeight()
-   {
-   return (int)(screen.getSize().getHeight());
-   }
+      {
+      return (int)(screen.getSize().getHeight());
+      }
 
    /**
     * Screen will repaint in backgroundColor (set to white in constructor)
     */
    public void clearScreen()
-   {
-   screen.repaint();
-   }
+      {
+      screen.repaint();
+      }
 
    /**
     * Set player color
     * @param c
     */
    public void setPlayerColor(Color c)
-   {
-   playerColor = c;
-   }
+      {
+      playerColor = c;
+      }
 
    /**
     * Set player radius
     * @param r
     */
    public void setPlayerRadius(int r)
-   {
-   playerRadius = r;
-   }
+      {
+      playerRadius = r;
+      }
 
    /**
     * Erase player in position x,y
     */
    public void clearPlayerPosition(int x, int y)
-   {
-   screenGraphics.setColor(Color.white);
-   screenGraphics.fillRect(x - playerRadius, y - playerRadius, playerRadius * 2, playerRadius * 2);
-   }
+      {
+      screenGraphics.setColor(Color.white);
+      screenGraphics.fillRect(x - playerRadius, y - playerRadius, playerRadius * 2, playerRadius * 2);
+      }
 
    /**
     * Draw player in position x, y
     */
    public void setPlayerPosition(int x, int y)
-   {
-   screenGraphics.setColor(playerColor);
-   screenGraphics.fillOval(x - playerRadius, y - playerRadius, playerRadius * 2, playerRadius * 2);
-   }
+      {
+      screenGraphics.setColor(playerColor);
+      screenGraphics.fillOval(x - playerRadius, y - playerRadius, playerRadius * 2, playerRadius * 2);
+      }
 
    /**
     * Draw target with radius in position x, y
     */
    public void showTarget(int x, int y, int radius)
-   {
-   screenGraphics.setColor(Color.blue);
-   screenGraphics.fillOval(x - 3, y - 3, 6, 6);
-   screenGraphics.drawOval(x - radius, y - radius, radius * 2, radius * 2);
-   }
+      {
+      screenGraphics.setColor(Color.blue);
+      screenGraphics.fillOval(x - 3, y - 3, 6, 6);
+      screenGraphics.drawOval(x - radius, y - radius, radius * 2, radius * 2);
+      }
 
    /**
     * Set status font to 12pt
     */
    public void makeStatusSmall()
-   {
-   status.setFont(new Font("Times New Roman", Font.PLAIN, 12));
-   }
+      {
+      status.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+      }
 
    /**
     * Set status font to 60pt
     */
    public void makeStatusBig()
-   {
-   status.setFont(new Font("Times New Roman", Font.PLAIN, 60));
-   }
+      {
+      status.setFont(new Font("Times New Roman", Font.PLAIN, 60));
+      }
 
    /**
     * Set status to display message s
     */
    public void setStatus(String s)
-   {
-   status.setText(s);
-   }
+      {
+      status.setText(s);
+      }
    }

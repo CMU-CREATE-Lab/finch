@@ -265,14 +265,14 @@ public final class DefaultFinchController implements FinchController
     * the state.
     */
    public AccelerometerGs getAccelerometerGs()
-   {
-   if (accelerometerUnitConversionStrategy != null)
       {
-      return accelerometerUnitConversionStrategy.convert(getAccelerometerState());
-      }
+      if (accelerometerUnitConversionStrategy != null)
+         {
+         return accelerometerUnitConversionStrategy.convert(getAccelerometerState());
+         }
 
-   return null;
-   }
+      return null;
+      }
 
    public Boolean isObstacleDetected(final int id)
       {
@@ -307,11 +307,11 @@ public final class DefaultFinchController implements FinchController
     * succeeded, <code>null</code> otherwise.
     */
    public boolean setFullColorLED(final Color color)
-   {
-   return setFullColorLED(color.getRed(),
-                          color.getGreen(),
-                          color.getBlue());
-   }
+      {
+      return setFullColorLED(color.getRed(),
+                             color.getGreen(),
+                             color.getBlue());
+      }
 
    private class FinchPinger implements Runnable
       {
