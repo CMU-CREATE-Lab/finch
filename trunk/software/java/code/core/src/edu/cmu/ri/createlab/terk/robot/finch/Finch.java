@@ -191,6 +191,89 @@ public final class Finch extends BaseFinchApplication
       }
 
    /**
+    * Sets the color of the LED in the Finch's beak using a Color object for the length of time specified by duration.
+    *
+    * @param     color is a Color object that determines the beaks color
+    * @param     duration is the length of time the color will display on the beak
+    */
+   public void setLED(final Color color, final int duration)
+   {
+   if (color != null)
+      {
+      final FullColorLEDService service = getFullColorLEDService();
+      if (service != null)
+         {
+         service.set(0, color);
+         sleep(duration);
+         setLED(new Color(0,0,0));
+         }
+      else
+         {
+         System.out.println("LED not responding, check Finch connection");
+         }
+      }
+   else
+      {
+      System.out.println("Color object was null, LED could not be set");
+      }
+   }
+
+   /**
+    * Sets the color of the LED in the Finch's beak for the length of time specified by duration.  
+    * The LED can be any color that can be created by mixing red, green, and blue; turning on all three colors in equal amounts results
+    * in white light.  Valid ranges for the red, green, and blue elements are 0 to 255.
+    *
+    * @param     red sets the intensity of the red element of the LED
+    * @param     green sets the intensity of the green element of the LED
+    * @param     blue sets the intensity of the blue element of the LED
+    * @param     duration is the length of time the color will display on the beak
+    */
+
+   public void setLED(final int red, final int green, final int blue, final int duration)
+   {
+   boolean inRange = true;
+   if (red > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      {
+      inRange = false;
+      System.out.println("Red value exceeds appropriate values (0-255), LED will not be set");
+      }
+   if (red < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      {
+      inRange = false;
+      System.out.println("Red value is negative, LED will not be set");
+      }
+
+   if (green > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      {
+      inRange = false;
+      System.out.println("Green value exceeds appropriate values (0-255), LED will not be set");
+      }
+   if (green < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      {
+      inRange = false;
+      System.out.println("Green value is negative, LED will not be set");
+      }
+
+   if (blue > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      {
+      inRange = false;
+      System.out.println("Blue value exceeds appropriate values (0-255), LED will not be set");
+      }
+   if (blue < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      {
+      inRange = false;
+      System.out.println("Blue value is negative, LED will not be set");
+      }
+
+   if (inRange)
+      {
+      setLED(new Color(red, green, blue));
+      sleep(duration);
+      setLED(new Color(0,0,0));
+      }
+   }
+
+   /**
     * Stops both wheels.
     */
    public void stopWheels()
@@ -546,7 +629,7 @@ public final class Finch extends BaseFinchApplication
       }
 
    /**
-    * Plays a wav file at the specificied fileLocation path.  If you place the audio
+    * Plays a wav file over computer speakers at the specificied fileLocation path.  If you place the audio
     * file in the same path as your source, you can just specify the name of the file.
     *
     * @param     fileLocation Absolute path of the file or name of the file if located in some directory as source code
@@ -575,7 +658,7 @@ public final class Finch extends BaseFinchApplication
       }
 
    /**
-    * Takes the text of 'sayThis' and synthesizes it into a sound file.  Plays the sound file over
+    * Takes the text of 'sayThis' and synthesizes it into a sound file and plays the sound file over
     * computer speakers.  sayThis can be arbitrarily long and can include variable arguments.
     *
     * Example:
@@ -592,6 +675,39 @@ public final class Finch extends BaseFinchApplication
          if (mouth != null)
             {
             AudioHelper.playClip(mouth.getSpeech(sayThis));
+            }
+         else
+            {
+            System.out.println("Speech not working");
+            }
+         }
+      else
+         {
+         System.out.println("Given text to speak was null or empty");
+         }
+      }
+
+   /**
+    * Takes the text of 'sayThis' and synthesizes it into a sound file and plays the sound file over
+    * computer speakers. sayThis can be arbitrarily long and can include variable arguments. The duration
+    * argument allows you to delay program execution for a number of milliseconds. 
+    *
+    * Example:
+    *   myFinch.saySomething("My light sensor has a value of "+ lightSensor + " and temperature is " + tempInCelcius);
+    *
+    * @param     sayThis The string of text that will be spoken by the computer
+    * @param     duration The time in milliseconds to halt further program execution
+    */
+   public void saySomething(final String sayThis, final int duration)
+      {
+      if (sayThis != null && sayThis.length() > 0)
+         {
+         final Mouth mouth = Mouth.getInstance();
+
+         if (mouth != null)
+            {
+            AudioHelper.playClip(mouth.getSpeech(sayThis));
+            sleep(duration);
             }
          else
             {
