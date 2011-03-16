@@ -147,6 +147,15 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="JNAerator">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/JNAerator/jnaerator-0.9.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="Log4j">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/java/lib/log4j/log4j-1.2.16.jar!/" />
