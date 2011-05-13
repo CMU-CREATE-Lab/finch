@@ -42,17 +42,12 @@ final class FullColorLEDServiceImpl extends BaseFullColorLEDServiceImpl
 
    public Color[] set(final boolean[] mask, final Color[] colors)
       {
-      LOG.debug("FullColorLEDServiceImpl.set(" + (mask == null ? null : mask.length) + ", " + (colors == null ? null : colors.length) + ")");
       if (mask != null && colors != null)
          {
          if (mask.length > 0 && colors.length > 0)
             {
             if (mask[0])
                {
-               if (LOG.isDebugEnabled())
-                  {
-                  LOG.debug("FullColorLEDServiceImpl.set(): setting LED to color [" + colors[0] + "]");
-                  }
                if (finchController.setFullColorLED(colors[0]))
                   {
                   return new Color[]{colors[0]};
