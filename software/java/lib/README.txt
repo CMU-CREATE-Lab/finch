@@ -8,7 +8,7 @@ The Finch software package relies on a number of third-party open source package
      - Used to synthesize speech from text.
 
    * HIDAPI (http://www.signal11.us/oss/hidapi)
-     - Native code for communicating with USB devices under Mac OS.
+     - Native code for communicating with USB devices under Mac OS and Linux.
 
    * JDom (http://www.jdom.org/)
      - Used for xml parsing by RSS Readers.

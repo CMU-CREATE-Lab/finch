@@ -58,7 +58,7 @@ public final class DefaultFinchController implements FinchController
             {
             LOG.debug("DefaultFinchController.create(): creating HID device for vendor ID [" + Integer.toHexString(FinchConstants.USB_VENDOR_ID) + "] and product ID [" + Integer.toHexString(FinchConstants.USB_PRODUCT_ID) + "]");
             }
-         final HIDDevice hidDevice = HIDDeviceFactory.create(FinchConstants.USB_VENDOR_ID, FinchConstants.USB_PRODUCT_ID);
+         final HIDDevice hidDevice = HIDDeviceFactory.create(FinchConstants.FINCH_HID_DEVICE_DESCRIPTOR);
 
          LOG.debug("DefaultFinchController.create(): attempting connection...");
          hidDevice.connectExclusively();

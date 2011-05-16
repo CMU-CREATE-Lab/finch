@@ -4,6 +4,7 @@ import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConvers
 import edu.cmu.ri.createlab.terk.services.accelerometer.unitconversionstrategies.AccelerometerUnitConversionStrategyFreescaleMMA7660FC;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStrategy;
 import edu.cmu.ri.createlab.terk.services.thermistor.unitconversionstrategies.ThermistorUnitConversionStrategyMF52A103F3380;
+import edu.cmu.ri.createlab.usb.hid.HIDDeviceDescriptor;
 
 /**
  * <p>
@@ -16,6 +17,15 @@ public final class FinchConstants
    {
    public static final short USB_VENDOR_ID = 0x2354;
    public static final short USB_PRODUCT_ID = 0x1111;
+
+   private static final int INPUT_REPORT_LENGTH_IN_BYTES = 9;  // count includes the report ID
+   private static final int OUTPUT_REPORT_LENGTH_IN_BYTES = 9; // count includes the report ID
+
+   public static final HIDDeviceDescriptor FINCH_HID_DEVICE_DESCRIPTOR = new HIDDeviceDescriptor(USB_VENDOR_ID,
+                                                                                                 USB_PRODUCT_ID,
+                                                                                                 INPUT_REPORT_LENGTH_IN_BYTES,
+                                                                                                 OUTPUT_REPORT_LENGTH_IN_BYTES,
+                                                                                                 "Finch");
 
    /** The number of accelerometers */
    public static final int ACCELEROMETER_DEVICE_COUNT = 1;
