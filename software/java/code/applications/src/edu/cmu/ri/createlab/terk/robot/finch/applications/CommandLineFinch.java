@@ -357,7 +357,7 @@ public final class CommandLineFinch extends BaseCommandLineApplication
                final String filePath = readString("Absolute path to sound file: ");
                if (filePath == null || filePath.length() == 0)
                   {
-                  println("Invalid path");
+                  println("Invalid path (" + filePath + ")");
                   return;
                   }
 

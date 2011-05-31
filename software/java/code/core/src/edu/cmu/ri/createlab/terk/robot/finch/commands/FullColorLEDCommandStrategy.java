@@ -26,11 +26,13 @@ public final class FullColorLEDCommandStrategy extends CreateLabHIDCommandStrate
                                 ByteUtils.intToUnsignedByte(MathUtils.ensureRange(blue, FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY, FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY))};
       }
 
+   @Override
    protected int getSizeOfExpectedResponse()
       {
       return SIZE_IN_BYTES_OF_EXPECTED_RESPONSE;
       }
 
+   @Override
    protected byte[] getCommand()
       {
       return command.clone();
