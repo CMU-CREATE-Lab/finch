@@ -38,11 +38,13 @@ public final class BuzzerCommandStrategy extends CreateLabHIDCommandStrategy
       return (byte)((val << 24) >> 24);
       }
 
+   @Override
    protected int getSizeOfExpectedResponse()
       {
       return SIZE_IN_BYTES_OF_EXPECTED_RESPONSE;
       }
 
+   @Override
    protected byte[] getCommand()
       {
       return command.clone();

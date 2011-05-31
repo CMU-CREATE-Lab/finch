@@ -13,11 +13,13 @@ public final class EmergencyStopCommandStrategy extends CreateLabHIDCommandStrat
    /** The size of the expected response, in bytes */
    private static final int SIZE_IN_BYTES_OF_EXPECTED_RESPONSE = 0;
 
+   @Override
    protected int getSizeOfExpectedResponse()
       {
       return SIZE_IN_BYTES_OF_EXPECTED_RESPONSE;
       }
 
+   @Override
    protected byte[] getCommand()
       {
       return COMMAND.clone();

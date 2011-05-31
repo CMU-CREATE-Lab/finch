@@ -1,13 +1,14 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
-import edu.cmu.ri.createlab.usb.hid.HIDCommandResult;
+import edu.cmu.ri.createlab.usb.hid.CreateLabHIDReturnValueCommandStrategy;
+import edu.cmu.ri.createlab.usb.hid.HIDCommandResponse;
 import edu.cmu.ri.createlab.util.ByteUtils;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class GetAccelerometerCommandStrategy extends ReturnValueCommandStrategy<AccelerometerState>
+public final class GetAccelerometerCommandStrategy extends CreateLabHIDReturnValueCommandStrategy<AccelerometerState>
    {
    /** The command character used to request the value of the finch's accelerometer. */
    private static final byte[] COMMAND = {'A'};
@@ -18,17 +19,20 @@ public final class GetAccelerometerCommandStrategy extends ReturnValueCommandStr
     */
    private static final int SIZE_IN_BYTES_OF_EXPECTED_RESPONSE = 5;
 
+   @Override
    protected int getSizeOfExpectedResponse()
       {
       return SIZE_IN_BYTES_OF_EXPECTED_RESPONSE;
       }
 
+   @Override
    protected byte[] getCommand()
       {
       return COMMAND.clone();
       }
 
-   public AccelerometerState convertResult(final HIDCommandResult result)
+   @Override
+   public AccelerometerState convertResponse(final HIDCommandResponse result)
       {
       if (result != null && result.wasSuccessful())
          {
