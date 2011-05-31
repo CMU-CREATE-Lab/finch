@@ -246,7 +246,7 @@ public interface FinchInterface
     * @param     frequency Frequency in Hertz of the tone to be played
     * @param     duration  Duration in milliseconds of the tone
     */
-   void buzzBlocking(final int frequency, final int duration)
+   void buzzBlocking(final int frequency, final int duration);
    
    /**
     * Returns the value of the left light sensor.  Valid values range from 0 to 255, with higher
