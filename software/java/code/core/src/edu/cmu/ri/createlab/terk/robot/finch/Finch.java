@@ -842,7 +842,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       }
 
    /**
-    * Returns true if the left light sensor is great than the value specified
+    * Returns true if the left light sensor is greater than the value specified
     * by limit, false otherwise.
     *
     * @param limit The value the light sensor needs to exceed
@@ -851,7 +851,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isLeftLightSensor(final int limit)
       {
-      return (limit > getLeftLightSensor());
+      return (limit < getLeftLightSensor());
       }
 
    /**
@@ -864,7 +864,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isRightLightSensor(final int limit)
       {
-      return (limit > getRightLightSensor());
+      return (limit < getRightLightSensor());
       }
 
    /**
@@ -984,7 +984,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isTemperature(final double limit)
       {
-      return (limit > getTemperature());
+      return (limit < getTemperature());
       }
 
    /**
