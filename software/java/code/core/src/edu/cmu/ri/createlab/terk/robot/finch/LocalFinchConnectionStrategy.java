@@ -33,7 +33,7 @@ public final class LocalFinchConnectionStrategy extends ConnectionStrategy
                switch (newState)
                   {
                   case CONNECTED:
-                     serviceManager = new FinchServiceManager((FinchController)finchConnectivityManager.getCreateLabDeviceProxy());
+                     serviceManager = new FinchServiceManager(finchConnectivityManager.getCreateLabDeviceProxy());
                      notifyListenersOfConnectionEvent();
                      break;
                   case DISCONNECTED:
@@ -75,7 +75,7 @@ public final class LocalFinchConnectionStrategy extends ConnectionStrategy
 
    public void cancelConnect()
       {
-      finchConnectivityManager.cancelScanning();
+      finchConnectivityManager.cancelConnecting();
       }
 
    public void disconnect()
