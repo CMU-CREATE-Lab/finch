@@ -8,13 +8,13 @@ import java.awt.event.WindowEvent;
 import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.Finch;
 import edu.cmu.ri.createlab.userinterface.component.DatasetPlotter;
-import org.jdesktop.layout.GroupLayout;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
@@ -65,28 +65,28 @@ public final class AccelerometerHUD
 
                groupLayout.setHorizontalGroup(
                      groupLayout.createSequentialGroup()
-                           .add(plotComponent)
-                           .add(horizontalSpacer)
-                           .add(
-                                 groupLayout.createParallelGroup(GroupLayout.CENTER)
-                                       .add(xPlotComponent)
-                                       .add(topVerticalSpacer)
-                                       .add(yPlotComponent)
-                                       .add(bottomVerticalSpacer)
-                                       .add(zPlotComponent))
+                           .addComponent(plotComponent)
+                           .addComponent(horizontalSpacer)
+                           .addGroup(
+                                 groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                       .addComponent(xPlotComponent)
+                                       .addComponent(topVerticalSpacer)
+                                       .addComponent(yPlotComponent)
+                                       .addComponent(bottomVerticalSpacer)
+                                       .addComponent(zPlotComponent))
                );
 
                groupLayout.setVerticalGroup(
-                     groupLayout.createParallelGroup(GroupLayout.CENTER)
-                           .add(plotComponent)
-                           .add(horizontalSpacer)
-                           .add(
+                     groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                           .addComponent(plotComponent)
+                           .addComponent(horizontalSpacer)
+                           .addGroup(
                                  groupLayout.createSequentialGroup()
-                                       .add(xPlotComponent)
-                                       .add(topVerticalSpacer)
-                                       .add(yPlotComponent)
-                                       .add(bottomVerticalSpacer)
-                                       .add(zPlotComponent))
+                                       .addComponent(xPlotComponent)
+                                       .addComponent(topVerticalSpacer)
+                                       .addComponent(yPlotComponent)
+                                       .addComponent(bottomVerticalSpacer)
+                                       .addComponent(zPlotComponent))
                );
 
                // create the main frame
