@@ -1,5 +1,6 @@
 package edu.cmu.ri.createlab.terk.robot.finch.services;
 
+import java.io.File;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import edu.cmu.ri.createlab.terk.TerkConstants;
@@ -19,7 +20,7 @@ final class AudioServiceImpl extends BaseAudioServiceImpl
    {
    private static final Logger LOG = Logger.getLogger(AudioServiceImpl.class);
 
-   static AudioServiceImpl create(final FinchController finchController)
+   static AudioServiceImpl create(final FinchController finchController, final File audioDirectory)
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
@@ -32,16 +33,18 @@ final class AudioServiceImpl extends BaseAudioServiceImpl
       basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MAX_FREQUENCY, FinchConstants.AUDIO_DEVICE_MAX_FREQUENCY);
 
       return new AudioServiceImpl(finchController,
-                                  basicPropertyManager);
+                                  basicPropertyManager,
+                                  audioDirectory);
       }
 
    private final FinchController finchController;
    private final Executor executor = Executors.newCachedThreadPool();
 
    private AudioServiceImpl(final FinchController finchController,
-                            final PropertyManager propertyManager)
+                            final PropertyManager propertyManager,
+                            final File audioDirectory)
       {
-      super(propertyManager);
+      super(propertyManager, audioDirectory);
       this.finchController = finchController;
       }
 
