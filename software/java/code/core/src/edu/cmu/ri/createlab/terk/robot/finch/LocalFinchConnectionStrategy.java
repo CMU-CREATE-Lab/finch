@@ -4,6 +4,7 @@ import edu.cmu.ri.createlab.device.connectivity.CreateLabDeviceConnectionEventLi
 import edu.cmu.ri.createlab.device.connectivity.CreateLabDeviceConnectionState;
 import edu.cmu.ri.createlab.device.connectivity.FinchConnectivityManager;
 import edu.cmu.ri.createlab.terk.application.ConnectionStrategy;
+import edu.cmu.ri.createlab.terk.robot.finch.services.DefaultFinchServiceFactoryHelper;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
 import edu.cmu.ri.createlab.terk.services.ServiceManager;
 import org.apache.log4j.Level;
@@ -33,7 +34,7 @@ public final class LocalFinchConnectionStrategy extends ConnectionStrategy
                switch (newState)
                   {
                   case CONNECTED:
-                     serviceManager = new FinchServiceManager(finchConnectivityManager.getCreateLabDeviceProxy());
+                     serviceManager = new FinchServiceManager(finchConnectivityManager.getCreateLabDeviceProxy(), DefaultFinchServiceFactoryHelper.getInstance());
                      notifyListenersOfConnectionEvent();
                      break;
                   case DISCONNECTED:

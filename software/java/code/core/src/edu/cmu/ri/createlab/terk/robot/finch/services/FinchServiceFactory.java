@@ -25,7 +25,7 @@ public final class FinchServiceFactory
 
    private final Map<String, ServiceCreator<FinchController>> typeIdToServiceCreatorsMap = new HashMap<String, ServiceCreator<FinchController>>();
 
-   public FinchServiceFactory()
+   public FinchServiceFactory(final FinchServiceFactoryHelper finchServiceFactoryHelper)
       {
       typeIdToServiceCreatorsMap.put(AccelerometerService.TYPE_ID,
                                      new ServiceCreator<FinchController>()
@@ -41,7 +41,7 @@ public final class FinchServiceFactory
                                      {
                                      public Service createService(final FinchController finchController)
                                         {
-                                        return AudioServiceImpl.create(finchController);
+                                        return AudioServiceImpl.create(finchController, finchServiceFactoryHelper.getAudioDirectory());
                                         }
                                      });
       typeIdToServiceCreatorsMap.put(BuzzerService.TYPE_ID,

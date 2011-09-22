@@ -27,10 +27,10 @@ public final class FinchServiceManager extends AbstractServiceManager
    private static final Logger LOG = Logger.getLogger(FinchServiceManager.class);
 
    private final FinchController finchController;
-   private final FinchServiceFactory finchServiceFactory = new FinchServiceFactory();
+   private final FinchServiceFactory serviceFactory;
    private final Map<String, Service> loadedServices = Collections.synchronizedMap(new HashMap<String, Service>());
 
-   public FinchServiceManager(final FinchController finchController)
+   public FinchServiceManager(final FinchController finchController, final FinchServiceFactoryHelper finchServiceFactoryHelper)
       {
       if (finchController == null)
          {
@@ -38,6 +38,7 @@ public final class FinchServiceManager extends AbstractServiceManager
          }
 
       this.finchController = finchController;
+      this.serviceFactory = new FinchServiceFactory(finchServiceFactoryHelper);
 
       // get the collection of supported services from the peer's proxy
       final Set<String> supportedServices = new HashSet<String>();
@@ -62,7 +63,7 @@ public final class FinchServiceManager extends AbstractServiceManager
          LOG.trace("FinchServiceManager.loadService(" + typeId + ")");
          }
 
-      if (finchServiceFactory != null)
+      if (serviceFactory != null)
          {
          Service service;
 
@@ -79,7 +80,7 @@ public final class FinchServiceManager extends AbstractServiceManager
                   LOG.debug("FinchServiceManager.loadService() needs to load the [" + typeId + "] service");
                   }
 
-               service = finchServiceFactory.createService(typeId, finchController);
+               service = serviceFactory.createService(typeId, finchController);
 
                // cache this service so future calls won't have to create it
                loadedServices.put(typeId, service);

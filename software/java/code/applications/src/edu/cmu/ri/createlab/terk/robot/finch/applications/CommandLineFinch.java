@@ -9,6 +9,7 @@ import edu.cmu.ri.createlab.device.CreateLabDevicePingFailureEventListener;
 import edu.cmu.ri.createlab.terk.robot.finch.DefaultFinchController;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
+import edu.cmu.ri.createlab.terk.robot.finch.services.DefaultFinchServiceFactoryHelper;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
 import edu.cmu.ri.createlab.terk.services.ServiceManager;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
@@ -549,7 +550,7 @@ public final class CommandLineFinch extends BaseCommandLineApplication
                   finchController = null;
                   }
                });
-         serviceManager = new FinchServiceManager(finchController);
+         serviceManager = new FinchServiceManager(finchController, DefaultFinchServiceFactoryHelper.getInstance());
          return true;
          }
       }
