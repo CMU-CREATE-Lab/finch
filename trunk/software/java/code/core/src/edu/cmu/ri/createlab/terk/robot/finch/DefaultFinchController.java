@@ -9,6 +9,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import edu.cmu.ri.createlab.audio.AudioHelper;
 import edu.cmu.ri.createlab.device.CreateLabDevicePingFailureEventListener;
+import edu.cmu.ri.createlab.speech.Mouth;
 import edu.cmu.ri.createlab.terk.robot.finch.commands.BuzzerCommandStrategy;
 import edu.cmu.ri.createlab.terk.robot.finch.commands.DisconnectCommandStrategy;
 import edu.cmu.ri.createlab.terk.robot.finch.commands.EmergencyStopCommandStrategy;
@@ -214,6 +215,32 @@ public final class DefaultFinchController implements FinchController
    public void playClip(final byte[] data)
       {
       AudioHelper.playClip(data);
+      }
+
+   @Override
+   public final byte[] getSpeech(final String whatToSay)
+      {
+      if (whatToSay != null && whatToSay.length() > 0)
+         {
+         final Mouth mouth = Mouth.getInstance();
+
+         if (mouth != null)
+            {
+            return mouth.getSpeech(whatToSay);
+            }
+         }
+      return null;
+      }
+
+   @Override
+   public final void speak(final String whatToSay)
+      {
+      final byte[] speechAudio = getSpeech(whatToSay);
+      if (speechAudio != null)
+         {
+         // play it this way since Mouth.speak() is deprecated
+         AudioHelper.playClip(speechAudio);
+         }
       }
 
    public boolean emergencyStop()

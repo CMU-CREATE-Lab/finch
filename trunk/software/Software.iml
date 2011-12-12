@@ -125,6 +125,20 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="FreeTTS">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/freetts/cmulex.jar!/" />
+          <root url="jar://$MODULE_DIR$/java/lib/freetts/en_us.jar!/" />
+          <root url="jar://$MODULE_DIR$/java/lib/freetts/freetts.jar!/" />
+          <root url="jar://$MODULE_DIR$/java/lib/freetts/cmu_us_kal.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="http://freetts.sourceforge.net/javadoc/" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="JDOM">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/java/lib/jdom/jdom.jar!/" />
