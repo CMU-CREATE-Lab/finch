@@ -97,4 +97,22 @@ final class AudioServiceImpl extends BaseAudioServiceImpl
          callback.handleException(e);
          }
       }
+
+   @Override
+   public byte[] getSpeech(final String whatToSay)
+      {
+      return finchController.getSpeech(whatToSay);
+      }
+
+   @Override
+   public void speak(final String whatToSay)
+      {
+      finchController.speak(whatToSay);
+      }
+
+   @Override
+   public boolean isSpeechSupported()
+      {
+      return true;
+      }
    }

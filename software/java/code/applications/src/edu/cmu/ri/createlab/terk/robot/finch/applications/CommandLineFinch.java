@@ -388,6 +388,29 @@ public final class CommandLineFinch extends BaseCommandLineApplication
             }
          };
 
+   private final Runnable speakTextAction =
+         new Runnable()
+         {
+         public void run()
+            {
+            if (isInitialized())
+               {
+               final String whatToSay = readString("Text to speak: ");
+               if (whatToSay == null || whatToSay.length() == 0)
+                  {
+                  println("Text to speak cannot be empty");
+                  return;
+                  }
+
+               speak(whatToSay);
+               }
+            else
+               {
+               println("You must be connected to a finch first.");
+               }
+            }
+         };
+
    private final Runnable emergencyStopAction =
          new Runnable()
          {
@@ -435,6 +458,7 @@ public final class CommandLineFinch extends BaseCommandLineApplication
       registerAction("b", playBuzzerToneAction);
       registerAction("t", playToneAction);
       registerAction("s", playClipAction);
+      registerAction("S", speakTextAction);
       registerAction("x", emergencyStopAction);
       registerAction("i", new MovementAction(200, 200));
       registerAction("j", new MovementAction(0, 150));
@@ -471,6 +495,7 @@ public final class CommandLineFinch extends BaseCommandLineApplication
       println("b         Play a tone using the finch's buzzer");
       println("t         Play a tone using the computer's speaker");
       println("s         Play a sound clip using the computer's speaker");
+      println("S         Convert text to speech and then speak it");
       println("");
       println("i         Drive forward");
       println("j         Turn left");
@@ -625,6 +650,11 @@ public final class CommandLineFinch extends BaseCommandLineApplication
    private void playClip(final byte[] data)
       {
       ((AudioService)serviceManager.getServiceByTypeId(AudioService.TYPE_ID)).playSound(data);
+      }
+
+   private void speak(final String whatToSay)
+      {
+      ((AudioService)serviceManager.getServiceByTypeId(AudioService.TYPE_ID)).speak(whatToSay);
       }
 
    private void emergencyStop()

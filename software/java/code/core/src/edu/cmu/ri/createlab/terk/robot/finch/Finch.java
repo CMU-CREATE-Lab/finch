@@ -11,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import edu.cmu.ri.createlab.audio.AudioHelper;
-import edu.cmu.ri.createlab.speech.Mouth;
 import edu.cmu.ri.createlab.terk.application.ConnectionStrategyEventHandlerAdapter;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;
@@ -695,15 +693,14 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       {
       if (sayThis != null && sayThis.length() > 0)
          {
-         final Mouth mouth = Mouth.getInstance();
-
-         if (mouth != null)
+         final AudioService service = getAudioService();
+         if (service != null)
             {
-            AudioHelper.playClip(mouth.getSpeech(sayThis));
+            service.speak(sayThis);
             }
          else
             {
-            System.out.println("Speech not working");
+            System.out.println("Audio not responding, check Finch connection");
             }
          }
       else
@@ -728,16 +725,15 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       {
       if (sayThis != null && sayThis.length() > 0)
          {
-         final Mouth mouth = Mouth.getInstance();
-
-         if (mouth != null)
+         final AudioService service = getAudioService();
+         if (service != null)
             {
-            AudioHelper.playClip(mouth.getSpeech(sayThis));
+            service.speak(sayThis);
             sleep(duration);
             }
          else
             {
-            System.out.println("Speech not working");
+            System.out.println("Audio not responding, check Finch connection");
             }
          }
       else
@@ -784,8 +780,8 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public void buzzBlocking(final int frequency, final int duration)
       {
-	      buzz(frequency, duration);
-	      sleep(duration);
+      buzz(frequency, duration);
+      sleep(duration);
       }
 
    /**
