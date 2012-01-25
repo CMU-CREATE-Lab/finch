@@ -39,15 +39,39 @@ final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVel
       this.finchController = finchController;
       }
 
-   public boolean setVelocities(final int[] velocities)
+   /**
+    * <p>
+    * Sets the motor velocities.  This method does nothing and returns <code>false</code> if either (or both) of the
+    * arrays is <code>null</code> or has a length less than {@link FinchConstants#MOTOR_DEVICE_COUNT}.
+    * </p>
+    * <p>
+    * Note that we can't really support the mask, since the finchController's {@link FinchController#setMotorVelocities}
+    * method requires that we always specify the velocity of both motors, but there's no way to know the *current*
+    * velocity of a motor.  So, instead, if a motor is masked off, this method simply sets its velocity to zero. This is
+    * in line with the docs for {@link OpenLoopVelocityControllableMotorService#setVelocities}.
+    * </p>
+    */
+   @Override
+   protected boolean execute(final boolean[] mask, final int[] velocities)
       {
-      if (velocities != null && velocities.length >= FinchConstants.MOTOR_DEVICE_COUNT)
+      if (mask != null &&
+          mask.length >= FinchConstants.MOTOR_DEVICE_COUNT &&
+          velocities != null &&
+          velocities.length >= FinchConstants.MOTOR_DEVICE_COUNT)
          {
+         // set velocity of masked off motors to 0
+         for (int i = 0; i < FinchConstants.MOTOR_DEVICE_COUNT; i++)
+            {
+            if (!mask[i])
+               {
+               velocities[i] = 0;
+               }
+            }
          return finchController.setMotorVelocities(velocities[0], velocities[1]);
          }
       else
          {
-         LOG.debug("OpenLoopVelocityControllableMotorServiceImpl.setVelocities(): given velocities array was null or didn't contain enough elements");
+         LOG.debug("OpenLoopVelocityControllableMotorServiceImpl.execute(): given mask and/or velocities array was null or didn't contain enough elements");
          }
       return false;
       }
