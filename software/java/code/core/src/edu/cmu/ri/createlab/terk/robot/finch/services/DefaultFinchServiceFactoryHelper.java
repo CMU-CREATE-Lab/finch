@@ -4,10 +4,6 @@ import java.io.File;
 import edu.cmu.ri.createlab.CreateLabConstants;
 
 /**
- * <p>
- * <code>DefaultFinchServiceFactoryHelper</code> does something...
- * </p>
- *
  * @author Chris Bartley (bartley@cmu.edu)
  */
 public final class DefaultFinchServiceFactoryHelper implements FinchServiceFactoryHelper
