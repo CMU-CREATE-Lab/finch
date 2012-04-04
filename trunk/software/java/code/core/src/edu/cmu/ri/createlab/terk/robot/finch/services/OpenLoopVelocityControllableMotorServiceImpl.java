@@ -30,6 +30,7 @@ final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVel
       }
 
    private final FinchController finchController;
+   private final int[] rememberedVelocities = new int[FinchConstants.MOTOR_DEVICE_COUNT];
 
    private OpenLoopVelocityControllableMotorServiceImpl(final FinchController finchController,
                                                         final PropertyManager propertyManager,
@@ -47,7 +48,8 @@ final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVel
     * <p>
     * Note that we can't really support the mask, since the finchController's {@link FinchController#setMotorVelocities}
     * method requires that we always specify the velocity of both motors, but there's no way to know the *current*
-    * velocity of a motor.  So, instead, if a motor is masked off, this method simply sets its velocity to zero. This is
+    * velocity of a motor.  So, instead, if a motor is masked off, this method simply sets its velocity to the value
+    * specified the last time the motor was set via this method, or 0 if it has never been set before. This is
     * in line with the docs for {@link OpenLoopVelocityControllableMotorService#setVelocities}.
     * </p>
     */
@@ -59,12 +61,18 @@ final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVel
           velocities != null &&
           velocities.length >= FinchConstants.MOTOR_DEVICE_COUNT)
          {
-         // set velocity of masked off motors to 0
+         // remember velocity of masked on motors, and set velocity of masked off motors to the remembered value
          for (int i = 0; i < FinchConstants.MOTOR_DEVICE_COUNT; i++)
             {
-            if (!mask[i])
+            if (mask[i])
                {
-               velocities[i] = 0;
+               // for motors which are masked on, update the remembered velocities with the new value
+               rememberedVelocities[i] = velocities[i];
+               }
+            else
+               {
+               // for motors which are masked off, use the remembered value
+               velocities[i] = rememberedVelocities[i];
                }
             }
          return finchController.setMotorVelocities(velocities[0], velocities[1]);
