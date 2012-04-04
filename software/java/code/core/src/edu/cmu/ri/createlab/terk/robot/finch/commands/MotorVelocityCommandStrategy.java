@@ -7,9 +7,7 @@ import edu.cmu.ri.createlab.util.MathUtils;
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class
-
-      MotorVelocityCommandStrategy extends CreateLabHIDCommandStrategy
+public final class MotorVelocityCommandStrategy extends CreateLabHIDCommandStrategy
    {
    /** The command character used to set the motor velocities. */
    private static final byte COMMAND_PREFIX = 'M';
