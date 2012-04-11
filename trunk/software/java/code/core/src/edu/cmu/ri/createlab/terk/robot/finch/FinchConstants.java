@@ -96,11 +96,23 @@ public final class FinchConstants
    /** The number of photoresistors */
    public static final int PHOTORESISTOR_DEVICE_COUNT = 2;
 
+   /** The minimum supported photoresistor value */
+   public static final int PHOTORESISTOR_MIN_VALUE = 0;
+
+   /** The maximum supported photoresistor value */
+   public static final int PHOTORESISTOR_MAX_VALUE = 255;
+
    /** The number of simple obstacle sensors */
    public static final int SIMPLE_OBSTACLE_SENSOR_DEVICE_COUNT = 2;
 
    /** The number of thermistors */
    public static final int THERMISTOR_DEVICE_COUNT = 1;
+
+   /** The minimum supported thermistor value */
+   public static final int THERMISTOR_MIN_VALUE = 0;
+
+   /** The maximum supported thermistor value */
+   public static final int THERMISTOR_MAX_VALUE = 255;
 
    /**
     * The unique device id for the thermistor used by all finches.  This value is used to lookup the appropriate
