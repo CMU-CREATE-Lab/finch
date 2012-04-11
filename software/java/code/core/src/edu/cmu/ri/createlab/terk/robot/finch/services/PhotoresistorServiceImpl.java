@@ -6,6 +6,7 @@ import edu.cmu.ri.createlab.terk.properties.PropertyManager;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.photoresistor.BasePhotoresistorServiceImpl;
+import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
@@ -17,6 +18,8 @@ final class PhotoresistorServiceImpl extends BasePhotoresistorServiceImpl
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
       basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, FinchConstants.PHOTORESISTOR_DEVICE_COUNT);
+      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_MIN_VALUE, FinchConstants.PHOTORESISTOR_MIN_VALUE);
+      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_MAX_VALUE, FinchConstants.PHOTORESISTOR_MAX_VALUE);
 
       return new PhotoresistorServiceImpl(finchController,
                                           basicPropertyManager,
