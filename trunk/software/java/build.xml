@@ -9,6 +9,7 @@
       <pathelement path="${create-lab-commons-audio.jar}"/>
       <pathelement path="${create-lab-commons-collections.jar}"/>
       <pathelement path="${create-lab-commons-device.jar}"/>
+      <pathelement path="${create-lab-commons-serial.jar}"/>
       <pathelement path="${create-lab-commons-speech.jar}"/>
       <pathelement path="${create-lab-commons-usb-hid.jar}"/>
       <pathelement path="${create-lab-commons-user-interface.jar}"/>
@@ -18,6 +19,7 @@
       <pathelement path="${log4j.jar}"/>
       <pathelement path="${jna.jar}"/>
       <pathelement path="${jnaerator.jar}"/>
+      <pathelement path="${rxtx.jar}"/>
       <pathelement path="${terk-core.jar}"/>
       <pathelement path="${terk-services.jar}"/>
    </path>
@@ -30,6 +32,7 @@
       <pathelement path="${create-lab-commons-audio.jar}"/>
       <pathelement path="${create-lab-commons-collections.jar}"/>
       <pathelement path="${create-lab-commons-device.jar}"/>
+      <pathelement path="${create-lab-commons-serial.jar}"/>
       <pathelement path="${create-lab-commons-rss.jar}"/>
       <pathelement path="${create-lab-commons-speech.jar}"/>
       <pathelement path="${create-lab-commons-usb-hid.jar}"/>
@@ -47,6 +50,7 @@
       <pathelement path="${jna.jar}"/>
       <pathelement path="${jnaerator.jar}"/>
       <pathelement path="${rome.jar}"/>
+      <pathelement path="${rxtx.jar}"/>
       <pathelement path="${swing-layout.jar}"/>
       <pathelement path="${terk-core.jar}"/>
       <pathelement path="${terk-services.jar}"/>
@@ -137,6 +141,7 @@
             <fileset file="${create-lab-commons-audio.jar}"/>
             <fileset file="${create-lab-commons-collections.jar}"/>
             <fileset file="${create-lab-commons-device.jar}"/>
+            <fileset file="${create-lab-commons-serial.jar}"/>
             <fileset file="${create-lab-commons-speech.jar}"/>
             <fileset file="${create-lab-commons-usb-hid.jar}"/>
             <fileset file="${create-lab-commons-user-interface.jar}"/>
@@ -144,6 +149,13 @@
             <fileset file="${create-lab-commons-video.jar}"/>
             <fileset file="${jna.jar}"/>
             <fileset file="${jnaerator.jar}"/>
+            <fileset file="${rxtx.jar}"/>
+            <fileset file="${rxtx-linux.native1}"/>
+            <fileset file="${rxtx-linux.native2}"/>
+            <fileset file="${rxtx-macos.native1}"/>
+            <fileset file="${rxtx-macos.native2}"/>
+            <fileset file="${rxtx-windows.native1}"/>
+            <fileset file="${rxtx-windows.native2}"/>
             <fileset file="${terk-core.jar}"/>
             <fileset file="${terk-services.jar}"/>
          </additional-files-to-copy>
@@ -170,6 +182,7 @@
             <fileset file="${create-lab-commons-collections.jar}"/>
             <fileset file="${create-lab-commons-device.jar}"/>
             <fileset file="${create-lab-commons-rss.jar}"/>
+            <fileset file="${create-lab-commons-serial.jar}"/>
             <fileset file="${create-lab-commons-speech.jar}"/>
             <fileset file="${create-lab-commons-usb-hid.jar}"/>
             <fileset file="${create-lab-commons-user-interface.jar}"/>
@@ -190,6 +203,13 @@
             <fileset file="${lti-civil-1.native}"/>
             <fileset file="${lti-civil-2.native}"/>
             <fileset file="${rome.jar}"/>
+            <fileset file="${rxtx.jar}"/>
+            <fileset file="${rxtx-linux.native1}"/>
+            <fileset file="${rxtx-linux.native2}"/>
+            <fileset file="${rxtx-macos.native1}"/>
+            <fileset file="${rxtx-macos.native2}"/>
+            <fileset file="${rxtx-windows.native1}"/>
+            <fileset file="${rxtx-windows.native2}"/>
             <fileset file="${swing-layout.jar}"/>
             <fileset file="${terk-core.jar}"/>
             <fileset file="${terk-services.jar}"/>
