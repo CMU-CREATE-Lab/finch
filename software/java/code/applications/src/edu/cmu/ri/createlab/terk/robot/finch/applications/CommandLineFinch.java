@@ -5,7 +5,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.SortedMap;
 import edu.cmu.ri.createlab.device.CreateLabDevicePingFailureEventListener;
+import edu.cmu.ri.createlab.serial.commandline.SerialDeviceCommandLineApplication;
 import edu.cmu.ri.createlab.terk.robot.finch.DefaultFinchController;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
@@ -25,16 +27,16 @@ import edu.cmu.ri.createlab.terk.services.photoresistor.PhotoresistorService;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
 import edu.cmu.ri.createlab.util.ArrayUtils;
 import edu.cmu.ri.createlab.util.FileUtils;
-import edu.cmu.ri.createlab.util.commandline.BaseCommandLineApplication;
 import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class CommandLineFinch extends BaseCommandLineApplication
+public final class CommandLineFinch extends SerialDeviceCommandLineApplication
    {
    private static final Logger LOG = Logger.getLogger(CommandLineFinch.class);
    private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
+   private static final String DEFAULT_SERIAL_PORT_NAME = "/dev/tty.finch-backpack";
 
    private final Runnable connectToFinchAction =
          new Runnable()
@@ -48,6 +50,82 @@ public final class CommandLineFinch extends BaseCommandLineApplication
             else
                {
                connect();
+               }
+            }
+         };
+
+   private final Runnable connectToFinchWithBackpackAction =
+         new Runnable()
+         {
+         public void run()
+            {
+            if (isInitialized())
+               {
+               println("You are already connected to a finch.");
+               }
+            else
+               {
+               String choice;
+               do
+                  {
+                  choice = readString("Scan serial ports? [y/N]: ");
+                  if ("".equals(choice))
+                     {
+                     choice = "n";
+                     }
+                  choice = (choice == null) ? "" : choice.trim().toLowerCase();
+                  }
+               while (!"y".equals(choice) && !"n".equals(choice));
+
+               String serialPortName = null;
+               if ("y".equals(choice))
+                  {
+                  final SortedMap<Integer, String> portMap = enumeratePorts();
+
+                  if (!portMap.isEmpty())
+                     {
+                     final Integer index = readInteger("Connect to port number: ");
+
+                     if (index == null)
+                        {
+                        println("Invalid port");
+                        }
+                     else
+                        {
+                        serialPortName = portMap.get(index);
+                        }
+                     }
+                  }
+               else
+                  {
+                  serialPortName = readString("Serial port name? [" + DEFAULT_SERIAL_PORT_NAME + "]: ");
+                  if ("".equals(serialPortName))
+                     {
+                     serialPortName = DEFAULT_SERIAL_PORT_NAME;
+                     }
+                  if (serialPortName != null)
+                     {
+                     serialPortName = serialPortName.trim();
+                     }
+                  }
+
+               if (serialPortName != null)
+                  {
+                  // TODO
+                  println("TODO: Connect to the Finch backpack on port [" + serialPortName + "]");
+                  //hummingbird = HummingbirdFactory.createSerialHummingbird(serialPortName);
+                  //
+                  //if (hummingbird == null)
+                  //   {
+                  //   println("Connection failed!");
+                  //   }
+                  //else
+                  //   {
+                  //   hummingbird.addCreateLabDevicePingFailureEventListener(pingFailureEventListener);
+                  //   serviceManager = new HummingbirdServiceManager(hummingbird, hummingbirdServiceFactoryHelper);
+                  //   println("Connection successful!");
+                  //   }
+                  }
                }
             }
          };
@@ -443,7 +521,8 @@ public final class CommandLineFinch extends BaseCommandLineApplication
       {
       super(in);
 
-      registerAction("c", connectToFinchAction);
+      registerAction("C", connectToFinchAction);
+      registerAction("c", connectToFinchWithBackpackAction);
       registerAction("d", disconnectFromFinchAction);
       registerAction("f", fullColorLEDAction);
       registerAction("a", getAccelerometerStateAction);
@@ -478,7 +557,8 @@ public final class CommandLineFinch extends BaseCommandLineApplication
       {
       println("COMMANDS -----------------------------------");
       println("");
-      println("c         Connect to the finch");
+      println("C         Connect to the finch via USB");
+      println("c         Connect to the finch with backpack via bluetooth");
       println("d         Disconnect from the finch");
       println("");
       println("f         Control the full-color LED");
@@ -585,7 +665,7 @@ public final class CommandLineFinch extends BaseCommandLineApplication
       return finchController != null && !finchController.isDisconnected();
       }
 
-   private boolean disconnect()
+   protected final void disconnect()
       {
       if (finchController != null)
          {
@@ -593,8 +673,6 @@ public final class CommandLineFinch extends BaseCommandLineApplication
          finchController = null;
          }
       serviceManager = null;
-
-      return true;
       }
 
    private void setFullColorLED(final int r, final int g, final int b)

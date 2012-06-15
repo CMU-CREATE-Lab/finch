@@ -70,6 +70,17 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="CREATE Lab Commons Serial">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-serial/create-lab-commons-serial.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-serial/create-lab-commons-serial-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="CREATE Lab Commons Speech">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/java/lib/create-lab-commons-speech/create-lab-commons-speech.jar!/" />
@@ -200,6 +211,18 @@
         <SOURCES>
           <root url="jar://$MODULE_DIR$/java/lib/ROME/rome-0.9-src.zip!/rome-0.9/src/java" />
         </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="RxTx">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/java/lib/rxtx/RXTXcomm.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="http://users.frii.com/jarvi/rxtx/doc" />
+          <root url="http://java.sun.com/products/javacomm/reference/api" />
+        </JAVADOC>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">

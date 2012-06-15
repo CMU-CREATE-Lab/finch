@@ -1,0 +1,1 @@
+java -Djna.library.path=./code/applications/dist:/usr/lib -Djava.library.path=./code/applications/dist:/usr/lib -cp code/applications/dist/finch-applications.jar edu.cmu.ri.createlab.terk.robot.finch.applications.CommandLineFinch
