@@ -10,6 +10,9 @@ import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
  */
 public interface FinchController extends CreateLabDeviceProxy
    {
+   /** Returns the {@link FinchProperties} for this finch. */
+   FinchProperties getFinchProperties();
+
    /**
     * Returns the state of the accelerometer; returns <code>null</code> if an error occurred while trying to read the
     * state.
@@ -61,6 +64,23 @@ public interface FinchController extends CreateLabDeviceProxy
     * trying to read the values.
     */
    Double getThermistorCelsiusTemperature();
+
+   /**
+    * Returns the current value of the analog input specified by the given <code>id</code>.  Invalid analog input ids
+    * cause this method to return <code>null</code>.    Note that, for finches without analog inputs, this method will
+    * always return <code>null</code>.  This method also returns <code>null</code> if an error occurred while trying to
+    * read the value.
+    *
+    * @see FinchProperties#getAnalogInputDeviceCount()
+    */
+   Integer getAnalogInput(final int id);
+
+   /**
+    * Returns the voltage.  This doesn't have much meaning for finches connected via USB HID, and so the value returned
+    * may be <code>null</code> or completely bogus.  For backpacked finches, it returns the voltage of the battery pack
+    * in millivolts.
+    */
+   Integer getVoltage();
 
    /**
     * Sets the full-color LED to the given red, green, and blue intensities.  Returns <code>true</code> if the command

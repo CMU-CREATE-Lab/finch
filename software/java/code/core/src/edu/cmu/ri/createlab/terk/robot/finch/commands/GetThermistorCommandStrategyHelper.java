@@ -1,13 +1,12 @@
 package edu.cmu.ri.createlab.terk.robot.finch.commands;
 
-import edu.cmu.ri.createlab.usb.hid.CreateLabHIDReturnValueCommandStrategy;
-import edu.cmu.ri.createlab.usb.hid.HIDCommandResponse;
 import edu.cmu.ri.createlab.util.ByteUtils;
+import edu.cmu.ri.createlab.util.commandexecution.CommandResponse;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class GetThermistorCommandStrategy extends CreateLabHIDReturnValueCommandStrategy<Integer>
+public final class GetThermistorCommandStrategyHelper extends BaseCommandStrategyHelper
    {
    /** The command character used to request the value of the finch's thermistor. */
    private static final byte[] COMMAND = {'T'};
@@ -15,20 +14,21 @@ public final class GetThermistorCommandStrategy extends CreateLabHIDReturnValueC
    /** The size of the expected response, in bytes */
    private static final int SIZE_IN_BYTES_OF_EXPECTED_RESPONSE = 1;
 
-   @Override
-   protected int getSizeOfExpectedResponse()
+   public GetThermistorCommandStrategyHelper()
+      {
+      }
+
+   public int getSizeOfExpectedResponse()
       {
       return SIZE_IN_BYTES_OF_EXPECTED_RESPONSE;
       }
 
-   @Override
-   protected byte[] getCommand()
+   public byte[] getCommand()
       {
       return COMMAND.clone();
       }
 
-   @Override
-   public Integer convertResponse(final HIDCommandResponse response)
+   public Integer convertResponse(final CommandResponse response)
       {
       if (response != null && response.wasSuccessful())
          {

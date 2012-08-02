@@ -1,5 +1,6 @@
-package edu.cmu.ri.createlab.terk.robot.finch.commands;
+package edu.cmu.ri.createlab.terk.robot.finch.commands.hid;
 
+import edu.cmu.ri.createlab.terk.robot.finch.commands.EmergencyStopCommandStrategyHelper;
 import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
 
 /**
@@ -7,11 +8,10 @@ import edu.cmu.ri.createlab.usb.hid.CreateLabHIDCommandStrategy;
  */
 public final class EmergencyStopCommandStrategy extends CreateLabHIDCommandStrategy
    {
-   /** The command character used to trigger the emergency stop. */
-   private static final byte[] COMMAND = {'X'};
-
    /** The size of the expected response, in bytes */
    private static final int SIZE_IN_BYTES_OF_EXPECTED_RESPONSE = 0;
+
+   private final EmergencyStopCommandStrategyHelper helper = new EmergencyStopCommandStrategyHelper();
 
    @Override
    protected int getSizeOfExpectedResponse()
@@ -22,6 +22,6 @@ public final class EmergencyStopCommandStrategy extends CreateLabHIDCommandStrat
    @Override
    protected byte[] getCommand()
       {
-      return COMMAND.clone();
+      return helper.getCommand();
       }
    }

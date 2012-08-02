@@ -3,7 +3,6 @@ package edu.cmu.ri.createlab.terk.robot.finch.services;
 import edu.cmu.ri.createlab.terk.TerkConstants;
 import edu.cmu.ri.createlab.terk.properties.BasicPropertyManager;
 import edu.cmu.ri.createlab.terk.properties.PropertyManager;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.obstacle.BaseSimpleObstacleDetectorServiceImpl;
 
@@ -16,11 +15,11 @@ final class SimpleObstacleDetectorServiceImpl extends BaseSimpleObstacleDetector
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
-      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, FinchConstants.SIMPLE_OBSTACLE_SENSOR_DEVICE_COUNT);
+      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, finchController.getFinchProperties().getSimpleObstacleSensorDeviceCount());
 
       return new SimpleObstacleDetectorServiceImpl(finchController,
                                                    basicPropertyManager,
-                                                   FinchConstants.SIMPLE_OBSTACLE_SENSOR_DEVICE_COUNT);
+                                                   finchController.getFinchProperties().getSimpleObstacleSensorDeviceCount());
       }
 
    private final FinchController finchController;

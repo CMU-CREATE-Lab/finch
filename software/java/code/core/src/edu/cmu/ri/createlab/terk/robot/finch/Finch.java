@@ -6,22 +6,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import edu.cmu.ri.createlab.terk.application.ConnectionStrategyEventHandlerAdapter;
+import edu.cmu.ri.createlab.device.connectivity.BackpackedFinchConnectivityManager;
+import edu.cmu.ri.createlab.device.connectivity.FinchConnectivityManager;
+import edu.cmu.ri.createlab.device.connectivity.HIDFinchConnectivityManager;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
-import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
-import edu.cmu.ri.createlab.terk.services.audio.AudioService;
-import edu.cmu.ri.createlab.terk.services.buzzer.BuzzerService;
-import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
-import edu.cmu.ri.createlab.terk.services.motor.OpenLoopVelocityControllableMotorService;
-import edu.cmu.ri.createlab.terk.services.obstacle.SimpleObstacleDetectorService;
-import edu.cmu.ri.createlab.terk.services.photoresistor.PhotoresistorService;
-import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
 import edu.cmu.ri.createlab.userinterface.component.DatasetPlotter;
 import edu.cmu.ri.createlab.util.FileUtils;
 import org.apache.log4j.Logger;
@@ -33,13 +26,9 @@ import org.apache.log4j.Logger;
  * @author Chris Bartley (bartley@cmu.edu)
  */
 @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
-public final class Finch extends BaseFinchApplication implements FinchInterface
+public final class Finch implements FinchInterface
    {
    private static final Logger LOG = Logger.getLogger(Finch.class);
-
-   private static final String DEFAULT_CONNECTION_STRATEGY_IMPLEMENTATION_CLASS = "edu.cmu.ri.createlab.terk.robot.finch.LocalFinchConnectionStrategy";
-
-   private final Semaphore connectionCompleteSemaphore = new Semaphore(1);
 
    // set new plotters to graph sensor values
    private final DatasetPlotter<Double> accelerometerPlotter = new DatasetPlotter<Double>(-1.7, 1.7, 340, 340, 10, TimeUnit.MILLISECONDS);
@@ -51,65 +40,45 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    private JFrame jFrameTemp;
    private JFrame jFrameLight;
 
+   private FinchController finchController;
+   private final FinchConnectivityManager connectivityManager;
+
    public Finch()
       {
-      super(DEFAULT_CONNECTION_STRATEGY_IMPLEMENTATION_CLASS);
+      this(new HIDFinchConnectivityManager());
+      }
+
+   public Finch(final String serialPortName)
+      {
+      this(new BackpackedFinchConnectivityManager(serialPortName));
+      }
+
+   public Finch(final FinchConnectivityManager connectivityManager)
+      {
+      this.connectivityManager = connectivityManager;
 
       System.out.println("Connecting to Finch...this may take a few seconds...");
 
-      this.addConnectionStrategyEventHandler(
-            new ConnectionStrategyEventHandlerAdapter()
-            {
-            public void handleConnectionEvent()
-               {
-               LOG.trace("Finch.handleConnectionEvent()");
-
-               // connection complete, so release the lock
-               connectionCompleteSemaphore.release();
-               }
-
-            public void handleFailedConnectionEvent()
-               {
-               LOG.trace("Finch.handleFailedConnectionEvent()");
-
-               // connection failed, so release the lock
-               connectionCompleteSemaphore.release();
-               }
-            });
-
-      LOG.trace("Finch.Finch(): 1) aquiring connection lock");
-
-      // acquire the lock, which will be released once the connection is complete
-      connectionCompleteSemaphore.acquireUninterruptibly();
-
-      LOG.trace("Finch.Finch(): 2) connecting");
-
-      // try to connect
-      connect();
-
-      LOG.trace("Finch.Finch(): 3) waiting for connection to complete");
-
-      // try to acquire the lock again, which will block until the connection is complete
-      connectionCompleteSemaphore.acquireUninterruptibly();
-
-      LOG.trace("Finch.Finch(): 4) releasing lock");
-
-      // we know the connection has completed (i.e. either connected or the connection failed) at this point, so just release the lock
-      connectionCompleteSemaphore.release();
-
-      LOG.trace("Finch.Finch(): 5) make sure we're actually connected");
-
-      // if we're not connected, then throw an exception
-      if (!isConnected())
-         {
-         LOG.error("Finch.Finch(): Failed to connect to the finch!  Aborting.");
-         System.exit(1);
-         }
-
-      LOG.trace("Finch.Finch(): 6) All done!");
-
       // Set system properties to point to the freeTTS directory for saySomething support
       System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
+
+      try
+         {
+         finchController = connectivityManager.connect();
+         }
+      catch (final Exception e)
+         {
+         LOG.error("Exception caught while trying to create the Finch!  Aborting.", e);
+         System.exit(1);
+         }
+      }
+
+   /**
+    * Returns the {@link FinchProperties} for this finch.
+    */
+   public FinchProperties getFinchProperties()
+      {
+      return finchController.getFinchProperties();
       }
 
    /**
@@ -122,12 +91,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       {
       if (color != null)
          {
-         final FullColorLEDService service = getFullColorLEDService();
-         if (service != null)
-            {
-            service.set(0, color);
-            }
-         else
+         if (!finchController.setFullColorLED(color))
             {
             System.out.println("LED not responding, check Finch connection");
             }
@@ -152,34 +116,34 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    public void setLED(final int red, final int green, final int blue)
       {
       boolean inRange = true;
-      if (red > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      if (red > finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity())
          {
          inRange = false;
          System.out.println("Red value exceeds appropriate values (0-255), LED will not be set");
          }
-      if (red < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      if (red < finchController.getFinchProperties().getFullColorLedDeviceMinIntensity())
          {
          inRange = false;
          System.out.println("Red value is negative, LED will not be set");
          }
 
-      if (green > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      if (green > finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity())
          {
          inRange = false;
          System.out.println("Green value exceeds appropriate values (0-255), LED will not be set");
          }
-      if (green < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      if (green < finchController.getFinchProperties().getFullColorLedDeviceMinIntensity())
          {
          inRange = false;
          System.out.println("Green value is negative, LED will not be set");
          }
 
-      if (blue > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      if (blue > finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity())
          {
          inRange = false;
          System.out.println("Blue value exceeds appropriate values (0-255), LED will not be set");
          }
-      if (blue < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      if (blue < finchController.getFinchProperties().getFullColorLedDeviceMinIntensity())
          {
          inRange = false;
          System.out.println("Blue value is negative, LED will not be set");
@@ -202,12 +166,13 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       {
       if (color != null)
          {
-         final FullColorLEDService service = getFullColorLEDService();
-         if (service != null)
+         if (finchController.setFullColorLED(color))
             {
-            service.set(0, color);
             sleep(duration);
-            setLED(new Color(0, 0, 0));
+            if (!finchController.setFullColorLED(new Color(0, 0, 0)))
+               {
+               System.out.println("LED not responding, check Finch connection");
+               }
             }
          else
             {
@@ -235,34 +200,34 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    public void setLED(final int red, final int green, final int blue, final int duration)
       {
       boolean inRange = true;
-      if (red > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      if (red > finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity())
          {
          inRange = false;
          System.out.println("Red value exceeds appropriate values (0-255), LED will not be set");
          }
-      if (red < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      if (red < finchController.getFinchProperties().getFullColorLedDeviceMinIntensity())
          {
          inRange = false;
          System.out.println("Red value is negative, LED will not be set");
          }
 
-      if (green > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      if (green > finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity())
          {
          inRange = false;
          System.out.println("Green value exceeds appropriate values (0-255), LED will not be set");
          }
-      if (green < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      if (green < finchController.getFinchProperties().getFullColorLedDeviceMinIntensity())
          {
          inRange = false;
          System.out.println("Green value is negative, LED will not be set");
          }
 
-      if (blue > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+      if (blue > finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity())
          {
          inRange = false;
          System.out.println("Blue value exceeds appropriate values (0-255), LED will not be set");
          }
-      if (blue < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY)
+      if (blue < finchController.getFinchProperties().getFullColorLedDeviceMinIntensity())
          {
          inRange = false;
          System.out.println("Blue value is negative, LED will not be set");
@@ -311,15 +276,13 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public void setWheelVelocities(final int leftVelocity, final int rightVelocity, final int timeToHold)
       {
-      final OpenLoopVelocityControllableMotorService service = getOpenLoopVelocityControllableMotorService();
-      if (service != null)
+      if (leftVelocity <= finchController.getFinchProperties().getMotorDeviceMaxVelocity() &&
+          leftVelocity >= finchController.getFinchProperties().getMotorDeviceMinVelocity() &&
+          rightVelocity <= finchController.getFinchProperties().getMotorDeviceMaxVelocity() &&
+          rightVelocity >= finchController.getFinchProperties().getMotorDeviceMinVelocity())
          {
-         if (leftVelocity <= FinchConstants.MOTOR_DEVICE_MAX_VELOCITY &&
-             leftVelocity >= FinchConstants.MOTOR_DEVICE_MIN_VELOCITY &&
-             rightVelocity <= FinchConstants.MOTOR_DEVICE_MAX_VELOCITY &&
-             rightVelocity >= FinchConstants.MOTOR_DEVICE_MIN_VELOCITY)
+         if (finchController.setMotorVelocities(leftVelocity, rightVelocity))
             {
-            service.setVelocities(new int[]{leftVelocity, rightVelocity});
             if (timeToHold > 0)
                {
                sleep(timeToHold);
@@ -328,12 +291,12 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
             }
          else
             {
-            System.out.println("Velocity values out of range");
+            System.out.println("Couldn't set motors, check Finch connection");
             }
          }
       else
          {
-         System.out.println("Couldn't set motors, check Finch connection");
+         System.out.println("Velocity values out of range");
          }
       }
 
@@ -372,14 +335,10 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public double getXAcceleration()
       {
-      final AccelerometerService service = getAccelerometerService();
-      if (service != null)
+      final AccelerometerGs accelerometerGs = finchController.getAccelerometerGs();
+      if (accelerometerGs != null)
          {
-         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-         if (accelerometerGs != null)
-            {
-            return accelerometerGs.getX();
-            }
+         return accelerometerGs.getX();
          }
       System.out.println("Accelerometer not responding, check Finch connection");
       return 0.0;
@@ -394,14 +353,10 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public double getYAcceleration()
       {
-      final AccelerometerService service = getAccelerometerService();
-      if (service != null)
+      final AccelerometerGs accelerometerGs = finchController.getAccelerometerGs();
+      if (accelerometerGs != null)
          {
-         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-         if (accelerometerGs != null)
-            {
-            return accelerometerGs.getY();
-            }
+         return accelerometerGs.getY();
          }
       System.out.println("Accelerometer not responding, check Finch connection");
       return 0.0;
@@ -416,14 +371,10 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public double getZAcceleration()
       {
-      final AccelerometerService service = getAccelerometerService();
-      if (service != null)
+      final AccelerometerGs accelerometerGs = finchController.getAccelerometerGs();
+      if (accelerometerGs != null)
          {
-         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-         if (accelerometerGs != null)
-            {
-            return accelerometerGs.getZ();
-            }
+         return accelerometerGs.getZ();
          }
       System.out.println("Accelerometer not responding, check Finch connection");
       return 0.0;
@@ -439,18 +390,14 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public double[] getAccelerations()
       {
-      final AccelerometerService service = getAccelerometerService();
-      if (service != null)
+      final AccelerometerGs accelerometerGs = finchController.getAccelerometerGs();
+      if (accelerometerGs != null)
          {
-         final AccelerometerGs accelerometerGs = service.getAccelerometerGs(0);
-         if (accelerometerGs != null)
-            {
-            final double[] accelerations = new double[3];
-            accelerations[0] = accelerometerGs.getX();
-            accelerations[1] = accelerometerGs.getY();
-            accelerations[2] = accelerometerGs.getZ();
-            return accelerations;
-            }
+         final double[] accelerations = new double[3];
+         accelerations[0] = accelerometerGs.getX();
+         accelerations[1] = accelerometerGs.getY();
+         accelerations[2] = accelerometerGs.getZ();
+         return accelerations;
          }
       System.out.println("Accelerometer not responding, check Finch connection");
       return null;
@@ -578,14 +525,10 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isShaken()
       {
-      final AccelerometerService service = getAccelerometerService();
-      if (service != null)
+      final AccelerometerState accelerometerState = finchController.getAccelerometerState();
+      if (accelerometerState != null)
          {
-         final AccelerometerState accelerometerState = service.getAccelerometerState(0);
-         if (accelerometerState != null)
-            {
-            return accelerometerState.wasShaken();
-            }
+         return accelerometerState.wasShaken();
          }
       System.out.println("Accelerometer not responding, check Finch connection");
       return false;
@@ -599,14 +542,10 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isTapped()
       {
-      final AccelerometerService service = getAccelerometerService();
-      if (service != null)
+      final AccelerometerState accelerometerState = finchController.getAccelerometerState();
+      if (accelerometerState != null)
          {
-         final AccelerometerState accelerometerState = service.getAccelerometerState(0);
-         if (accelerometerState != null)
-            {
-            return accelerometerState.wasTapped();
-            }
+         return accelerometerState.wasTapped();
          }
       System.out.println("Accelerometer not responding, check Finch connection");
       return false;
@@ -623,7 +562,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public void playTone(final int frequency, final int duration)
       {
-      playTone(frequency, FinchConstants.AUDIO_DEVICE_MAX_AMPLITUDE, duration);
+      playTone(frequency, finchController.getFinchProperties().getAudioDeviceMaxAmplitude(), duration);
       }
 
    /**
@@ -638,15 +577,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public void playTone(final int frequency, final int volume, final int duration)
       {
-      final AudioService service = getAudioService();
-      if (service != null)
-         {
-         service.playTone(frequency, volume, duration);
-         }
-      else
-         {
-         System.out.println("Audio not responding, check Finch connection");
-         }
+      finchController.playTone(frequency, volume, duration);
       }
 
    /**
@@ -658,24 +589,17 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public void playClip(final String fileLocation)
       {
-      final AudioService service = getAudioService();
-      if (service != null)
+      try
          {
-         try
-            {
-            final File file = new File(fileLocation);
-            final byte[] rawSound = FileUtils.getFileAsBytes(file);
-            service.playSound(rawSound);
-            }
-         catch (IOException e)
-            {
-            LOG.error("IOException while trying to play sound at [" + fileLocation + "]", e);
-            System.out.println("Failed to play sound.");
-            }
+         final File file = new File(fileLocation);
+         final byte[] rawSound = FileUtils.getFileAsBytes(file);
+
+         finchController.playClip(rawSound);
          }
-      else
+      catch (IOException e)
          {
-         System.out.println("Audio not responding, check Finch connection");
+         LOG.error("IOException while trying to play sound at [" + fileLocation + "]", e);
+         System.out.println("Failed to play sound.");
          }
       }
 
@@ -693,15 +617,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       {
       if (sayThis != null && sayThis.length() > 0)
          {
-         final AudioService service = getAudioService();
-         if (service != null)
-            {
-            service.speak(sayThis);
-            }
-         else
-            {
-            System.out.println("Audio not responding, check Finch connection");
-            }
+         finchController.speak(sayThis);
          }
       else
          {
@@ -725,16 +641,8 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       {
       if (sayThis != null && sayThis.length() > 0)
          {
-         final AudioService service = getAudioService();
-         if (service != null)
-            {
-            service.speak(sayThis);
-            sleep(duration);
-            }
-         else
-            {
-            System.out.println("Audio not responding, check Finch connection");
-            }
+         finchController.speak(sayThis);
+         sleep(duration);
          }
       else
          {
@@ -756,12 +664,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public void buzz(final int frequency, final int duration)
       {
-      final BuzzerService service = getBuzzerService();
-      if (service != null)
-         {
-         service.playTone(0, frequency, duration);
-         }
-      else
+      if (!finchController.playBuzzerTone(frequency, duration))
          {
          System.out.println("Buzzer not responding, check Finch connection");
          }
@@ -794,18 +697,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public int getLeftLightSensor()
       {
-      final PhotoresistorService service = getPhotoresistorService();
-      if (service != null)
-         {
-         final int[] values = service.getPhotoresistorValues();
-         if (values != null)
-            {
-            return values[0];
-            }
-         }
-
-      System.out.println("Light sensor not responding, check Finch connection");
-      return 0;
+      return getLightSensor(0);
       }
 
    /**
@@ -818,14 +710,15 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public int getRightLightSensor()
       {
-      final PhotoresistorService service = getPhotoresistorService();
-      if (service != null)
+      return getLightSensor(1);
+      }
+
+   private int getLightSensor(final int id)
+      {
+      final int[] values = finchController.getPhotoresistors();
+      if (values != null)
          {
-         final int[] values = service.getPhotoresistorValues();
-         if (values != null)
-            {
-            return values[1];
-            }
+         return values[id];
          }
 
       System.out.println("Light sensor not responding, check Finch connection");
@@ -842,16 +735,14 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public int[] getLightSensors()
       {
-      final PhotoresistorService service = getPhotoresistorService();
-      if (service != null)
-         {
-         return service.getPhotoresistorValues();
-         }
-      else
+      final int[] values = finchController.getPhotoresistors();
+
+      if (values == null)
          {
          System.out.println("Light sensor not responding, check Finch connection");
-         return null;
          }
+
+      return values;
       }
 
    /**
@@ -889,16 +780,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isObstacleLeftSide()
       {
-      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-      if (service != null)
-         {
-         return service.isObstacleDetected(0);
-         }
-      else
-         {
-         System.out.println("Obstacle sensor not responding, check Finch connection");
-         return false;
-         }
+      return isObstactleDetected(0);
       }
 
    /**
@@ -910,16 +792,18 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isObstacleRightSide()
       {
-      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-      if (service != null)
-         {
-         return service.isObstacleDetected(1);
-         }
-      else
+      return isObstactleDetected(1);
+      }
+
+   private boolean isObstactleDetected(final int id)
+      {
+      final Boolean isDetected = finchController.isObstacleDetected(id);
+      if (isDetected == null)
          {
          System.out.println("Obstacle sensor not responding, check Finch connection");
          return false;
          }
+      return isDetected;
       }
 
    /**
@@ -931,16 +815,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean isObstacle()
       {
-      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-      if (service != null)
-         {
-         return (service.isObstacleDetected(0) || service.isObstacleDetected(1));
-         }
-      else
-         {
-         System.out.println("Obstacle sensor not responding, check Finch connection");
-         return false;
-         }
+      return isObstacleLeftSide() || isObstacleRightSide();
       }
 
    /**
@@ -953,16 +828,12 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public boolean[] getObstacleSensors()
       {
-      final SimpleObstacleDetectorService service = getSimpleObstacleDetectorService();
-      if (service != null)
-         {
-         return service.areObstaclesDetected();
-         }
-      else
+      final boolean[] areDetected = finchController.areObstaclesDetected();
+      if (areDetected == null)
          {
          System.out.println("Obstacle sensors not responding, check Finch connection");
-         return null;
          }
+      return areDetected;
       }
 
    /**
@@ -975,16 +846,13 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
    @Override
    public double getTemperature()
       {
-      final ThermistorService service = getThermistorService();
-      if (service != null)
-         {
-         return service.getCelsiusTemperature(0);
-         }
-      else
+      final Double temperature = finchController.getThermistorCelsiusTemperature();
+      if (temperature == null)
          {
          System.out.println("Temperature sensor not responding, check Finch connection");
          return 0;
          }
+      return temperature;
       }
 
    /**
@@ -1001,12 +869,36 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
       }
 
    /**
+    * Returns the current value of the analog input specified by the given <code>id</code>.  Invalid analog input ids
+    * cause this method to return <code>null</code>.    Note that, for finches without analog inputs, this method will
+    * always return <code>null</code>.  This method also returns <code>null</code> if an error occurred while trying to
+    * read the value.
+    *
+    * @see FinchProperties#getAnalogInputDeviceCount()
+    */
+   @Override
+   public Integer getAnalogInput(final int id)
+      {
+      return finchController.getAnalogInput(id);
+      }
+
+   /**
+    * Returns the voltage.  This doesn't have much meaning for finches connected via USB HID, and so the value returned
+    * may be <code>null</code> or completely bogus.  For backpacked finches, it returns the voltage of the battery pack
+    * in millivolts.
+    */
+   @Override
+   public Integer getVoltage()
+      {
+      return finchController.getVoltage();
+      }
+
+   /**
     * Displays a graph of the X, Y, and Z accelerometer values.  Note that this graph
     * does not update on its own - you need to call updateAccelerometerGraph to
     * do so.
     *
     */
-
    @Override
    public void showAccelerometerGraph()
       {
@@ -1236,7 +1128,7 @@ public final class Finch extends BaseFinchApplication implements FinchInterface
          closeTemperatureGraph();
          }
 
-      shutdown();
+      connectivityManager.disconnect();
       }
    }
 

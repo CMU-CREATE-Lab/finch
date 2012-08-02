@@ -4,30 +4,26 @@ import java.awt.Color;
 import edu.cmu.ri.createlab.terk.TerkConstants;
 import edu.cmu.ri.createlab.terk.properties.BasicPropertyManager;
 import edu.cmu.ri.createlab.terk.properties.PropertyManager;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.led.BaseFullColorLEDServiceImpl;
 import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
-import org.apache.log4j.Logger;
 
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
 final class FullColorLEDServiceImpl extends BaseFullColorLEDServiceImpl
    {
-   private static final Logger LOG = Logger.getLogger(FullColorLEDServiceImpl.class);
-
    static FullColorLEDServiceImpl create(final FinchController finchController)
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
-      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, FinchConstants.FULL_COLOR_LED_DEVICE_COUNT);
-      basicPropertyManager.setReadOnlyProperty(FullColorLEDService.PROPERTY_NAME_MIN_INTENSITY, FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY);
-      basicPropertyManager.setReadOnlyProperty(FullColorLEDService.PROPERTY_NAME_MAX_INTENSITY, FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY);
+      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, finchController.getFinchProperties().getFullColorLedDeviceCount());
+      basicPropertyManager.setReadOnlyProperty(FullColorLEDService.PROPERTY_NAME_MIN_INTENSITY, finchController.getFinchProperties().getFullColorLedDeviceMinIntensity());
+      basicPropertyManager.setReadOnlyProperty(FullColorLEDService.PROPERTY_NAME_MAX_INTENSITY, finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity());
 
       return new FullColorLEDServiceImpl(finchController,
                                          basicPropertyManager,
-                                         FinchConstants.FULL_COLOR_LED_DEVICE_COUNT);
+                                         finchController.getFinchProperties().getFullColorLedDeviceCount());
       }
 
    private final FinchController finchController;

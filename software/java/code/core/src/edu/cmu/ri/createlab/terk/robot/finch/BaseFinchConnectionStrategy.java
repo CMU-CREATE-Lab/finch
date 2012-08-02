@@ -1,8 +1,8 @@
 package edu.cmu.ri.createlab.terk.robot.finch;
 
+import edu.cmu.ri.createlab.device.connectivity.BaseCreateLabDeviceConnectivityManager;
 import edu.cmu.ri.createlab.device.connectivity.CreateLabDeviceConnectionEventListener;
 import edu.cmu.ri.createlab.device.connectivity.CreateLabDeviceConnectionState;
-import edu.cmu.ri.createlab.device.connectivity.FinchConnectivityManager;
 import edu.cmu.ri.createlab.terk.application.ConnectionStrategy;
 import edu.cmu.ri.createlab.terk.robot.finch.services.DefaultFinchServiceFactoryHelper;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
@@ -13,15 +13,17 @@ import org.apache.log4j.Logger;
 /**
  * @author Chris Bartley (bartley@cmu.edu)
  */
-public final class LocalFinchConnectionStrategy extends ConnectionStrategy
+abstract class BaseFinchConnectionStrategy extends ConnectionStrategy
    {
-   private static final Logger LOG = Logger.getLogger(LocalFinchConnectionStrategy.class);
+   private static final Logger LOG = Logger.getLogger(BaseFinchConnectionStrategy.class);
 
    private ServiceManager serviceManager = null;
-   private final FinchConnectivityManager finchConnectivityManager = new FinchConnectivityManager();
+   private final BaseCreateLabDeviceConnectivityManager<FinchController> finchConnectivityManager;
 
-   public LocalFinchConnectionStrategy()
+   BaseFinchConnectionStrategy(final BaseCreateLabDeviceConnectivityManager<FinchController> finchConnectivityManager)
       {
+      this.finchConnectivityManager = finchConnectivityManager;
+
       finchConnectivityManager.addConnectionEventListener(
             new CreateLabDeviceConnectionEventListener()
             {
@@ -29,7 +31,7 @@ public final class LocalFinchConnectionStrategy extends ConnectionStrategy
                {
                if (LOG.isDebugEnabled())
                   {
-                  LOG.debug("LocalFinchConnectionStrategy.handleConnectionStateChange(): OLD [" + oldState.getStateName() + "]  NEW [" + newState.getStateName() + "]  port [" + portName + "]");
+                  LOG.debug("BaseFinchConnectionStrategy.handleConnectionStateChange(): OLD [" + oldState.getStateName() + "]  NEW [" + newState.getStateName() + "]  port [" + portName + "]");
                   }
                switch (newState)
                   {
@@ -54,41 +56,41 @@ public final class LocalFinchConnectionStrategy extends ConnectionStrategy
             });
       }
 
-   public boolean isConnected()
+   public final boolean isConnected()
       {
       return CreateLabDeviceConnectionState.CONNECTED.equals(finchConnectivityManager.getConnectionState());
       }
 
-   public boolean isConnecting()
+   public final boolean isConnecting()
       {
       return CreateLabDeviceConnectionState.SCANNING.equals(finchConnectivityManager.getConnectionState());
       }
 
-   public ServiceManager getServiceManager()
+   public final ServiceManager getServiceManager()
       {
       return serviceManager;
       }
 
-   public void connect()
+   public final void connect()
       {
       finchConnectivityManager.scanAndConnect();
       }
 
-   public void cancelConnect()
+   public final void cancelConnect()
       {
       finchConnectivityManager.cancelConnecting();
       }
 
-   public void disconnect()
+   public final void disconnect()
       {
-      LOG.debug("LocalFinchConnectionStrategy.disconnect()");
+      LOG.debug("BaseFinchConnectionStrategy.disconnect()");
       notifyListenersOfAttemptingDisconnectionEvent();
       finchConnectivityManager.disconnect();
       }
 
-   public void prepareForShutdown()
+   public final void prepareForShutdown()
       {
-      LOG.debug("LocalFinchConnectionStrategy.prepareForShutdown()");
+      LOG.debug("BaseFinchConnectionStrategy.prepareForShutdown()");
       disconnect();
       }
    }
