@@ -8,17 +8,20 @@ import java.io.InputStreamReader;
 import java.util.SortedMap;
 import edu.cmu.ri.createlab.device.CreateLabDevicePingFailureEventListener;
 import edu.cmu.ri.createlab.serial.commandline.SerialDeviceCommandLineApplication;
-import edu.cmu.ri.createlab.terk.robot.finch.DefaultFinchController;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
+import edu.cmu.ri.createlab.terk.robot.finch.BackpackedFinchController;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
+import edu.cmu.ri.createlab.terk.robot.finch.FinchHardwareType;
+import edu.cmu.ri.createlab.terk.robot.finch.HIDFinchController;
 import edu.cmu.ri.createlab.terk.robot.finch.services.DefaultFinchServiceFactoryHelper;
 import edu.cmu.ri.createlab.terk.robot.finch.services.FinchServiceManager;
 import edu.cmu.ri.createlab.terk.services.ServiceManager;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerGs;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerState;
+import edu.cmu.ri.createlab.terk.services.analog.AnalogInputsService;
 import edu.cmu.ri.createlab.terk.services.audio.AudioService;
 import edu.cmu.ri.createlab.terk.services.buzzer.BuzzerService;
+import edu.cmu.ri.createlab.terk.services.finch.FinchBackpackService;
 import edu.cmu.ri.createlab.terk.services.finch.FinchService;
 import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
 import edu.cmu.ri.createlab.terk.services.motor.OpenLoopVelocityControllableMotorService;
@@ -38,7 +41,31 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
    private static final int THIRTY_SECONDS_IN_MILLIS = 30000;
    private static final String DEFAULT_SERIAL_PORT_NAME = "/dev/tty.finch-backpack";
 
-   private final Runnable connectToFinchAction =
+   private void initializeFinchControllerAfterCreation()
+      {
+      if (finchController == null)
+         {
+         println("Connection failed.");
+         serviceManager = null;
+         }
+      else
+         {
+         println("Connection successful.");
+         finchController.addCreateLabDevicePingFailureEventListener(
+               new CreateLabDevicePingFailureEventListener()
+               {
+               public void handlePingFailureEvent()
+                  {
+                  println("Finch ping failure detected.  You will need to reconnect.");
+                  serviceManager = null;
+                  finchController = null;
+                  }
+               });
+         serviceManager = new FinchServiceManager(finchController, DefaultFinchServiceFactoryHelper.getInstance());
+         }
+      }
+
+   private final Runnable connectToHIDFinchAction =
          new Runnable()
          {
          public void run()
@@ -49,12 +76,13 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
                }
             else
                {
-               connect();
+               finchController = HIDFinchController.create();
+               initializeFinchControllerAfterCreation();
                }
             }
          };
 
-   private final Runnable connectToFinchWithBackpackAction =
+   private final Runnable connectToBackpackedFinchAction =
          new Runnable()
          {
          public void run()
@@ -111,20 +139,9 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
 
                if (serialPortName != null)
                   {
-                  // TODO
-                  println("TODO: Connect to the Finch backpack on port [" + serialPortName + "]");
-                  //hummingbird = HummingbirdFactory.createSerialHummingbird(serialPortName);
-                  //
-                  //if (hummingbird == null)
-                  //   {
-                  //   println("Connection failed!");
-                  //   }
-                  //else
-                  //   {
-                  //   hummingbird.addCreateLabDevicePingFailureEventListener(pingFailureEventListener);
-                  //   serviceManager = new HummingbirdServiceManager(hummingbird, hummingbirdServiceFactoryHelper);
-                  //   println("Connection successful!");
-                  //   }
+                  println("Attempting to connect to the Finch backpack on port [" + serialPortName + "]...");
+                  finchController = BackpackedFinchController.create(serialPortName);
+                  initializeFinchControllerAfterCreation();
                   }
                }
             }
@@ -146,20 +163,22 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
             {
             if (isInitialized())
                {
-               final Integer r = readInteger("Red Intensity   [" + FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY + ", " + FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY + "]: ");
-               if (r == null || r < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY || r > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+               final int minIntensity = finchController.getFinchProperties().getFullColorLedDeviceMinIntensity();
+               final int maxIntensity = finchController.getFinchProperties().getFullColorLedDeviceMaxIntensity();
+               final Integer r = readInteger("Red Intensity   [" + minIntensity + ", " + maxIntensity + "]: ");
+               if (r == null || r < minIntensity || r > maxIntensity)
                   {
                   println("Invalid red intensity");
                   return;
                   }
-               final Integer g = readInteger("Green Intensity [" + FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY + ", " + FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY + "]: ");
-               if (g == null || g < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY || g > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+               final Integer g = readInteger("Green Intensity [" + minIntensity + ", " + maxIntensity + "]: ");
+               if (g == null || g < minIntensity || g > maxIntensity)
                   {
                   println("Invalid green intensity");
                   return;
                   }
-               final Integer b = readInteger("Blue Intensity  [" + FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY + ", " + FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY + "]: ");
-               if (b == null || b < FinchConstants.FULL_COLOR_LED_DEVICE_MIN_INTENSITY || b > FinchConstants.FULL_COLOR_LED_DEVICE_MAX_INTENSITY)
+               final Integer b = readInteger("Blue Intensity  [" + minIntensity + ", " + maxIntensity + "]: ");
+               if (b == null || b < minIntensity || b > maxIntensity)
                   {
                   println("Invalid blue intensity");
                   return;
@@ -307,6 +326,85 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
             }
          };
 
+   private final Runnable getVoltageAction =
+         new Runnable()
+         {
+         public void run()
+            {
+            if (isInitialized())
+               {
+               println(convertVoltageStateToString());
+               }
+            else
+               {
+               println("You must be connected to a finch first.");
+               }
+            }
+         };
+
+   private final Runnable getAnalogInputAction =
+         new Runnable()
+         {
+         public void run()
+            {
+            if (isInitialized())
+               {
+               if (FinchHardwareType.BACKPACK.equals(finchController.getFinchProperties().getHardwareType()))
+                  {
+                  final Integer analogInputId = readInteger("Analog input index [0 - " + (finchController.getFinchProperties().getAnalogInputDeviceCount() - 1) + "]: ");
+
+                  if (analogInputId == null || analogInputId < 0 || analogInputId >= finchController.getFinchProperties().getAnalogInputDeviceCount())
+                     {
+                     println("Invalid analog input index");
+                     }
+                  else
+                     {
+                     println(getAnalogInput(analogInputId));
+                     }
+                  }
+               else
+                  {
+                  println("The finch you are connected to doesn't have analog inputs.");
+                  }
+               }
+            else
+               {
+               println("You must be connected to a finch first.");
+               }
+            }
+         };
+
+   private final Runnable getAnalogInputsAction =
+         new Runnable()
+         {
+         public void run()
+            {
+            if (isInitialized())
+               {
+               if (FinchHardwareType.BACKPACK.equals(finchController.getFinchProperties().getHardwareType()))
+                  {
+                  poll(
+                        new Runnable()
+                        {
+                        public void run()
+                           {
+                           final int[] analogInputValues = getAnalogInputs();
+                           println("Analog inputs: " + arrayToFormattedString(analogInputValues));
+                           }
+                        });
+                  }
+               else
+                  {
+                  println("The finch you are connected to doesn't have analog inputs.");
+                  }
+               }
+            else
+               {
+               println("You must be connected to a finch first.");
+               }
+            }
+         };
+
    private final Runnable pollingGetThermistorStateAction =
          new Runnable()
          {
@@ -337,14 +435,16 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
             {
             if (isInitialized())
                {
-               final Integer leftVelocity = readInteger("Left Velocity  [" + FinchConstants.MOTOR_DEVICE_MIN_VELOCITY + ", " + FinchConstants.MOTOR_DEVICE_MAX_VELOCITY + "]: ");
-               if (leftVelocity == null || leftVelocity < FinchConstants.MOTOR_DEVICE_MIN_VELOCITY || leftVelocity > FinchConstants.MOTOR_DEVICE_MAX_VELOCITY)
+               final int minVelocity = finchController.getFinchProperties().getMotorDeviceMinVelocity();
+               final int maxVelocity = finchController.getFinchProperties().getMotorDeviceMaxVelocity();
+               final Integer leftVelocity = readInteger("Left Velocity  [" + minVelocity + ", " + maxVelocity + "]: ");
+               if (leftVelocity == null || leftVelocity < minVelocity || leftVelocity > maxVelocity)
                   {
                   println("Invalid velocity");
                   return;
                   }
-               final Integer rightVelocity = readInteger("Right Velocity  [" + FinchConstants.MOTOR_DEVICE_MIN_VELOCITY + ", " + FinchConstants.MOTOR_DEVICE_MAX_VELOCITY + "]: ");
-               if (rightVelocity == null || rightVelocity < FinchConstants.MOTOR_DEVICE_MIN_VELOCITY || rightVelocity > FinchConstants.MOTOR_DEVICE_MAX_VELOCITY)
+               final Integer rightVelocity = readInteger("Right Velocity  [" + minVelocity + ", " + maxVelocity + "]: ");
+               if (rightVelocity == null || rightVelocity < minVelocity || rightVelocity > maxVelocity)
                   {
                   println("Invalid velocity");
                   return;
@@ -369,14 +469,19 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
             {
             if (isInitialized())
                {
-               final Integer frequency = readInteger("Frequency (hz) [" + FinchConstants.BUZZER_DEVICE_MIN_FREQUENCY + ", " + FinchConstants.BUZZER_DEVICE_MAX_FREQUENCY + "]: ");
-               if (frequency == null || frequency < FinchConstants.BUZZER_DEVICE_MIN_FREQUENCY || frequency > FinchConstants.BUZZER_DEVICE_MAX_FREQUENCY)
+               final int minFrequency = finchController.getFinchProperties().getBuzzerDeviceMinFrequency();
+               final int maxFrequency = finchController.getFinchProperties().getBuzzerDeviceMaxFrequency();
+               final Integer frequency = readInteger("Frequency (hz) [" + minFrequency + ", " + maxFrequency + "]: ");
+               if (frequency == null || frequency < minFrequency || frequency > maxFrequency)
                   {
                   println("Invalid frequency");
                   return;
                   }
-               final Integer duration = readInteger("Duration  (ms) [" + FinchConstants.BUZZER_DEVICE_MIN_DURATION + ", " + FinchConstants.BUZZER_DEVICE_MAX_DURATION + "]: ");
-               if (duration == null || duration < FinchConstants.BUZZER_DEVICE_MIN_DURATION || duration > FinchConstants.BUZZER_DEVICE_MAX_DURATION)
+
+               final int minDuration = finchController.getFinchProperties().getBuzzerDeviceMinDuration();
+               final int maxDuration = finchController.getFinchProperties().getBuzzerDeviceMaxDuration();
+               final Integer duration = readInteger("Duration  (ms) [" + minDuration + ", " + maxDuration + "]: ");
+               if (duration == null || duration < minDuration || duration > maxDuration)
                   {
                   println("Invalid duration");
                   return;
@@ -399,19 +504,25 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
             if (isInitialized())
                {
                final Integer freq = readInteger("Frequency   (hz): ");
-               if (freq == null || freq < FinchConstants.AUDIO_DEVICE_MIN_FREQUENCY)
+               final int minFrequency = finchController.getFinchProperties().getAudioDeviceMinFrequency();
+               final int maxFrequency = finchController.getFinchProperties().getAudioDeviceMaxFrequency();
+               if (freq == null || freq < minFrequency || freq > maxFrequency)
                   {
                   println("Invalid frequency");
                   return;
                   }
-               final Integer amp = readInteger("Amplitude [" + FinchConstants.AUDIO_DEVICE_MIN_AMPLITUDE + ", " + FinchConstants.AUDIO_DEVICE_MAX_AMPLITUDE + "]: ");
-               if (amp == null || amp < FinchConstants.AUDIO_DEVICE_MIN_AMPLITUDE || amp > FinchConstants.AUDIO_DEVICE_MAX_AMPLITUDE)
+               final int minAmplitude = finchController.getFinchProperties().getAudioDeviceMinAmplitude();
+               final int maxAmplitude = finchController.getFinchProperties().getAudioDeviceMaxAmplitude();
+               final Integer amp = readInteger("Amplitude [" + minAmplitude + ", " + maxAmplitude + "]: ");
+               if (amp == null || amp < minAmplitude || amp > maxAmplitude)
                   {
                   println("Invalid amplitude");
                   return;
                   }
                final Integer dur = readInteger("Duration    (ms): ");
-               if (dur == null || dur < FinchConstants.AUDIO_DEVICE_MIN_DURATION)
+               final int maxDuration = finchController.getFinchProperties().getAudioDeviceMaxDuration();
+               final int minDuration = finchController.getFinchProperties().getAudioDeviceMinDuration();
+               if (dur == null || dur < minDuration || dur > maxDuration)
                   {
                   println("Invalid duration");
                   return;
@@ -521,8 +632,8 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
       {
       super(in);
 
-      registerAction("C", connectToFinchAction);
-      registerAction("c", connectToFinchWithBackpackAction);
+      registerAction("C", connectToHIDFinchAction);
+      registerAction("c", connectToBackpackedFinchAction);
       registerAction("d", disconnectFromFinchAction);
       registerAction("f", fullColorLEDAction);
       registerAction("a", getAccelerometerStateAction);
@@ -534,6 +645,9 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
       registerAction("h", getThermistorStateAction);
       registerAction("H", pollingGetThermistorStateAction);
       registerAction("v", setMotorVelocitiesAction);
+      registerAction("V", getVoltageAction);
+      registerAction("n", getAnalogInputAction);
+      registerAction("N", getAnalogInputsAction);
       registerAction("b", playBuzzerToneAction);
       registerAction("t", playToneAction);
       registerAction("s", playClipAction);
@@ -571,6 +685,9 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
       println("h         Get the state of the thermistor");
       println("H         Continuously poll the thermistor for 30 seconds");
       println("v         Set the velocity of both of the motors (in native units)");
+      println("V         Get the finch's current voltage");
+      println("n         Get the value of one of the analog inputs");
+      println("N         Continuously poll the analog inputs for 30 seconds");
       println("");
       println("b         Play a tone using the finch's buzzer");
       println("t         Play a tone using the computer's speaker");
@@ -615,6 +732,17 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
       return "Thermistor: failed to read value";
       }
 
+   private String convertVoltageStateToString()
+      {
+      final Integer rawValue = getVoltage();
+      if (rawValue != null)
+         {
+         return "Voltage: " + rawValue;   // TODO: display units
+         }
+
+      return "Voltage: failed to read value";
+      }
+
    private void poll(final Runnable strategy)
       {
       final long startTime = System.currentTimeMillis();
@@ -632,32 +760,18 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
          }
       }
 
-   private boolean connect()
+   private static String arrayToFormattedString(final int[] a)
       {
-      finchController = DefaultFinchController.create();
-
-      if (finchController == null)
+      if (a != null && a.length > 0)
          {
-         println("Connection failed.");
-         serviceManager = null;
-         return false;
+         final StringBuilder s = new StringBuilder();
+         for (final int i : a)
+            {
+            s.append(String.format("%5d", i));
+            }
+         return s.toString();
          }
-      else
-         {
-         println("Connection successful.");
-         finchController.addCreateLabDevicePingFailureEventListener(
-               new CreateLabDevicePingFailureEventListener()
-               {
-               public void handlePingFailureEvent()
-                  {
-                  println("Finch ping failure detected.  You will need to reconnect.");
-                  serviceManager = null;
-                  finchController = null;
-                  }
-               });
-         serviceManager = new FinchServiceManager(finchController, DefaultFinchServiceFactoryHelper.getInstance());
-         return true;
-         }
+      return "";
       }
 
    private boolean isConnected()
@@ -703,6 +817,36 @@ public final class CommandLineFinch extends SerialDeviceCommandLineApplication
    private Integer getThermistor()
       {
       return ((ThermistorService)serviceManager.getServiceByTypeId(ThermistorService.TYPE_ID)).getThermistorValue(0);
+      }
+
+   private Integer getAnalogInput(final int id)
+      {
+      final AnalogInputsService service = (AnalogInputsService)serviceManager.getServiceByTypeId(AnalogInputsService.TYPE_ID);
+      if (service != null)
+         {
+         return service.getAnalogInputValue(id);
+         }
+      return null;
+      }
+
+   private int[] getAnalogInputs()
+      {
+      final AnalogInputsService service = (AnalogInputsService)serviceManager.getServiceByTypeId(AnalogInputsService.TYPE_ID);
+      if (service != null)
+         {
+         return service.getAnalogInputValues();
+         }
+      return null;
+      }
+
+   private Integer getVoltage()
+      {
+      final FinchBackpackService service = (FinchBackpackService)serviceManager.getServiceByTypeId(FinchBackpackService.TYPE_ID);
+      if (service != null)
+         {
+         return service.getVoltage();
+         }
+      return null;
       }
 
    private Double convertToCelsiusTemperature(final Integer rawValue)

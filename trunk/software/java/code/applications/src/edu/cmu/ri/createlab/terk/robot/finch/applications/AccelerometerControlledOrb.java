@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import edu.cmu.ri.createlab.terk.robot.finch.Finch;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConversionStrategy;
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConversionStrategyFinder;
 
@@ -14,11 +13,10 @@ import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConvers
 @SuppressWarnings({"UseOfSystemOutOrSystemErr"})
 public final class AccelerometerControlledOrb
    {
-   private static final AccelerometerUnitConversionStrategy ACCELEROMETER_UNIT_CONVERTER = AccelerometerUnitConversionStrategyFinder.getInstance().lookup(FinchConstants.ACCELEROMETER_DEVICE_ID);
-
    public static void main(final String[] args) throws IOException
       {
       final Finch finch = new Finch();
+      final AccelerometerUnitConversionStrategy accelerometerUnitConverter = AccelerometerUnitConversionStrategyFinder.getInstance().lookup(finch.getFinchProperties().getAccelerometerDeviceId());
 
       final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -34,9 +32,9 @@ public final class AccelerometerControlledOrb
             }
 
          // use the native accelerometer values to set the color
-         finch.setLED(ACCELEROMETER_UNIT_CONVERTER.convertToNative(finch.getXAcceleration()),
-                      ACCELEROMETER_UNIT_CONVERTER.convertToNative(finch.getYAcceleration()),
-                      ACCELEROMETER_UNIT_CONVERTER.convertToNative(finch.getZAcceleration()));
+         finch.setLED(accelerometerUnitConverter.convertToNative(finch.getXAcceleration()),
+                      accelerometerUnitConverter.convertToNative(finch.getYAcceleration()),
+                      accelerometerUnitConverter.convertToNative(finch.getZAcceleration()));
          }
 
       finch.quit();

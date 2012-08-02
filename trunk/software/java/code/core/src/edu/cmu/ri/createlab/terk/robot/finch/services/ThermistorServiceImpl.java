@@ -3,7 +3,6 @@ package edu.cmu.ri.createlab.terk.robot.finch.services;
 import edu.cmu.ri.createlab.terk.TerkConstants;
 import edu.cmu.ri.createlab.terk.properties.BasicPropertyManager;
 import edu.cmu.ri.createlab.terk.properties.PropertyManager;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.thermistor.BaseThermistorServiceImpl;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
@@ -17,14 +16,14 @@ final class ThermistorServiceImpl extends BaseThermistorServiceImpl
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
-      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, FinchConstants.THERMISTOR_DEVICE_COUNT);
-      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_THERMISTOR_DEVICE_ID, FinchConstants.THERMISTOR_DEVICE_ID);
-      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_MIN_VALUE, FinchConstants.THERMISTOR_MIN_VALUE);
-      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_MAX_VALUE, FinchConstants.THERMISTOR_MAX_VALUE);
+      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, finchController.getFinchProperties().getThermistorDeviceCount());
+      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_THERMISTOR_DEVICE_ID, finchController.getFinchProperties().getThermistorDeviceId());
+      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_MIN_VALUE, finchController.getFinchProperties().getThermistorMinValue());
+      basicPropertyManager.setReadOnlyProperty(ThermistorService.PROPERTY_NAME_MAX_VALUE, finchController.getFinchProperties().getThermistorMaxValue());
 
       return new ThermistorServiceImpl(finchController,
                                        basicPropertyManager,
-                                       FinchConstants.THERMISTOR_DEVICE_COUNT);
+                                       finchController.getFinchProperties().getThermistorDeviceCount());
       }
 
    private final FinchController finchController;

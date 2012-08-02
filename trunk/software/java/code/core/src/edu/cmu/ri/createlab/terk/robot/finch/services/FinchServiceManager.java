@@ -2,21 +2,10 @@ package edu.cmu.ri.createlab.terk.robot.finch.services;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.AbstractServiceManager;
 import edu.cmu.ri.createlab.terk.services.Service;
-import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerService;
-import edu.cmu.ri.createlab.terk.services.audio.AudioService;
-import edu.cmu.ri.createlab.terk.services.buzzer.BuzzerService;
-import edu.cmu.ri.createlab.terk.services.finch.FinchService;
-import edu.cmu.ri.createlab.terk.services.led.FullColorLEDService;
-import edu.cmu.ri.createlab.terk.services.motor.OpenLoopVelocityControllableMotorService;
-import edu.cmu.ri.createlab.terk.services.obstacle.SimpleObstacleDetectorService;
-import edu.cmu.ri.createlab.terk.services.photoresistor.PhotoresistorService;
-import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorService;
 import org.apache.log4j.Logger;
 
 /**
@@ -38,22 +27,10 @@ public final class FinchServiceManager extends AbstractServiceManager
          }
 
       this.finchController = finchController;
-      this.serviceFactory = new FinchServiceFactory(finchServiceFactoryHelper);
-
-      // get the collection of supported services from the peer's proxy
-      final Set<String> supportedServices = new HashSet<String>();
-      supportedServices.add(AccelerometerService.TYPE_ID);
-      supportedServices.add(AudioService.TYPE_ID);
-      supportedServices.add(BuzzerService.TYPE_ID);
-      supportedServices.add(FinchService.TYPE_ID);
-      supportedServices.add(FullColorLEDService.TYPE_ID);
-      supportedServices.add(PhotoresistorService.TYPE_ID);
-      supportedServices.add(SimpleObstacleDetectorService.TYPE_ID);
-      supportedServices.add(ThermistorService.TYPE_ID);
-      supportedServices.add(OpenLoopVelocityControllableMotorService.TYPE_ID);
+      this.serviceFactory = new FinchServiceFactory(finchServiceFactoryHelper, finchController.getFinchProperties());
 
       // register the supported services with the superclass
-      registerSupportedServices(supportedServices);
+      registerSupportedServices(serviceFactory.getSupportedServices());
       }
 
    protected final Service loadService(final String typeId)

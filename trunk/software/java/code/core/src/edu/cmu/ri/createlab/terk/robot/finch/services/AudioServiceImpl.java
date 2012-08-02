@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 import edu.cmu.ri.createlab.terk.TerkConstants;
 import edu.cmu.ri.createlab.terk.properties.BasicPropertyManager;
 import edu.cmu.ri.createlab.terk.properties.PropertyManager;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.ExceptionHandler;
 import edu.cmu.ri.createlab.terk.services.audio.AudioService;
@@ -24,13 +23,13 @@ final class AudioServiceImpl extends BaseAudioServiceImpl
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
-      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, FinchConstants.AUDIO_DEVICE_COUNT);
-      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MIN_AMPLITUDE, FinchConstants.AUDIO_DEVICE_MIN_AMPLITUDE);
-      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MAX_AMPLITUDE, FinchConstants.AUDIO_DEVICE_MAX_AMPLITUDE);
-      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MIN_DURATION, FinchConstants.AUDIO_DEVICE_MIN_DURATION);
-      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MAX_DURATION, FinchConstants.AUDIO_DEVICE_MAX_DURATION);
-      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MIN_FREQUENCY, FinchConstants.AUDIO_DEVICE_MIN_FREQUENCY);
-      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MAX_FREQUENCY, FinchConstants.AUDIO_DEVICE_MAX_FREQUENCY);
+      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, finchController.getFinchProperties().getAudioDeviceCount());
+      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MIN_AMPLITUDE, finchController.getFinchProperties().getAudioDeviceMinAmplitude());
+      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MAX_AMPLITUDE, finchController.getFinchProperties().getAudioDeviceMaxAmplitude());
+      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MIN_DURATION, finchController.getFinchProperties().getAudioDeviceMinDuration());
+      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MAX_DURATION, finchController.getFinchProperties().getAudioDeviceMaxDuration());
+      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MIN_FREQUENCY, finchController.getFinchProperties().getAudioDeviceMinFrequency());
+      basicPropertyManager.setReadOnlyProperty(AudioService.PROPERTY_NAME_MAX_FREQUENCY, finchController.getFinchProperties().getAudioDeviceMaxFrequency());
 
       return new AudioServiceImpl(finchController,
                                   basicPropertyManager,

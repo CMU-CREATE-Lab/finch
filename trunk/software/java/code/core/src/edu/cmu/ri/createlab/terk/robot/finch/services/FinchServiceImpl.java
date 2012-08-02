@@ -3,7 +3,6 @@ package edu.cmu.ri.createlab.terk.robot.finch.services;
 import edu.cmu.ri.createlab.terk.TerkConstants;
 import edu.cmu.ri.createlab.terk.properties.BasicPropertyManager;
 import edu.cmu.ri.createlab.terk.properties.PropertyManager;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.finch.BaseFinchServiceImpl;
 
@@ -16,11 +15,11 @@ final class FinchServiceImpl extends BaseFinchServiceImpl
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
-      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, FinchConstants.FINCH_DEVICE_COUNT);
+      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, finchController.getFinchProperties().getFinchDeviceCount());
 
       return new FinchServiceImpl(finchController,
                                   basicPropertyManager,
-                                  FinchConstants.FINCH_DEVICE_COUNT);
+                                  finchController.getFinchProperties().getFinchDeviceCount());
       }
 
    private final FinchController finchController;

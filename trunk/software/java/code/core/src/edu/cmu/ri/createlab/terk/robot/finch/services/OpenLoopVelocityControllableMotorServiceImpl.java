@@ -3,7 +3,6 @@ package edu.cmu.ri.createlab.terk.robot.finch.services;
 import edu.cmu.ri.createlab.terk.TerkConstants;
 import edu.cmu.ri.createlab.terk.properties.BasicPropertyManager;
 import edu.cmu.ri.createlab.terk.properties.PropertyManager;
-import edu.cmu.ri.createlab.terk.robot.finch.FinchConstants;
 import edu.cmu.ri.createlab.terk.robot.finch.FinchController;
 import edu.cmu.ri.createlab.terk.services.motor.BaseOpenLoopVelocityControllableMotorServiceImpl;
 import edu.cmu.ri.createlab.terk.services.motor.OpenLoopVelocityControllableMotorService;
@@ -20,17 +19,17 @@ final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVel
       {
       final BasicPropertyManager basicPropertyManager = new BasicPropertyManager();
 
-      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, FinchConstants.MOTOR_DEVICE_COUNT);
-      basicPropertyManager.setReadOnlyProperty(OpenLoopVelocityControllableMotorService.PROPERTY_NAME_MIN_VELOCITY, FinchConstants.MOTOR_DEVICE_MIN_VELOCITY);
-      basicPropertyManager.setReadOnlyProperty(OpenLoopVelocityControllableMotorService.PROPERTY_NAME_MAX_VELOCITY, FinchConstants.MOTOR_DEVICE_MAX_VELOCITY);
+      basicPropertyManager.setReadOnlyProperty(TerkConstants.PropertyKeys.DEVICE_COUNT, finchController.getFinchProperties().getMotorDeviceCount());
+      basicPropertyManager.setReadOnlyProperty(OpenLoopVelocityControllableMotorService.PROPERTY_NAME_MIN_VELOCITY, finchController.getFinchProperties().getMotorDeviceMinVelocity());
+      basicPropertyManager.setReadOnlyProperty(OpenLoopVelocityControllableMotorService.PROPERTY_NAME_MAX_VELOCITY, finchController.getFinchProperties().getMotorDeviceMaxVelocity());
 
       return new OpenLoopVelocityControllableMotorServiceImpl(finchController,
                                                               basicPropertyManager,
-                                                              FinchConstants.MOTOR_DEVICE_COUNT);
+                                                              finchController.getFinchProperties().getMotorDeviceCount());
       }
 
    private final FinchController finchController;
-   private final int[] rememberedVelocities = new int[FinchConstants.MOTOR_DEVICE_COUNT];
+   private final int[] rememberedVelocities;
 
    private OpenLoopVelocityControllableMotorServiceImpl(final FinchController finchController,
                                                         final PropertyManager propertyManager,
@@ -38,12 +37,13 @@ final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVel
       {
       super(propertyManager, deviceCount);
       this.finchController = finchController;
+      this.rememberedVelocities = new int[deviceCount];
       }
 
    /**
     * <p>
     * Sets the motor velocities.  This method does nothing and returns <code>false</code> if either (or both) of the
-    * arrays is <code>null</code> or has a length less than {@link FinchConstants#MOTOR_DEVICE_COUNT}.
+    * arrays is <code>null</code> or has a length less than {@link #getDeviceCount()}.
     * </p>
     * <p>
     * Note that we can't really support the mask, since the finchController's {@link FinchController#setMotorVelocities}
@@ -57,12 +57,12 @@ final class OpenLoopVelocityControllableMotorServiceImpl extends BaseOpenLoopVel
    protected boolean execute(final boolean[] mask, final int[] velocities)
       {
       if (mask != null &&
-          mask.length >= FinchConstants.MOTOR_DEVICE_COUNT &&
+          mask.length >= getDeviceCount() &&
           velocities != null &&
-          velocities.length >= FinchConstants.MOTOR_DEVICE_COUNT)
+          velocities.length >= getDeviceCount())
          {
          // remember velocity of masked on motors, and set velocity of masked off motors to the remembered value
-         for (int i = 0; i < FinchConstants.MOTOR_DEVICE_COUNT; i++)
+         for (int i = 0; i < getDeviceCount(); i++)
             {
             if (mask[i])
                {

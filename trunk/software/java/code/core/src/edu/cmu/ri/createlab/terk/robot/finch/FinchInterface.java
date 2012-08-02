@@ -8,6 +8,11 @@ import java.awt.Color;
 public interface FinchInterface
    {
    /**
+    * Returns the {@link FinchProperties} for this finch.
+    */
+   FinchProperties getFinchProperties();
+
+   /**
     * Sets the color of the LED in the Finch's beak using a Color object.
     *
     * @param     color is a Color object that determines the beaks color
@@ -247,7 +252,7 @@ public interface FinchInterface
     * @param     duration  Duration in milliseconds of the tone
     */
    void buzzBlocking(final int frequency, final int duration);
-   
+
    /**
     * Returns the value of the left light sensor.  Valid values range from 0 to 255, with higher
     * values indicating more light is being detected by the sensor.
@@ -350,6 +355,23 @@ public interface FinchInterface
     * do so.
     *
     */
+
+   /**
+    * Returns the current value of the analog input specified by the given <code>id</code>.  Invalid analog input ids
+    * cause this method to return <code>null</code>.    Note that, for finches without analog inputs, this method will
+    * always return <code>null</code>.  This method also returns <code>null</code> if an error occurred while trying to
+    * read the value.
+    *
+    * @see FinchProperties#getAnalogInputDeviceCount()
+    */
+   Integer getAnalogInput(final int id);
+
+   /**
+    * Returns the voltage.  This doesn't have much meaning for finches connected via USB HID, and so the value returned
+    * may be <code>null</code> or completely bogus.  For backpacked finches, it returns the voltage of the battery pack
+    * in millivolts.
+    */
+   Integer getVoltage();
 
    void showAccelerometerGraph();
 
