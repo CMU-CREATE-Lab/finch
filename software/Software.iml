@@ -222,7 +222,9 @@
           <root url="http://users.frii.com/jarvi/rxtx/doc" />
           <root url="http://java.sun.com/products/javacomm/reference/api" />
         </JAVADOC>
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/java/lib/rxtx/RXTXcomm-src.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
