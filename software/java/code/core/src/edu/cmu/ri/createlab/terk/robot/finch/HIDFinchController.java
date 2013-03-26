@@ -22,7 +22,6 @@ import edu.cmu.ri.createlab.usb.hid.HIDDeviceNoReturnValueCommandExecutor;
 import edu.cmu.ri.createlab.usb.hid.HIDDeviceNotFoundException;
 import edu.cmu.ri.createlab.usb.hid.HIDDeviceReturnValueCommandExecutor;
 import edu.cmu.ri.createlab.util.commandexecution.CommandResponse;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
 /**
@@ -60,9 +59,9 @@ public final class HIDFinchController extends BaseFinchController
             return finchController;
             }
          }
-      catch (NotImplementedException e)
+      catch (UnsupportedOperationException e)
          {
-         LOG.error("NotImplementedException caught while trying to create the HIDCommandExecutionQueue", e);
+         LOG.error("UnsupportedOperationException caught while trying to create the HIDCommandExecutionQueue", e);
          System.err.println(e);
          System.exit(1);
          }
