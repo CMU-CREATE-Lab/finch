@@ -22,7 +22,7 @@ final class BackpackedFinchProperties extends BaseFinchProperties
 
    static final class SerialConfiguration
       {
-      public static final BaudRate BAUD_RATE = BaudRate.BAUD_125000;
+      public static final BaudRate BAUD_RATE = BaudRate.BAUD_115200;
       public static final CharacterSize CHARACTER_SIZE = CharacterSize.EIGHT;
       public static final Parity PARITY = Parity.NONE;
       public static final StopBits STOP_BITS = StopBits.ONE;
