@@ -253,6 +253,7 @@ abstract class BaseFinchController implements FinchController, CommandExecutionF
          catch (Exception e)
             {
             LOG.error("BaseFinchController$Pinger.run(): Exception caught while executing the pinger", e);
+            forceFailure();
             }
          }
 
