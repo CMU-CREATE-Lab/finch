@@ -23,7 +23,6 @@ import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConvers
 import edu.cmu.ri.createlab.terk.services.accelerometer.AccelerometerUnitConversionStrategyFinder;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStrategy;
 import edu.cmu.ri.createlab.terk.services.thermistor.ThermistorUnitConversionStrategyFinder;
-import edu.cmu.ri.createlab.util.commandexecution.CommandResponse;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
@@ -133,6 +132,7 @@ public final class BackpackedFinchController extends BaseFinchController
 
    private BackpackedFinchController(final SerialDeviceCommandExecutionQueue commandQueue, final String serialPortName)
       {
+      super(false);
       this.commandQueue = commandQueue;
       this.serialPortName = serialPortName;
 
@@ -257,11 +257,5 @@ public final class BackpackedFinchController extends BaseFinchController
    protected void shutdownCommandQueue()
       {
       commandQueue.shutdown();
-      }
-
-   @Override
-   protected CommandResponse executePingCommand() throws Exception
-      {
-      return commandQueue.execute(getThermistorCommandStrategy);
       }
    }
