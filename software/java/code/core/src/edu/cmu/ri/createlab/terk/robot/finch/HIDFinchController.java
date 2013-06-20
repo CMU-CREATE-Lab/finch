@@ -99,6 +99,7 @@ public final class HIDFinchController extends BaseFinchController
 
    private HIDFinchController(final HIDCommandExecutionQueue commandQueue, final HIDDevice hidDevice)
       {
+      super(true);
       this.commandQueue = commandQueue;
       this.hidDevice = hidDevice;
 

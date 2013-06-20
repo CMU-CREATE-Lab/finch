@@ -33,13 +33,20 @@ abstract class BaseFinchController implements FinchController, CommandExecutionF
    private final ScheduledFuture<?> pingScheduledFuture;
    private final Collection<CreateLabDevicePingFailureEventListener> createLabDevicePingFailureEventListeners = new HashSet<CreateLabDevicePingFailureEventListener>();
 
-   protected BaseFinchController()
+   protected BaseFinchController(final boolean usePinger)
       {
-      // schedule periodic pings
-      pingScheduledFuture = pingExecutorService.scheduleAtFixedRate(pinger,
-                                                                    DELAY_IN_SECONDS_BETWEEN_PEER_PINGS, // delay before first ping
-                                                                    DELAY_IN_SECONDS_BETWEEN_PEER_PINGS, // delay between pings
-                                                                    TimeUnit.SECONDS);
+      if (usePinger)
+         {
+         // schedule periodic pings
+         pingScheduledFuture = pingExecutorService.scheduleAtFixedRate(pinger,
+                                                                       DELAY_IN_SECONDS_BETWEEN_PEER_PINGS, // delay before first ping
+                                                                       DELAY_IN_SECONDS_BETWEEN_PEER_PINGS, // delay between pings
+                                                                       TimeUnit.SECONDS);
+         }
+      else
+         {
+         pingScheduledFuture = null;
+         }
       }
 
    @Override
@@ -177,16 +184,19 @@ abstract class BaseFinchController implements FinchController, CommandExecutionF
          }
 
       // turn off the pinger
-      try
+      if (pingScheduledFuture != null)
          {
-         LOG.debug("BaseFinchController.disconnect(): Shutting down finch pinger...");
-         pingScheduledFuture.cancel(false);
-         pingExecutorService.shutdownNow();
-         LOG.debug("BaseFinchController.disconnect(): Successfully shut down the Finch pinger.");
-         }
-      catch (Exception e)
-         {
-         LOG.error("BaseFinchController.disconnect(): Exception caught while trying to shut down pinger", e);
+         try
+            {
+            LOG.debug("BaseFinchController.disconnect(): Shutting down finch pinger...");
+            pingScheduledFuture.cancel(false);
+            pingExecutorService.shutdownNow();
+            LOG.debug("BaseFinchController.disconnect(): Successfully shut down the Finch pinger.");
+            }
+         catch (Exception e)
+            {
+            LOG.error("BaseFinchController.disconnect(): Exception caught while trying to shut down pinger", e);
+            }
          }
 
       // optionally send goodbye command to the Finch
@@ -297,5 +307,9 @@ abstract class BaseFinchController implements FinchController, CommandExecutionF
          }
       }
 
-   protected abstract CommandResponse executePingCommand() throws Exception;
+   protected CommandResponse executePingCommand() throws Exception
+      {
+      // default does nothing
+      return null;
+      }
    }
