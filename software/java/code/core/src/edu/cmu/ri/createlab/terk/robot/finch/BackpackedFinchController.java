@@ -5,6 +5,7 @@ import java.util.Map;
 import edu.cmu.ri.createlab.serial.SerialDeviceCommandExecutionQueue;
 import edu.cmu.ri.createlab.serial.SerialDeviceNoReturnValueCommandExecutor;
 import edu.cmu.ri.createlab.serial.SerialDeviceReturnValueCommandExecutor;
+import edu.cmu.ri.createlab.util.commandexecution.CommandExecutionFailureHandler;
 import edu.cmu.ri.createlab.serial.config.SerialIOConfiguration;
 import edu.cmu.ri.createlab.terk.robot.finch.commands.serial.BuzzerCommandStrategy;
 import edu.cmu.ri.createlab.terk.robot.finch.commands.serial.DisconnectCommandStrategy;
@@ -78,25 +79,43 @@ public final class BackpackedFinchController extends BaseFinchController
                LOG.debug("Serial port '" + serialPortName + "' opened.");
                }
 
-            // now try to do the handshake with the finch to establish communication
-            final boolean wasHandshakeSuccessful = commandQueue.executeAndReturnStatus(new HandshakeCommandStrategy());
+            // Check the battery voltage to make sure you're getting proper data back
+             final SerialDeviceReturnValueCommandExecutor<Integer> integerReturnValueCommandExecutor =
+             					new SerialDeviceReturnValueCommandExecutor<Integer>(commandQueue,
+																								  new CommandExecutionFailureHandler()
+																								  {
+																								  @Override
+																								  public void handleExecutionFailure()
+																									 {
+																										//commandQueue.shutdown();
+																									 }
+																								  });
+			final Integer voltage =  integerReturnValueCommandExecutor.execute(new GetVoltageCommandStrategy());
 
-            // see if the handshake was a success
-            if (wasHandshakeSuccessful)
-               {
-               LOG.info("Finch handshake successful!");
+			boolean wasHandshakeSuccessful = false;
+			if(voltage != null)
+			{
+				if(voltage <= 255 && voltage > 100)
+					wasHandshakeSuccessful = true;
+			}
 
-               // now create and return the proxy
-               return new BackpackedFinchController(commandQueue, serialPortName);
-               }
-            else
-               {
-               LOG.error("Failed to handshake with finch");
-               }
+			// see if the handshake was a success
 
-            // the handshake failed, so shutdown the command queue to release the serial port
-            commandQueue.shutdown();
-            }
+			 if (wasHandshakeSuccessful)
+			   {
+			   LOG.info("Finch handshake successful!");
+
+			   // now create and return the proxy
+			   return new BackpackedFinchController(commandQueue, serialPortName);
+			   }
+			else
+			   {
+			   LOG.error("Failed to handshake with finch");
+			   }
+
+			// the handshake failed, so shutdown the command queue to release the serial port
+			commandQueue.shutdown();
+			}
          }
       catch (Exception e)
          {
