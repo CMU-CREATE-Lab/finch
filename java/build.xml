@@ -385,6 +385,8 @@
             <map from="${dist-@{component.name}.dir.after-conversion}" to="."/>
          </pathconvert>
 
+         <echo level="info">Git Revision: ${repository.version}</echo>
+
          <!-- create jar of Java classes -->
          <jar destfile="${@{component.name}.dist.dir}/${@{component.name}.jar.filename}"
               basedir="${@{component.name}.build.dir}"
@@ -393,6 +395,7 @@
             <manifest>
                <attribute name="Built-By" value="${jar.built-by}"/>
                <attribute name="Build-Timestamp" value="${build.timestamp}"/>
+               <attribute name="Git-Revision" value="${repository.version}"/>
                <attribute name="Class-Path" value="${@{component.name}.execution.classpath}"/>
                <jar-manifest-attributes/>
             </manifest>
