@@ -1,0 +1,8 @@
+.DS_Store
+*.iws
+zip
+finch.zip
+java/code/applications/build
+java/code/applications/dist
+java/code/core/build
+java/code/core/dist

@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Finch" default="all">
+   <dirname property="base.directory" file="${ant.file}"/>
+   <property file="build.properties"/>
+
+   <!-- Paths -->
+   <path id="finch-core-classpath">
+      <!-- third-party jars -->
+      <pathelement path="${create-lab-commons-audio.jar}"/>
+      <pathelement path="${create-lab-commons-collections.jar}"/>
+      <pathelement path="${create-lab-commons-device.jar}"/>
+      <pathelement path="${create-lab-commons-serial.jar}"/>
+      <pathelement path="${create-lab-commons-speech.jar}"/>
+      <pathelement path="${create-lab-commons-usb-hid.jar}"/>
+      <pathelement path="${create-lab-commons-user-interface.jar}"/>
+      <pathelement path="${create-lab-commons-util.jar}"/>
+      <pathelement path="${create-lab-commons-video.jar}"/>
+      <pathelement path="${commons-lang.jar}"/>
+      <pathelement path="${log4j.jar}"/>
+      <pathelement path="${jna.jar}"/>
+      <pathelement path="${jnaerator.jar}"/>
+      <pathelement path="${rxtx.jar}"/>
+      <pathelement path="${terk-core.jar}"/>
+      <pathelement path="${terk-services.jar}"/>
+   </path>
+
+   <path id="finch-applications-classpath">
+      <!-- other classes within this project -->
+      <pathelement path="${finch-core.build.dir}"/>
+
+      <!-- third-party jars -->
+      <pathelement path="${create-lab-commons-audio.jar}"/>
+      <pathelement path="${create-lab-commons-collections.jar}"/>
+      <pathelement path="${create-lab-commons-device.jar}"/>
+      <pathelement path="${create-lab-commons-serial.jar}"/>
+      <pathelement path="${create-lab-commons-rss.jar}"/>
+      <pathelement path="${create-lab-commons-speech.jar}"/>
+      <pathelement path="${create-lab-commons-usb-hid.jar}"/>
+      <pathelement path="${create-lab-commons-user-interface.jar}"/>
+      <pathelement path="${create-lab-commons-util.jar}"/>
+      <pathelement path="${create-lab-commons-video.jar}"/>
+      <pathelement path="${commons-lang.jar}"/>
+      <pathelement path="${freetts.jar}"/>
+      <pathelement path="${freetts-extra1.jar}"/>
+      <pathelement path="${freetts-extra2.jar}"/>
+      <pathelement path="${freetts-extra3.jar}"/>
+      <pathelement path="${lti-civil.jar}"/>
+      <pathelement path="${log4j.jar}"/>
+      <pathelement path="${jdom.jar}"/>
+      <pathelement path="${jna.jar}"/>
+      <pathelement path="${jnaerator.jar}"/>
+      <pathelement path="${rome.jar}"/>
+      <pathelement path="${rxtx.jar}"/>
+      <pathelement path="${swing-layout.jar}"/>
+      <pathelement path="${terk-core.jar}"/>
+      <pathelement path="${terk-services.jar}"/>
+   </path>
+
+   <!-- Compiler resources -->
+   <patternset id="compiler.resources">
+      <!-- excluded files -->
+      <exclude name="**/CVS/**"/>
+      <exclude name="**/SCCS/**"/>
+      <exclude name="**/RCS/**"/>
+      <exclude name="**/rcs/**"/>
+      <exclude name="**/.DS_Store/**"/>
+      <exclude name="**/.svn/**"/>
+      <!-- included files -->
+      <include name="**/?*.properties"/>
+      <include name="**/?*.xml"/>
+      <include name="**/?*.htm"/>
+      <include name="**/?*.html"/>
+      <include name="**/?*.dtd"/>
+      <include name="**/?*.tld"/>
+      <include name="**/?*.xsd"/>
+      <include name="**/?*.xsl"/>
+      <include name="**/?*.gif"/>
+      <include name="**/?*.png"/>
+      <include name="**/?*.jpeg"/>
+      <include name="**/?*.jpg"/>
+      <include name="**/?*.dll"/>
+      <include name="**/?*.lib"/>
+      <include name="**/?*.ice"/>
+      <include name="**/?*.pem"/>
+   </patternset>
+
+   <tstamp>
+      <format property="build.timestamp" pattern="yyyy-MM-dd hh:mm:ss a z"/>
+   </tstamp>
+
+   <!-- Get the git revision number and URL, and store it in property repository.version (found at http://stackoverflow.com/a/4059546/703200) -->
+   <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+      <arg value="describe"/>
+      <arg value="--tags"/>
+      <arg value="--always"/>
+      <arg value="HEAD"/>
+   </exec>
+   <condition property="repository.version" value="${git.revision}" else="unknown">
+      <and>
+         <isset property="git.revision"/>
+         <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+      </and>
+   </condition>
+   <echo level="info">Git Revision: ${repository.version}</echo>
+
+   <target name="all" depends="clean, dist" description="clean, then build everything"/>
+
+   <target name="clean" depends="clean-finch-core,
+                                 clean-finch-applications" description="clean up everything"/>
+
+   <target name="clean-finch-core" description="clean up finch-core">
+      <delete dir="${finch-core.build.dir}"/>
+      <delete dir="${finch-core.dist.dir}"/>
+   </target>
+
+   <target name="clean-finch-applications" description="clean up finch-applications">
+      <delete dir="${finch-applications.build.dir}"/>
+      <delete dir="${finch-applications.dist.dir}"/>
+   </target>
+
+   <target name="build" depends="build-finch-core, build-finch-applications" description="builds the source code" unless="build-is-complete">
+      <property name="build-is-complete" value="true"/>
+   </target>
+
+   <target name="build-finch-core" description="builds the finch-core source code" unless="build-finch-core-is-complete">
+      <compile-code-and-copy-resources src.dir="${finch-core.src.dir}"
+                                       build.dir="${finch-core.build.dir}"
+                                       classpath-ref="finch-core-classpath"/>
+
+      <property name="build-finch-core-is-complete" value="true"/>
+   </target>
+
+   <target name="build-finch-applications" depends="build-finch-core" description="builds the finch-applications source code" unless="build-finch-applications-is-complete">
+      <compile-code-and-copy-resources src.dir="${finch-applications.src.dir}"
+                                       build.dir="${finch-applications.build.dir}"
+                                       classpath-ref="finch-applications-classpath"/>
+
+      <property name="build-finch-applications-is-complete" value="true"/>
+   </target>
+
+   <target name="dist" depends="dist-finch-core, dist-finch-applications" description="builds the project" unless="dist-is-complete">
+      <property name="dist-is-complete" value="true"/>
+   </target>
+
+   <target name="dist-finch-core" depends="build-finch-core" description="builds finch-core" unless="dist-finch-core-is-complete">
+      <create-dist component.name="finch-core">
+         <additional-files-to-copy>
+            <fileset file="${commons-lang.jar}"/>
+            <fileset file="${create-lab-commons-audio.jar}"/>
+            <fileset file="${create-lab-commons-collections.jar}"/>
+            <fileset file="${create-lab-commons-device.jar}"/>
+            <fileset file="${create-lab-commons-serial.jar}"/>
+            <fileset file="${create-lab-commons-speech.jar}"/>
+            <fileset file="${create-lab-commons-usb-hid.jar}"/>
+            <fileset file="${create-lab-commons-user-interface.jar}"/>
+            <fileset file="${create-lab-commons-util.jar}"/>
+            <fileset file="${create-lab-commons-video.jar}"/>
+            <fileset file="${jna.jar}"/>
+            <fileset file="${jnaerator.jar}"/>
+            <fileset file="${rxtx.jar}"/>
+            <fileset file="${rxtx-linux.native1}"/>
+            <fileset file="${rxtx-linux.native2}"/>
+            <fileset file="${rxtx-macos.native1}"/>
+            <fileset file="${rxtx-macos.native2}"/>
+            <fileset file="${rxtx-windows.native1}"/>
+            <fileset file="${rxtx-windows.native2}"/>
+            <fileset file="${terk-core.jar}"/>
+            <fileset file="${terk-services.jar}"/>
+         </additional-files-to-copy>
+      </create-dist>
+
+      <property name="dist-finch-core-is-complete" value="true"/>
+   </target>
+
+   <target name="dist-finch-applications" depends="dist-finch-core, build-finch-applications" description="builds finch-applications" unless="dist-finch-applications-is-complete">
+      <mkdir dir="${finch-applications.dist.dir}"/>
+
+      <!-- create jar of resources, using the logging config file required for console-only logging -->
+      <jar destfile="${finch-applications.dist.dir}/${finch-applications-resources-jar.filename}"
+           update="no"
+           compress="true">
+         <fileset dir="${resources.logging.dir}/console" includes="**/*"/>
+      </jar>
+
+      <create-dist component.name="finch-applications">
+         <additional-files-to-copy>
+            <fileset file="${finch-core.dist.dir}/${finch-core.jar.filename}"/>
+            <fileset file="${commons-lang.jar}"/>
+            <fileset file="${create-lab-commons-audio.jar}"/>
+            <fileset file="${create-lab-commons-collections.jar}"/>
+            <fileset file="${create-lab-commons-device.jar}"/>
+            <fileset file="${create-lab-commons-rss.jar}"/>
+            <fileset file="${create-lab-commons-serial.jar}"/>
+            <fileset file="${create-lab-commons-speech.jar}"/>
+            <fileset file="${create-lab-commons-usb-hid.jar}"/>
+            <fileset file="${create-lab-commons-user-interface.jar}"/>
+            <fileset file="${create-lab-commons-util.jar}"/>
+            <fileset file="${create-lab-commons-video.jar}"/>
+            <fileset file="${freetts.jar}"/>
+            <fileset file="${freetts-extra1.jar}"/>
+            <fileset file="${freetts-extra2.jar}"/>
+            <fileset file="${freetts-extra3.jar}"/>
+            <fileset file="${hidapi1.native}"/>
+            <fileset file="${hidapi2.native}"/>
+            <fileset file="${hidapi3.native}"/>
+            <fileset file="${hidapi4.native}"/>
+            <fileset file="${jdom.jar}"/>
+            <fileset file="${jna.jar}"/>
+            <fileset file="${jnaerator.jar}"/>
+            <fileset file="${lti-civil.jar}"/>
+            <fileset file="${lti-civil-1.native}"/>
+            <fileset file="${lti-civil-2.native}"/>
+            <fileset file="${rome.jar}"/>
+            <fileset file="${rxtx.jar}"/>
+            <fileset file="${rxtx-linux.native1}"/>
+            <fileset file="${rxtx-linux.native2}"/>
+            <fileset file="${rxtx-macos.native1}"/>
+            <fileset file="${rxtx-macos.native2}"/>
+            <fileset file="${rxtx-windows.native1}"/>
+            <fileset file="${rxtx-windows.native2}"/>
+            <fileset file="${swing-layout.jar}"/>
+            <fileset file="${terk-core.jar}"/>
+            <fileset file="${terk-services.jar}"/>
+         </additional-files-to-copy>
+      </create-dist>
+
+      <property name="dist-finch-applications-is-complete" value="true"/>
+   </target>
+
+   <target name="update-core-lib" depends="dist-finch-core" description="copies the core library to its home in the lib directory" unless="update-lib-core-is-complete">
+      <update-lib-directory component.name="finch-core"/>
+
+      <property name="update-lib-core-is-complete" value="true"/>
+   </target>
+
+   <target name="create-distro-zip" depends="dist" description="builds the zip for distributing to students, etc." unless="create-distro-zip-is-complete">
+      <!-- create the temporary zip directory -->
+      <mkdir dir="${zip.dir}"/>
+
+      <!-- Create the big honkin' jar containing all the third-party jars from dist-finch-applications
+      and the log4j.xml file for file logging. We don't actually inclue the classes from finch-applications since those
+      will be provided as samples. -->
+      <jar destfile="${finch.jar}" update="yes" compress="true">
+         <zipfileset dir="${resources.logging.dir}/file" includes="**/*"/>
+         <zipgroupfileset dir="${finch-applications.dist.dir}" includes="**/*.jar" excludes="${finch-applications.jar.filename},${finch-applications-resources-jar.filename},${jnaerator.jar.filename}"/>
+      </jar>
+
+      <!-- make a directory for the finch-applications examples -->
+      <mkdir dir="${zip.dir}/examples"/>
+      <copy todir="${zip.dir}/examples">
+         <fileset dir="${finch-applications.src.dir}"/>
+      </copy>
+
+      <!-- make a directory for the finch-applications examples -->
+      <mkdir dir="${zip.dir}/licenses"/>
+      <copy file="${lib.dir}/README.txt" todir="${zip.dir}/licenses"/>
+      <copy file="${commons-lang.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/commons-lang-license.txt"/>
+      <copy file="${freetts.dir}/license.txt" tofile="${zip.dir}/licenses/freetts-license.txt"/>
+      <copy file="${hidapi.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/hidapi-license.txt"/>
+      <copy file="${jdom.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/jdom-license.txt"/>
+      <copy file="${jna.dir}/license.txt" tofile="${zip.dir}/licenses/jna-license.txt"/>
+      <copy file="${jnaerator.dir}/LICENSE.txt" tofile="${zip.dir}/licenses/jnaerator-license.txt"/>
+      <copy file="${log4j.dir}/LICENSE" tofile="${zip.dir}/licenses/log4j-license.txt"/>
+      <copy file="${lti-civil.dir}/LICENSE" tofile="${zip.dir}/licenses/lti-civil-license.txt"/>
+      <copy file="${rome.dir}/License.txt" tofile="${zip.dir}/licenses/rome-license.txt"/>
+      <copy file="${swing-layout.dir}/License.txt" tofile="${zip.dir}/licenses/swing-layout-license.txt"/>
+
+      <!-- Make a temp directory into which we'll unjar the create-lab-commons-rss-src.jar so we can javadoc it -->
+      <mkdir dir="${zip.dir}/create-lab-commons-rss-src"/>
+      <unzip src="${create-lab-commons-rss-src.jar}" dest="${zip.dir}/create-lab-commons-rss-src"/>
+
+      <!-- create javadocs -->
+      <javadoc packagenames="*"
+               destdir="${zip.dir}/javadoc"
+               author="true"
+               version="true"
+               windowtitle="Finch API"
+               doctitle="Finch API"
+               protected="true"
+               notree="true"
+               noindex="true">
+         <classpath>
+            <pathelement location="${finch-core.build.dir}"/>
+            <path refid="finch-core-classpath"/>
+            <pathelement location="${create-lab-commons-rss.jar}"/>
+            <pathelement location="${rome.jar}"/>
+         </classpath>
+         <fileset dir="${finch-core.src.dir}" includes="**/VideoHelper.java"/>
+         <fileset dir="${finch-core.src.dir}" includes="**/Finch.java"/>
+         <fileset dir="${zip.dir}/create-lab-commons-rss-src" includes="**/*.java"/>
+         <link href="http://download.oracle.com/javase/6/docs/api/"/>
+      </javadoc>
+
+      <!-- delete the temp directory containing the create-lab-commons-rss-src.jar source -->
+      <delete dir="${zip.dir}/create-lab-commons-rss-src"/>
+
+      <!-- create zip of the directory -->
+      <zip destfile="${base.directory}/${zip.filename}"
+           compress="true">
+         <zipfileset dir="${zip.dir}" prefix="finch"/>
+         <zipfileset file="${hidapi1.native}" prefix="finch"/>
+         <zipfileset file="${hidapi2.native}" prefix="finch"/>
+         <zipfileset file="${hidapi3.native}" prefix="finch"/>
+         <zipfileset file="${hidapi4.native}" prefix="finch"/>
+         <zipfileset file="${lti-civil-1.native}" prefix="finch"/>
+         <zipfileset file="${lti-civil-2.native}" prefix="finch"/>
+         <zipfileset file="${jnaerator.jar}" prefix="finch"/>
+      </zip>
+
+      <!-- delete the temporary zip directory -->
+      <delete dir="${zip.dir}"/>
+
+      <property name="create-distro-zip-is-complete" value="true"/>
+   </target>
+   <!-- ============================================================================================================ -->
+   <!-- Macro definitions -->
+   <!-- ============================================================================================================ -->
+
+   <macrodef name="compile-code-and-copy-resources">
+      <attribute name="classpath-ref"/>
+      <attribute name="build.dir"/>
+      <attribute name="src.dir"/>
+      <element name="resources-filterset" optional="true"/>
+      <sequential>
+         <!-- create the build directory -->
+         <mkdir dir="@{build.dir}"/>
+
+         <!-- compile code -->
+         <javac srcdir="@{src.dir}"
+                destdir="@{build.dir}"
+                classpathref="@{classpath-ref}"
+                debug="${java.compiler.debug}"
+                nowarn="${java.compiler.generate.no.warnings}"
+                memorymaximumsize="${java.compiler.max.memory}"
+                source="${java.compiler.source.level}"
+                target="${java.compiler.target.level}"
+                fork="true"
+                includeAntRuntime="false">
+            <compilerarg line="${java.compiler.args}"/>
+         </javac>
+
+         <!-- copy resources -->
+         <copy todir="@{build.dir}">
+            <fileset dir="@{src.dir}">
+               <patternset refid="compiler.resources"/>
+            </fileset>
+            <resources-filterset/>
+         </copy>
+
+      </sequential>
+   </macrodef>
+
+   <macrodef name="create-dist">
+      <attribute name="component.name"/>
+      <element name="jar-manifest-attributes" optional="true"/>
+      <element name="additional-files-to-copy" optional="true"/>
+      <sequential>
+         <!-- create the dist directory -->
+         <mkdir dir="${@{component.name}.dist.dir}"/>
+
+         <!-- copy required jar files -->
+         <copy todir="${@{component.name}.dist.dir}" flatten="true">
+            <fileset file="${log4j.jar}"/>
+            <additional-files-to-copy/>
+         </copy>
+
+         <!-- define the execution classpath for use in the scripts -->
+         <path id="@{component.name}.execution.classpath.elements">
+            <pathelement location="${@{component.name}.dist.dir}"/>
+            <fileset dir="${@{component.name}.dist.dir}">
+               <include name="**/*.jar"/>
+               <include name="**/*.dll"/>
+               <include name="**/*.so"/>
+            </fileset>
+         </path>
+
+         <!-- Set up a path id for the dist directory so it contains the correct kind of slashes when we do the pathconvert mapping -->
+         <path id="dist-@{component.name}.dir.before-conversion" path="${@{component.name}.dist.dir}"/>
+
+         <!-- Convert the dist directory path for the target platform to ensure that all the slashes are in the right direction -->
+         <pathconvert property="dist-@{component.name}.dir.after-conversion" dirsep="/" pathsep=":" refid="dist-@{component.name}.dir.before-conversion"/>
+
+         <!-- Create the classpath -->
+         <pathconvert property="@{component.name}.execution.classpath" dirsep="/" pathsep=" " refid="@{component.name}.execution.classpath.elements">
+            <map from="${dist-@{component.name}.dir.after-conversion}" to="."/>
+         </pathconvert>
+
+         <!-- create jar of Java classes -->
+         <jar destfile="${@{component.name}.dist.dir}/${@{component.name}.jar.filename}"
+              basedir="${@{component.name}.build.dir}"
+              update="no"
+              compress="true">
+            <manifest>
+               <attribute name="Built-By" value="${jar.built-by}"/>
+               <attribute name="Build-Timestamp" value="${build.timestamp}"/>
+               <attribute name="Class-Path" value="${@{component.name}.execution.classpath}"/>
+               <jar-manifest-attributes/>
+            </manifest>
+         </jar>
+
+      </sequential>
+   </macrodef>
+
+   <macrodef name="update-lib-directory">
+      <attribute name="component.name"/>
+      <sequential>
+
+         <!-- make sure the directory exists -->
+         <mkdir dir="${@{component.name}.lib.dir}"/>
+
+         <!-- copy jar fle -->
+         <copy todir="${@{component.name}.lib.dir}" flatten="true">
+            <fileset file="${@{component.name}.dist.dir}/${@{component.name}.jar.basefilename}.jar"/>
+         </copy>
+
+         <echo level="info">Git Revision: ${repository.version}</echo>
+
+         <!-- create jar of Java source code -->
+         <jar destfile="${@{component.name}.lib.dir}/${@{component.name}.jar.basefilename}-src.jar"
+              basedir="${@{component.name}.src.dir}"
+              update="no"
+              compress="true">
+            <manifest>
+               <attribute name="Built-By" value="${jar.built-by}"/>
+               <attribute name="Build-Timestamp" value="${build.timestamp}"/>
+               <attribute name="Git-Revision" value="${repository.version}"/>
+            </manifest>
+         </jar>
+
+      </sequential>
+   </macrodef>
+
+</project>
